@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Component Factory - Examples</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4rem 0;
+      margin-bottom: 2rem;
+    }
+    .example-card {
+      transition: transform 0.2s;
+      height: 100%;
+    }
+    .example-card:hover {
+      transform: translateY(-5px);
+    }
+    .badge-feature {
+      font-size: 0.75rem;
+      margin-right: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-boxes"></i> Component Factory
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com" target="_blank">
+              <i class="bi bi-github"></i> GitHub
+            </a>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-sm btn-outline-light ms-2" id="themeToggle">
+              <i class="bi bi-moon-stars"></i> Toggle Theme
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="hero-section text-center">
+    <div class="container">
+      <h1 class="display-4 fw-bold mb-3">
+        <i class="bi bi-lightning-charge-fill"></i> Web Component Factory
+      </h1>
+      <p class="lead mb-4">A minimal, dynamic factory for creating web components with zero build steps</p>
+      <div class="d-flex justify-content-center gap-2">
+        <span class="badge bg-light text-dark">30 Lines of Code</span>
+        <span class="badge bg-light text-dark">Zero Dependencies</span>
+        <span class="badge bg-light text-dark">Pure ES6</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mb-5">
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="mb-3">
+          <i class="bi bi-card-checklist"></i> Features
+        </h2>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="card bg-primary text-white">
+              <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-file-earmark-code"></i> Template or File</h5>
+                <p class="card-text">Use inline &lt;template&gt; tags or external HTML files</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card bg-success text-white">
+              <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-shield-check"></i> Shadow DOM</h5>
+                <p class="card-text">Optional style encapsulation with Shadow DOM</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card bg-info text-white">
+              <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-lightning"></i> Events & Lifecycle</h5>
+                <p class="card-text">Standard events, custom events, and lifecycle hooks</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="mb-3">
+          <i class="bi bi-collection"></i> Examples
+        </h2>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Example 1 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card example-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-1-circle-fill text-primary"></i> Template Tag
+            </h5>
+            <p class="card-text">Component using inline &lt;template&gt; tag with light DOM rendering</p>
+            <div class="mb-3">
+              <span class="badge badge-feature bg-secondary">Template</span>
+              <span class="badge badge-feature bg-secondary">Light DOM</span>
+              <span class="badge badge-feature bg-secondary">Attributes</span>
+              <span class="badge badge-feature bg-secondary">Events</span>
+            </div>
+            <a href="example-1-template.html" class="btn btn-primary w-100">
+              <i class="bi bi-box-arrow-up-right"></i> View Example
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 2 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card example-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-2-circle-fill text-success"></i> Template + Shadow DOM
+            </h5>
+            <p class="card-text">Template with Shadow DOM for complete style encapsulation</p>
+            <div class="mb-3">
+              <span class="badge badge-feature bg-secondary">Template</span>
+              <span class="badge badge-feature bg-secondary">Shadow DOM</span>
+              <span class="badge badge-feature bg-secondary">Isolated Styles</span>
+            </div>
+            <a href="example-2-shadow.html" class="btn btn-success w-100">
+              <i class="bi bi-box-arrow-up-right"></i> View Example
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 3 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card example-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-3-circle-fill text-info"></i> External HTML File
+            </h5>
+            <p class="card-text">Load component HTML from external file with light DOM</p>
+            <div class="mb-3">
+              <span class="badge badge-feature bg-secondary">External File</span>
+              <span class="badge badge-feature bg-secondary">Light DOM</span>
+              <span class="badge badge-feature bg-secondary">Events</span>
+            </div>
+            <a href="example-3-external.html" class="btn btn-info w-100">
+              <i class="bi bi-box-arrow-up-right"></i> View Example
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 4 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card example-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-4-circle-fill text-warning"></i> External + Shadow DOM
+            </h5>
+            <p class="card-text">External HTML file with Shadow DOM encapsulation</p>
+            <div class="mb-3">
+              <span class="badge badge-feature bg-secondary">External File</span>
+              <span class="badge badge-feature bg-secondary">Shadow DOM</span>
+              <span class="badge badge-feature bg-secondary">Isolated</span>
+            </div>
+            <a href="example-4-external-shadow.html" class="btn btn-warning w-100">
+              <i class="bi bi-box-arrow-up-right"></i> View Example
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 5 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card example-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-5-circle-fill text-danger"></i> Events & Custom Events
+            </h5>
+            <p class="card-text">Demonstrates standard and custom event handling</p>
+            <div class="mb-3">
+              <span class="badge badge-feature bg-secondary">Click Events</span>
+              <span class="badge badge-feature bg-secondary">Custom Events</span>
+              <span class="badge badge-feature bg-secondary">Event Bubbling</span>
+            </div>
+            <a href="example-5-events.html" class="btn btn-danger w-100">
+              <i class="bi bi-box-arrow-up-right"></i> View Example
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 6 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card example-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-6-circle-fill text-secondary"></i> Lifecycle Hooks
+            </h5>
+            <p class="card-text">Component lifecycle: mounted, unmounted, and changed</p>
+            <div class="mb-3">
+              <span class="badge badge-feature bg-secondary">Mounted</span>
+              <span class="badge badge-feature bg-secondary">Unmounted</span>
+              <span class="badge badge-feature bg-secondary">Changed</span>
+            </div>
+            <a href="example-6-lifecycle.html" class="btn btn-secondary w-100">
+              <i class="bi bi-box-arrow-up-right"></i> View Example
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title"><i class="bi bi-code-square"></i> Quick Start</h4>
+            <pre class="bg-dark text-light p-3 rounded"><code>import { component } from './component-factory.js';
+
+component('my-button', '#button-template', {
+  attrs: ['label'],
+  mounted() {
+    console.log('Button ready!');
+  },
+  on: {
+    'button': {
+      click() {
+        alert('Clicked!');
+      }
+    }
+  }
+});</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-light py-4 mt-5">
+    <div class="container text-center">
+      <p class="mb-0">
+        <i class="bi bi-lightning-charge"></i> Web Component Factory - Minimal, Dynamic, Powerful
+      </p>
+      <p class="text-muted small mb-0">Built with vanilla JavaScript and Bootstrap 5</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-bs-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-bs-theme', newTheme);
+      
+      const icon = themeToggle.querySelector('i');
+      icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
+    });
+  </script>
+</body>
+</html>

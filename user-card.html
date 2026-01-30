@@ -1,0 +1,42 @@
+<style>
+  .user-card {
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  .user-card h3 {
+    margin: 0 0 10px 0;
+  }
+  .user-card p {
+    margin: 5px 0;
+  }
+  .user-card button {
+    margin: 10px 5px 0 0;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .user-card button.edit {
+    background: #2ecc71;
+    color: white;
+  }
+  .user-card button.delete {
+    background: #e74c3c;
+    color: white;
+  }
+  .user-card button:hover {
+    opacity: 0.8;
+  }
+</style>
+<div class="user-card">
+  <h3 class="name">User Name</h3>
+  <p class="email">Email: user@example.com</p>
+  <p class="role">Role: Member</p>
+  <button class="edit">✏️ Edit</button>
+  <button class="delete">🗑️ Delete</button>
+</div>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Example 4 - External + Shadow | Component Factory</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="bi bi-arrow-left"></i> Back to Examples
+      </a>
+      <button class="btn btn-sm btn-outline-light" id="themeToggle">
+        <i class="bi bi-moon-stars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <div class="alert alert-warning" role="alert">
+          <h4 class="alert-heading">
+            <i class="bi bi-4-circle-fill"></i> Example 4: External HTML + Shadow DOM
+          </h4>
+          <p class="mb-0">Component loaded from external file (product-card.html) with Shadow DOM for complete style isolation.</p>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-eye"></i> Live Demo</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <product-card 
+                  product-name="Awesome Widget" 
+                  price="29.99" 
+                  description="The best widget you'll ever own!">
+                </product-card>
+              </div>
+              <div class="col-md-6 mb-3">
+                <product-card 
+                  product-name="Super Gadget" 
+                  price="49.99" 
+                  description="A must-have gadget for everyone!">
+                </product-card>
+              </div>
+            </div>
+            
+            <div class="mt-4">
+              <h6>Add New Product:</h6>
+              <div class="input-group mb-2">
+                <span class="input-group-text">Product Name</span>
+                <input type="text" class="form-control" id="productInput" placeholder="Enter product name">
+              </div>
+              <div class="input-group mb-2">
+                <span class="input-group-text">Price ($)</span>
+                <input type="number" class="form-control" id="priceInput" placeholder="0.00" step="0.01">
+              </div>
+              <div class="input-group mb-2">
+                <span class="input-group-text">Description</span>
+                <input type="text" class="form-control" id="descInput" placeholder="Product description">
+              </div>
+              <button class="btn btn-warning" id="addProductBtn">
+                <i class="bi bi-plus-circle"></i> Add Product
+              </button>
+            </div>
+            <div id="newProducts" class="row mt-3"></div>
+            
+            <div class="alert alert-success mt-4">
+              <h6 class="alert-heading"><i class="bi bi-cart-check"></i> Shopping Cart</h6>
+              <div id="cart">
+                <p class="text-muted mb-0">Your cart is empty</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-terminal"></i> Event Log</h5>
+          </div>
+          <div class="card-body">
+            <div id="eventLog" class="bg-dark text-light p-3 rounded" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.9em;">
+              <div class="text-success">Ready to log events...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-code-square"></i> Source Code</h5>
+          </div>
+          <div class="card-body">
+            <h6>External HTML File (product-card.html):</h6>
+            <pre class="bg-dark text-light p-3 rounded"><code>&lt;style&gt;
+  .product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .price {
+    font-size: 1.5em;
+    color: #27ae60;
+    font-weight: bold;
+  }
+  button {
+    width: 100%;
+    padding: 10px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+&lt;/style&gt;
+&lt;div class="product-card"&gt;
+  &lt;h4 class="product-name"&gt;Product Name&lt;/h4&gt;
+  &lt;p class="description"&gt;Product description&lt;/p&gt;
+  &lt;div class="price"&gt;$0.00&lt;/div&gt;
+  &lt;button class="add-to-cart"&gt;🛒 Add to Cart&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+
+            <h6 class="mt-3">JavaScript:</h6>
+            <pre class="bg-dark text-light p-3 rounded"><code>component('product-card', './product-card.html', {
+  shadow: true, // Shadow DOM enabled
+  attrs: ['product-name', 'price', 'description'],
+  
+  mounted(root) {
+    this.updateProduct();
+  },
+  
+  changed(attr) {
+    this.updateProduct();
+  },
+  
+  on: {
+    '.add-to-cart': {
+      click() {
+        this.dispatchEvent(new CustomEvent('add-to-cart', {
+          bubbles: true,
+          detail: { 
+            product: this.getAttribute('product-name'),
+            price: parseFloat(this.getAttribute('price'))
+          }
+        }));
+      }
+    }
+  },
+  
+  methods: {
+    updateProduct() {
+      const root = this.shadowRoot;
+      root.querySelector('.product-name').textContent = 
+        this.getAttribute('product-name') || 'Product';
+      root.querySelector('.description').textContent = 
+        this.getAttribute('description') || 'No description';
+      root.querySelector('.price').textContent = 
+        \`$\${this.getAttribute('price') || '0.00'}\`;
+    }
+  }
+});</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    import { component } from './component-factory.js';
+
+    let cart = [];
+
+    function logEvent(message) {
+      const log = document.getElementById('eventLog');
+      const entry = document.createElement('div');
+      const time = new Date().toLocaleTimeString();
+      entry.className = 'text-info';
+      entry.textContent = `[${time}] ${message}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function updateCart() {
+      const cartDiv = document.getElementById('cart');
+      if (cart.length === 0) {
+        cartDiv.innerHTML = '<p class="text-muted mb-0">Your cart is empty</p>';
+      } else {
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        cartDiv.innerHTML = `
+          <ul class="list-unstyled mb-2">
+            ${cart.map(item => `<li>🛒 ${item.product} - $${item.price.toFixed(2)}</li>`).join('')}
+          </ul>
+          <strong>Total: $${total.toFixed(2)}</strong>
+        `;
+      }
+    }
+
+    component('product-card', './product-card.html', {
+      shadow: true,
+      attrs: ['product-name', 'price', 'description'],
+      
+      mounted(root) {
+        logEvent(`✅ product-card mounted: ${this.getAttribute('product-name')}`);
+        this.updateProduct();
+      },
+      
+      changed(attr) {
+        this.updateProduct();
+      },
+      
+      on: {
+        '.add-to-cart': {
+          click() {
+            const productName = this.getAttribute('product-name');
+            const price = this.getAttribute('price');
+            logEvent(`🛒 Added to cart: ${productName} ($${price})`);
+            this.dispatchEvent(new CustomEvent('add-to-cart', {
+              bubbles: true,
+              detail: { 
+                product: productName,
+                price: parseFloat(price)
+              }
+            }));
+          }
+        }
+      },
+      
+      methods: {
+        updateProduct() {
+          const root = this.shadowRoot;
+          root.querySelector('.product-name').textContent = this.getAttribute('product-name') || 'Product';
+          root.querySelector('.description').textContent = this.getAttribute('description') || 'No description';
+          root.querySelector('.price').textContent = `$${this.getAttribute('price') || '0.00'}`;
+        }
+      }
+    });
+
+    // Listen for add-to-cart events
+    document.addEventListener('add-to-cart', (e) => {
+      cart.push(e.detail);
+      updateCart();
+      logEvent(`📢 Cart updated: ${cart.length} item(s)`);
+    });
+
+    // Add product button handler
+    document.getElementById('addProductBtn').addEventListener('click', () => {
+      const name = document.getElementById('productInput').value;
+      const price = document.getElementById('priceInput').value;
+      const desc = document.getElementById('descInput').value;
+      
+      if (!name || !price) {
+        alert('Please fill in product name and price');
+        return;
+      }
+      
+      const col = document.createElement('div');
+      col.className = 'col-md-6 mb-3';
+      
+      const card = document.createElement('product-card');
+      card.setAttribute('product-name', name);
+      card.setAttribute('price', price);
+      card.setAttribute('description', desc);
+      
+      col.appendChild(card);
+      document.getElementById('newProducts').appendChild(col);
+      logEvent(`➕ Added new product: ${name}`);
+      
+      // Clear inputs
+      document.getElementById('productInput').value = '';
+      document.getElementById('priceInput').value = '';
+      document.getElementById('descInput').value = '';
+    });
+
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-bs-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-bs-theme', newTheme);
+      
+      const icon = themeToggle.querySelector('i');
+      icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
+    });
+
+    logEvent('🚀 External + Shadow DOM components initialized');
+  </script>
+</body>
+</html>

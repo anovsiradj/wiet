@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Example 6 - Lifecycle | Component Factory</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="bi bi-arrow-left"></i> Back to Examples
+      </a>
+      <button class="btn btn-sm btn-outline-light" id="themeToggle">
+        <i class="bi bi-moon-stars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <div class="alert alert-secondary" role="alert">
+          <h4 class="alert-heading">
+            <i class="bi bi-6-circle-fill"></i> Example 6: Lifecycle Hooks
+          </h4>
+          <p class="mb-0">Demonstrates component lifecycle: <code>mounted()</code>, <code>unmounted()</code>, and <code>changed()</code> callbacks.</p>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-gear"></i> Lifecycle Controls</h5>
+          </div>
+          <div class="card-body">
+            <div class="d-flex gap-2 mb-3">
+              <button class="btn btn-success" id="addComponent">
+                <i class="bi bi-plus-circle"></i> Add Component
+              </button>
+              <button class="btn btn-danger" id="removeComponent">
+                <i class="bi bi-trash"></i> Remove Component
+              </button>
+              <button class="btn btn-warning" id="changeAttr">
+                <i class="bi bi-pencil"></i> Change Attribute
+              </button>
+            </div>
+            
+            <div class="input-group mb-3">
+              <span class="input-group-text">Component Data</span>
+              <input type="text" class="form-control" id="dataInput" placeholder="Enter data for component">
+            </div>
+            
+            <div id="componentContainer" class="border border-secondary rounded p-3" style="min-height: 100px;">
+              <p class="text-muted text-center mb-0">No component mounted yet</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-terminal"></i> Lifecycle Event Log</h5>
+          </div>
+          <div class="card-body">
+            <div id="eventLog" class="bg-dark text-light p-3 rounded" style="max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 0.9em;">
+              <div class="text-success">Waiting for lifecycle events...</div>
+            </div>
+            <button class="btn btn-sm btn-secondary mt-2" id="clearLog">
+              <i class="bi bi-trash"></i> Clear Log
+            </button>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-code-square"></i> Source Code</h5>
+          </div>
+          <div class="card-body">
+            <h6>Lifecycle Hooks Configuration:</h6>
+            <pre class="bg-dark text-light p-3 rounded"><code>component('lifecycle-demo', '#lifecycle-template', {
+  attrs: ['data'],
+  
+  // Called when component is added to DOM
+  mounted() {
+    console.log('Component mounted!');
+    this.querySelector('.status').textContent = 'Status: Mounted';
+    this.updateData();
+  },
+  
+  // Called when component is removed from DOM
+  unmounted() {
+    console.log('Component unmounted!');
+  },
+  
+  // Called when observed attributes change
+  changed(attr, oldVal, newVal) {
+    console.log(\`Attribute "\${attr}" changed from "\${oldVal}" to "\${newVal}"\`);
+    this.querySelector('.status').textContent = \`Status: Attribute "\${attr}" changed\`;
+    this.updateData();
+  },
+  
+  methods: {
+    updateData() {
+      const data = this.getAttribute('data') || 'No data';
+      this.querySelector('.data-display').textContent = \`Data: \${data}\`;
+    }
+  }
+});</code></pre>
+
+            <h6 class="mt-3">Lifecycle Flow:</h6>
+            <pre class="bg-dark text-light p-3 rounded"><code>1. Component created
+   ↓
+2. mounted() callback fires
+   ↓
+3. Component is active
+   ↓
+4. changed() callback fires on attribute updates
+   ↓
+5. Component removed
+   ↓
+6. unmounted() callback fires</code></pre>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-list-check"></i> Lifecycle Hooks Explained</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Hook</th>
+                    <th>When It Fires</th>
+                    <th>Use Cases</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>mounted()</code></td>
+                    <td>After component is added to DOM</td>
+                    <td>Initialize state, fetch data, set up timers</td>
+                  </tr>
+                  <tr>
+                    <td><code>unmounted()</code></td>
+                    <td>When component is removed from DOM</td>
+                    <td>Cleanup: clear timers, remove listeners</td>
+                  </tr>
+                  <tr>
+                    <td><code>changed(attr, old, new)</code></td>
+                    <td>When observed attribute changes</td>
+                    <td>React to prop changes, update UI</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <template id="lifecycle-template">
+    <style>
+      .lifecycle {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      .lifecycle h4 {
+        margin: 0 0 10px 0;
+      }
+      .lifecycle .status {
+        font-family: monospace;
+        font-size: 0.9em;
+        padding: 8px;
+        background: rgba(0,0,0,0.2);
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+      .lifecycle .data-display {
+        font-size: 1.1em;
+        font-weight: bold;
+      }
+    </style>
+    <div class="lifecycle">
+      <h4>Lifecycle Component</h4>
+      <div class="status">Status: Initialized</div>
+      <p class="data-display">Data: None</p>
+    </div>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    import { component } from './component-factory.js';
+
+    let componentCount = 0;
+    let currentComponent = null;
+
+    function logEvent(message, type = 'info') {
+      const log = document.getElementById('eventLog');
+      const entry = document.createElement('div');
+      const time = new Date().toLocaleTimeString();
+      const colors = {
+        info: 'text-info',
+        success: 'text-success',
+        warning: 'text-warning',
+        danger: 'text-danger'
+      };
+      entry.className = colors[type] || 'text-info';
+      entry.textContent = `[${time}] ${message}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    component('lifecycle-demo', '#lifecycle-template', {
+      attrs: ['data'],
+      
+      mounted() {
+        logEvent('✅ MOUNTED: Component added to DOM', 'success');
+        this.querySelector('.status').textContent = 'Status: Mounted';
+        this.updateData();
+      },
+      
+      unmounted() {
+        logEvent('❌ UNMOUNTED: Component removed from DOM', 'danger');
+      },
+      
+      changed(attr, oldVal, newVal) {
+        logEvent(`🔄 CHANGED: Attribute "${attr}" = "${newVal}" (was "${oldVal}")`, 'warning');
+        this.querySelector('.status').textContent = `Status: Attribute "${attr}" changed`;
+        this.updateData();
+      },
+      
+      methods: {
+        updateData() {
+          const data = this.getAttribute('data') || 'No data';
+          this.querySelector('.data-display').textContent = `Data: ${data}`;
+        }
+      }
+    });
+
+    // Add component button
+    document.getElementById('addComponent').addEventListener('click', () => {
+      if (currentComponent) {
+        logEvent('⚠️ Component already exists. Remove it first.', 'warning');
+        return;
+      }
+      
+      componentCount++;
+      const container = document.getElementById('componentContainer');
+      container.innerHTML = '';
+      
+      currentComponent = document.createElement('lifecycle-demo');
+      currentComponent.setAttribute('data', `Component #${componentCount}`);
+      container.appendChild(currentComponent);
+      
+      logEvent(`➕ Creating component #${componentCount}...`, 'info');
+    });
+
+    // Remove component button
+    document.getElementById('removeComponent').addEventListener('click', () => {
+      if (!currentComponent) {
+        logEvent('⚠️ No component to remove', 'warning');
+        return;
+      }
+      
+      logEvent('🗑️ Removing component...', 'info');
+      currentComponent.remove();
+      currentComponent = null;
+      
+      const container = document.getElementById('componentContainer');
+      container.innerHTML = '<p class="text-muted text-center mb-0">No component mounted yet</p>';
+    });
+
+    // Change attribute button
+    document.getElementById('changeAttr').addEventListener('click', () => {
+      if (!currentComponent) {
+        logEvent('⚠️ No component to update', 'warning');
+        return;
+      }
+      
+      const newData = document.getElementById('dataInput').value || `Updated at ${new Date().toLocaleTimeString()}`;
+      logEvent(`📝 Updating attribute to: "${newData}"`, 'info');
+      currentComponent.setAttribute('data', newData);
+    });
+
+    // Clear log button
+    document.getElementById('clearLog').addEventListener('click', () => {
+      const log = document.getElementById('eventLog');
+      log.innerHTML = '<div class="text-success">Log cleared!</div>';
+    });
+
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-bs-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-bs-theme', newTheme);
+      
+      const icon = themeToggle.querySelector('i');
+      icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
+    });
+
+    logEvent('🚀 Lifecycle demo initialized', 'success');
+  </script>
+</body>
+</html>
