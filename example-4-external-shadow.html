@@ -8,26 +8,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-  <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">
-        <i class="bi bi-arrow-left"></i> Back to Examples
-      </a>
-      <button class="btn btn-sm btn-outline-light" id="themeToggle">
-        <i class="bi bi-moon-stars"></i>
-      </button>
-    </div>
-  </nav>
+  <page-header></page-header>
 
   <div class="container my-5">
     <div class="row">
       <div class="col-lg-8 mx-auto">
-        <div class="alert alert-warning" role="alert">
-          <h4 class="alert-heading">
-            <i class="bi bi-4-circle-fill"></i> Example 4: External HTML + Shadow DOM
-          </h4>
-          <p class="mb-0">Component loaded from external file (product-card.html) with Shadow DOM for complete style isolation.</p>
-        </div>
+        <example-section icon="bi bi-4-circle-fill" title="Example 4: External HTML + Shadow DOM" description="Component loaded from external file (product-card.html) with Shadow DOM for complete style isolation." variant="warning"></example-section>
 
         <div class="card mb-4">
           <div class="card-header">
@@ -80,15 +66,7 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-terminal"></i> Event Log</h5>
-          </div>
-          <div class="card-body">
-            <div id="eventLog" class="bg-dark text-light p-3 rounded" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.9em;">
-              <div class="text-success">Ready to log events...</div>
-            </div>
-          </div>
+        <event-log id="eventLog"></event-log>
         </div>
 
         <div class="card mt-4">
@@ -175,18 +153,19 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module">
     import { component } from './component-factory.js';
+    import './components.js';
+
+    const eventLog = document.getElementById('eventLog');
+
+    function logEvent(message, type = 'info') {
+      eventLog.log(message, type);
+    }
+
+    
 
     let cart = [];
 
-    function logEvent(message) {
-      const log = document.getElementById('eventLog');
-      const entry = document.createElement('div');
-      const time = new Date().toLocaleTimeString();
-      entry.className = 'text-info';
-      entry.textContent = `[${time}] ${message}`;
-      log.appendChild(entry);
-      log.scrollTop = log.scrollHeight;
-    }
+    
 
     function updateCart() {
       const cartDiv = document.getElementById('cart');
@@ -279,18 +258,7 @@
       document.getElementById('descInput').value = '';
     });
 
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
     
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = html.getAttribute('data-bs-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-bs-theme', newTheme);
-      
-      const icon = themeToggle.querySelector('i');
-      icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
-    });
 
     logEvent('🚀 External + Shadow DOM components initialized');
   </script>

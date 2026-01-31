@@ -1,5 +1,10 @@
 export function component(tag, template, config = {}) {
-  customElements.define(tag, class extends HTMLElement {
+  class ComponentClass extends HTMLElement {
+    constructor() {
+      super();
+      this._isConnected = false;
+    }
+    
     async connectedCallback() {
       // Load template
       const html = template.startsWith('#') 
@@ -9,6 +14,9 @@ export function component(tag, template, config = {}) {
       // Render
       const root = config.shadow ? this.attachShadow({ mode: 'open' }) : this;
       root.innerHTML = html;
+      
+      // Mark as connected
+      this._isConnected = true;
       
       // Bind events
       if (config.on) {
@@ -26,6 +34,7 @@ export function component(tag, template, config = {}) {
     }
     
     disconnectedCallback() {
+      this._isConnected = false;
       config.unmounted?.call(this);
     }
     
@@ -35,7 +44,18 @@ export function component(tag, template, config = {}) {
     }
     
     attributeChangedCallback(name, oldVal, newVal) {
-      config.changed?.call(this, name, oldVal, newVal);
+      // Only call changed callback after component is connected and rendered
+      if (this._isConnected) {
+        config.changed?.call(this, name, oldVal, newVal);
+      }
     }
-  });
+  }
+  
+  // Add custom methods if provided
+  if (config.methods) {
+    Object.assign(ComponentClass.prototype, config.methods);
+  }
+  
+  customElements.define(tag, ComponentClass);
+  return ComponentClass;
 }

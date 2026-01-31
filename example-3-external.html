@@ -8,26 +8,17 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-  <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">
-        <i class="bi bi-arrow-left"></i> Back to Examples
-      </a>
-      <button class="btn btn-sm btn-outline-light" id="themeToggle">
-        <i class="bi bi-moon-stars"></i>
-      </button>
-    </div>
-  </nav>
+  <page-header></page-header>
 
   <div class="container my-5">
     <div class="row">
       <div class="col-lg-8 mx-auto">
-        <div class="alert alert-info" role="alert">
-          <h4 class="alert-heading">
-            <i class="bi bi-3-circle-fill"></i> Example 3: External HTML File
-          </h4>
-          <p class="mb-0">Component HTML loaded from external file (user-card.html). Demonstrates file-based component organization with light DOM.</p>
-        </div>
+        <example-section 
+          icon="bi bi-3-circle-fill" 
+          title="Example 3: External HTML File" 
+          description="Component HTML loaded from external file (user-card.html). Demonstrates file-based component organization with light DOM." 
+          variant="info">
+        </example-section>
 
         <div class="card mb-4">
           <div class="card-header">
@@ -73,15 +64,7 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-terminal"></i> Event Log</h5>
-          </div>
-          <div class="card-body">
-            <div id="eventLog" class="bg-dark text-light p-3 rounded" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.9em;">
-              <div class="text-success">Ready to log events...</div>
-            </div>
-          </div>
+        <event-log id="eventLog"></event-log>
         </div>
 
         <div class="card mt-4">
@@ -106,7 +89,7 @@
 &lt;/style&gt;
 &lt;div class="user-card"&gt;
   &lt;h3 class="name"&gt;User Name&lt;/h3&gt;
-  &lt;p class="email"&gt;Email: user@example.com&lt;/p&gt;
+  &lt;p class="email"&gt;Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="394c4a5c4b795c41585449555c175a5654">[email&#160;protected]</a>&lt;/p&gt;
   &lt;p class="role"&gt;Role: Member&lt;/p&gt;
   &lt;button class="btn btn-success edit"&gt;✏️ Edit&lt;/button&gt;
   &lt;button class="btn btn-danger delete"&gt;🗑️ Delete&lt;/button&gt;
@@ -161,10 +144,7 @@
           </div>
         </div>
 
-        <div class="alert alert-warning mt-4">
-          <h6 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Important Note</h6>
-          <p class="mb-0">External HTML files require a local server to work (due to CORS). Use Python's <code>python3 -m http.server</code> or similar.</p>
-        </div>
+        
       </div>
     </div>
   </div>
@@ -172,16 +152,17 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module">
     import { component } from './component-factory.js';
+    import './components.js';
 
-    function logEvent(message) {
-      const log = document.getElementById('eventLog');
-      const entry = document.createElement('div');
-      const time = new Date().toLocaleTimeString();
-      entry.className = 'text-info';
-      entry.textContent = `[${time}] ${message}`;
-      log.appendChild(entry);
-      log.scrollTop = log.scrollHeight;
+    const eventLog = document.getElementById('eventLog');
+
+    function logEvent(message, type = 'info') {
+      eventLog.log(message, type);
     }
+
+    
+
+    
 
     component('user-card', './user-card.html', {
       attrs: ['user-name', 'email', 'role'],
@@ -267,19 +248,6 @@
       // Clear inputs
       document.getElementById('nameInput').value = '';
       document.getElementById('emailInput').value = '';
-    });
-
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-    
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = html.getAttribute('data-bs-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-bs-theme', newTheme);
-      
-      const icon = themeToggle.querySelector('i');
-      icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
     });
 
     logEvent('🚀 External HTML components initialized');

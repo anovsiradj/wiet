@@ -1,0 +1,32 @@
+<style>
+	.event-log-card {
+		margin-top: 1rem;
+	}
+	.event-log-content {
+		background: #1a1a1a;
+		color: #ecf0f1;
+		padding: 15px;
+		border-radius: 4px;
+		max-height: 300px;
+		overflow-y: auto;
+		font-family: monospace;
+		font-size: 0.9em;
+	}
+	.event-log-content .text-info { color: #3498db !important; }
+	.event-log-content .text-success { color: #2ecc71 !important; }
+	.event-log-content .text-warning { color: #f39c12 !important; }
+	.event-log-content .text-danger { color: #e74c3c !important; }
+</style>
+<div class="card event-log-card">
+	<div class="card-header">
+		<h5 class="mb-0"><i class="bi bi-terminal"></i> Event Log</h5>
+	</div>
+	<div class="card-body">
+		<div class="event-log-content">
+			<div class="text-success">Ready to log events...</div>
+		</div>
+		<button class="btn btn-sm btn-secondary mt-2 clear-log-btn">
+			<i class="bi bi-trash"></i> Clear Log
+		</button>
+	</div>
+</div>
