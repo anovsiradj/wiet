@@ -1,5 +1,5 @@
-
 @author : anovsiradj
 @version: 20260131
 @agent  : claude
 @status : kinda slop but not very slop
+@todos  : <slot>

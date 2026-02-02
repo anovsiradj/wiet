@@ -43,19 +43,7 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-terminal"></i> Lifecycle Event Log</h5>
-          </div>
-          <div class="card-body">
-            <div id="eventLog" class="bg-dark text-light p-3 rounded" style="max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 0.9em;">
-              <div class="text-success">Waiting for lifecycle events...</div>
-            </div>
-            <button class="btn btn-sm btn-secondary mt-2" id="clearLog">
-              <i class="bi bi-trash"></i> Clear Log
-            </button>
-          </div>
-        </div>
+        <event-log id="eventLog"></event-log>
 
         <div class="card mt-4">
           <div class="card-header">
@@ -273,7 +261,10 @@
 
     
 
-    logEvent('🚀 Lifecycle demo initialized', 'success');
+    // Wait for event-log component to be ready before logging
+    setTimeout(() => {
+      logEvent('🚀 Lifecycle demo initialized', 'success');
+    }, 100);
   </script>
 </body>
 </html>
