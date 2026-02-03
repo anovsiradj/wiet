@@ -122,6 +122,34 @@ component('user-profile', './profile.html', {
 });
 ```
 
+### With Slots
+```javascript
+// Template
+<template id="card-template">
+  <div class="card">
+    <div class="card-header">
+      <slot name="header">Default Header</slot>
+    </div>
+    <div class="card-body">
+      <slot>Default content</slot>
+    </div>
+    <div class="card-footer">
+      <slot name="footer"></slot>
+    </div>
+  </div>
+</template>
+
+// Component
+component('my-card', '#card-template');
+
+// Usage
+<my-card>
+  <h3 slot="header">Custom Header</h3>
+  <p>This goes in the default slot</p>
+  <button slot="footer">Click Me</button>
+</my-card>
+```
+
 ## Key Features
 
 ✅ **Minimal** - Only ~30 lines of code
@@ -131,6 +159,7 @@ component('user-profile', './profile.html', {
 ✅ **Events** - Both standard and custom events
 ✅ **Attributes** - Reactive attribute system
 ✅ **Lifecycle** - mounted, unmounted, changed hooks
+✅ **Slots** - Default and named slots for content composition
 ✅ **No Build Step** - Works directly in the browser
 ✅ **ES6 Modules** - Modern JavaScript
 

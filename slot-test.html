@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Slot Test - Shadow DOM vs Light DOM</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			max-width: 800px;
+			margin: 50px auto;
+			padding: 20px;
+		}
+		.test-section {
+			border: 2px solid #333;
+			padding: 20px;
+			margin: 20px 0;
+		}
+		.shadow-test {
+			border: 2px solid green;
+			padding: 10px;
+			margin: 10px 0;
+		}
+		.light-test {
+			border: 2px solid red;
+			padding: 10px;
+			margin: 10px 0;
+		}
+	</style>
+</head>
+<body>
+	<h1>Native Slot Behavior Test</h1>
+
+	<div class="test-section">
+		<h2>1. Shadow DOM with Native Slots ✅</h2>
+		<p>Browser handles slots automatically in Shadow DOM</p>
+		<shadow-test>
+			<span slot="title">This is the title from slot content</span>
+			<p>This is default slot content</p>
+		</shadow-test>
+	</div>
+
+	<div class="test-section">
+		<h2>2. Light DOM with &lt;slot&gt; tags ❌</h2>
+		<p>Browser does NOT handle slots in Light DOM - just shows the tag</p>
+		<light-test>
+			<span slot="title">This should go in title slot</span>
+			<p>This should go in default slot</p>
+		</light-test>
+	</div>
+
+	<script>
+		// Shadow DOM component - slots work natively
+		class ShadowTest extends HTMLElement {
+			connectedCallback() {
+				const shadow = this.attachShadow({ mode: 'open' });
+				shadow.innerHTML = `
+					<style>
+						.container {
+							background: #e8f5e9;
+							padding: 15px;
+							border-radius: 5px;
+						}
+						.title {
+							font-weight: bold;
+							color: green;
+						}
+					</style>
+					<div class="container">
+						<div class="title">
+							Title: <slot name="title">Default Title</slot>
+						</div>
+						<div>
+							Content: <slot>Default Content</slot>
+						</div>
+					</div>
+				`;
+			}
+		}
+		customElements.define('shadow-test', ShadowTest);
+
+		// Light DOM component - slots DON'T work natively
+		class LightTest extends HTMLElement {
+			connectedCallback() {
+				// This is what happens without manual slot processing
+				this.innerHTML = `
+					<style>
+						.container {
+							background: #ffebee;
+							padding: 15px;
+							border-radius: 5px;
+						}
+						.title {
+							font-weight: bold;
+							color: red;
+						}
+					</style>
+					<div class="container">
+						<div class="title">
+							Title: <slot name="title">Default Title</slot>
+						</div>
+						<div>
+							Content: <slot>Default Content</slot>
+						</div>
+					</div>
+				`;
+				// The <slot> tags just appear as text/unknown elements!
+			}
+		}
+		customElements.define('light-test', LightTest);
+	</script>
+
+	<div class="test-section">
+		<h2>What You'll See:</h2>
+		<ul>
+			<li><strong>Shadow DOM (green box):</strong> Slots work! Content is properly inserted.</li>
+			<li><strong>Light DOM (red box):</strong> Slots DON'T work! You'll see the literal <code>&lt;slot&gt;</code> tags or nothing at all.</li>
+		</ul>
+		<p><strong>Conclusion:</strong> The manual slot implementation in component-factory.js is necessary to make slots work in Light DOM mode, since the browser only processes slots natively in Shadow DOM.</p>
+	</div>
+</body>
+</html>

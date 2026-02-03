@@ -6,6 +6,9 @@ export function component(tag, template, config = {}) {
     }
     
     async connectedCallback() {
+      // Save slot content before replacing innerHTML
+      // const slotContent = this.innerHTML;
+      
       // Load template
       const html = template.startsWith('#') 
         ? document.getElementById(template.slice(1)).innerHTML
@@ -14,6 +17,62 @@ export function component(tag, template, config = {}) {
       // Render
       const root = config.shadow ? this.attachShadow({ mode: 'open' }) : this;
       root.innerHTML = html;
+      
+      /*
+      // Process slots
+      if (slotContent.trim()) {
+        const slots = root.querySelectorAll('slot');
+        
+        if (slots.length > 0) {
+          // Create a temporary container to parse slot content
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = slotContent;
+          
+          slots.forEach(slot => {
+            const slotName = slot.getAttribute('name');
+            
+            if (slotName) {
+              // Named slot: find matching content
+              const slotted = tempDiv.querySelector(`[slot="${slotName}"]`);
+              if (slotted) {
+                slot.replaceWith(slotted.cloneNode(true));
+              } else {
+                // Keep default content if no matching slot provided
+                const defaultContent = slot.innerHTML;
+                if (defaultContent.trim()) {
+                  const wrapper = document.createElement('span');
+                  wrapper.innerHTML = defaultContent;
+                  slot.replaceWith(wrapper);
+                }
+              }
+            } else {
+              // Default slot: insert all non-slotted content
+              const defaultContent = Array.from(tempDiv.childNodes)
+                .filter(node => {
+                  if (node.nodeType === 1) { // Element node
+                    return !node.hasAttribute('slot');
+                  }
+                  return node.nodeType === 3 && node.textContent.trim(); // Text node
+                });
+              
+              if (defaultContent.length > 0) {
+                const fragment = document.createDocumentFragment();
+                defaultContent.forEach(node => fragment.appendChild(node.cloneNode(true)));
+                slot.replaceWith(fragment);
+              } else {
+                // Keep default content if no content provided
+                const defaultSlotContent = slot.innerHTML;
+                if (defaultSlotContent.trim()) {
+                  const wrapper = document.createElement('span');
+                  wrapper.innerHTML = defaultSlotContent;
+                  slot.replaceWith(wrapper);
+                }
+              }
+            }
+          });
+        }
+      }
+      */
       
       // Mark as connected
       this._isConnected = true;
