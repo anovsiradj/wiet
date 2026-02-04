@@ -1,3 +1,8 @@
+/**
+ * Shared Components
+ * Reusable components used across all example pages
+ */
+
 import { component } from './component-factory.js';
 
 // Page Header Component

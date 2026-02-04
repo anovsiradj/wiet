@@ -1,3 +1,17 @@
+/**
+ * Web Component Factory
+ * A minimal, dynamic factory for creating web components
+ * 
+ * Features:
+ * - Template or external HTML files
+ * - Shadow DOM support
+ * - Slot support (default and named)
+ * - Event binding
+ * - Lifecycle hooks
+ * - Reactive attributes
+ * - Custom methods
+ */
+
 export function component(tag, template, config = {}) {
   class ComponentClass extends HTMLElement {
     constructor() {
@@ -7,7 +21,7 @@ export function component(tag, template, config = {}) {
     
     async connectedCallback() {
       // Save slot content before replacing innerHTML
-      // const slotContent = this.innerHTML;
+      const slotContent = this.innerHTML;
       
       // Load template
       const html = template.startsWith('#') 
@@ -18,7 +32,6 @@ export function component(tag, template, config = {}) {
       const root = config.shadow ? this.attachShadow({ mode: 'open' }) : this;
       root.innerHTML = html;
       
-      /*
       // Process slots
       if (slotContent.trim()) {
         const slots = root.querySelectorAll('slot');
@@ -72,7 +85,6 @@ export function component(tag, template, config = {}) {
           });
         }
       }
-      */
       
       // Mark as connected
       this._isConnected = true;

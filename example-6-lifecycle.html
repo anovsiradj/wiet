@@ -168,21 +168,16 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module">
-    import { component } from './component-factory.js';
-    import './components.js';
-
-    const eventLog = document.getElementById('eventLog');
+				import { component } from './component-factory.js';
+    		import './components.js';
+		const eventLog = document.getElementById('eventLog');
 
     function logEvent(message, type = 'info') {
       eventLog.log(message, type);
     }
 
-    
-
     let componentCount = 0;
     let currentComponent = null;
-
-    
 
     component('lifecycle-demo', '#lifecycle-template', {
       attrs: ['data'],
@@ -257,9 +252,6 @@
     });
 
     // Clear log button
-    
-
-    
 
     // Wait for event-log component to be ready before logging
     setTimeout(() => {

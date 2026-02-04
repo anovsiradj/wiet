@@ -152,20 +152,15 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module">
-    import { component } from './component-factory.js';
-    import './components.js';
-
-    const eventLog = document.getElementById('eventLog');
+				import { component } from './component-factory.js';
+    		import './components.js';
+		const eventLog = document.getElementById('eventLog');
 
     function logEvent(message, type = 'info') {
       eventLog.log(message, type);
     }
 
-    
-
     let cart = [];
-
-    
 
     function updateCart() {
       const cartDiv = document.getElementById('cart');
@@ -257,8 +252,6 @@
       document.getElementById('priceInput').value = '';
       document.getElementById('descInput').value = '';
     });
-
-    
 
     setTimeout(() => logEvent('🚀 External + Shadow DOM components initialized'), 100);
   </script>
