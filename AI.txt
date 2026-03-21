@@ -1,5 +1,5 @@
 @author : anovsiradj
-@version: 20260131
-@agent  : claude
+@version: 20260131, 20260321.
+@agent  : 1. claude (web), 2. auto (cursor).
 @status : kinda slop but not very slop
 @todos  : <slot>

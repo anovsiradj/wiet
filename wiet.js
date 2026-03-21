@@ -1,5 +1,5 @@
 /**
- * Web Component Factory
+ * Wiet
  * A minimal, dynamic factory for creating web components
  * 
  * Features:
@@ -12,7 +12,7 @@
  * - Custom methods
  */
 
-export function component(tag, template, config = {}) {
+export function wiet(tag, template, config = {}) {
   class ComponentClass extends HTMLElement {
     constructor() {
       super();

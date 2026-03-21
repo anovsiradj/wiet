@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Example 7 - Slots | Component Factory</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<title>Example 7 - Slots | Wiet</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
 	<page-header></page-header>
 
 	<div class="container my-5">
 		<div class="row">
 			<div class="col-lg-8 mx-auto">
-				<example-section 
-					icon="bi bi-7-circle-fill" 
-					title="Example 7: Slots" 
+				<example-section icon="bi bi-7-circle-fill" title="Example 7: Slots"
 					description="Demonstrates slot usage for customizable component content. Supports default slots and named slots."
 					variant="dark">
 				</example-section>
@@ -72,8 +72,10 @@
 						<article-component>
 							<h3 slot="header">Introduction to Web Components</h3>
 							<span slot="author">by John Doe</span>
-							<p>Web components are a set of web platform APIs that allow you to create custom, reusable HTML tags.</p>
-							<p>They provide encapsulation and reusability, making them perfect for building scalable applications.</p>
+							<p>Web components are a set of web platform APIs that allow you to create custom, reusable
+								HTML tags.</p>
+							<p>They provide encapsulation and reusability, making them perfect for building scalable
+								applications.</p>
 							<span slot="footer">Published on February 2, 2026</span>
 						</article-component>
 					</div>
@@ -126,8 +128,8 @@
 &lt;/dialog-component&gt;</code></pre>
 
 						<h6 class="mt-3">JavaScript:</h6>
-						<pre class="bg-dark text-light p-3 rounded"><code>component('card-component', '#card-template');
-component('dialog-component', '#dialog-template');</code></pre>
+						<pre class="bg-dark text-light p-3 rounded"><code>wiet('card-component', '#card-template');
+wiet('dialog-component', '#dialog-template');</code></pre>
 					</div>
 				</div>
 
@@ -199,6 +201,7 @@ component('dialog-component', '#dialog-template');</code></pre>
 				margin: 10px 0;
 				overflow: hidden;
 			}
+
 			.dialog-header {
 				background: #9b59b6;
 				color: white;
@@ -206,9 +209,11 @@ component('dialog-component', '#dialog-template');</code></pre>
 				font-weight: bold;
 				font-size: 1.2em;
 			}
+
 			.dialog-body {
 				padding: 20px;
 			}
+
 			.dialog-footer {
 				background: #ecf0f1;
 				padding: 15px;
@@ -239,21 +244,26 @@ component('dialog-component', '#dialog-template');</code></pre>
 				color: #333;
 				margin: 10px 0;
 			}
+
 			.article-header {
 				background: #34495e;
 				color: white;
 				padding: 20px;
 			}
+
 			.article-header h3 {
 				margin: 0 0 10px 0;
 			}
+
 			.article-author {
 				font-size: 0.9em;
 				color: #ecf0f1;
 			}
+
 			.article-body {
 				padding: 20px;
 			}
+
 			.article-footer {
 				background: #f8f9fa;
 				padding: 15px;
@@ -277,10 +287,10 @@ component('dialog-component', '#dialog-template');</code></pre>
 		</article>
 	</template>
 
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module">
-				import { component } from './component-factory.js';
-				import './components.js';
+		import { wiet } from './wiet.js';
+		import './widgets.js';
 		const eventLog = document.getElementById('eventLog');
 
 		function logEvent(message, type = 'info') {
@@ -288,21 +298,21 @@ component('dialog-component', '#dialog-template');</code></pre>
 		}
 
 		// Card component with default slot
-		component('card-component', '#card-template', {
+		wiet('card-component', '#card-template', {
 			mounted() {
 				logEvent('✅ card-component mounted');
 			}
 		});
 
 		// Dialog component with named slots
-		component('dialog-component', '#dialog-template', {
+		wiet('dialog-component', '#dialog-template', {
 			mounted() {
 				logEvent('✅ dialog-component mounted');
 			}
 		});
 
 		// Article component with mixed slots
-		component('article-component', '#article-template', {
+		wiet('article-component', '#article-template', {
 			mounted() {
 				logEvent('✅ article-component mounted');
 			}
@@ -313,4 +323,5 @@ component('dialog-component', '#dialog-template');</code></pre>
 		}, 100);
 	</script>
 </body>
+
 </html>

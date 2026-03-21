@@ -3,10 +3,10 @@
  * Reusable components used across all example pages
  */
 
-import { component } from './component-factory.js';
+import { wiet } from './wiet.js';
 
 // Page Header Component
-component('page-header', './components/page-header.html', {
+wiet('page-header', './widgets/page-header.html', {
 	mounted() {
 		// Setup theme toggle
 		const toggleBtn = this.querySelector('.theme-toggle');
@@ -24,7 +24,7 @@ component('page-header', './components/page-header.html', {
 });
 
 // Event Log Component
-component('event-log', './components/event-log.html', {
+wiet('event-log', './widgets/event-log.html', {
 	mounted() {
 		const clearBtn = this.querySelector('.clear-log-btn');
 		clearBtn.addEventListener('click', () => {
@@ -64,7 +64,7 @@ component('event-log', './components/event-log.html', {
 });
 
 // Example Section Component
-component('example-section', './components/example-section.html', {
+wiet('example-section', './widgets/example-section.html', {
 	attrs: ['icon', 'title', 'description', 'variant'],
 	
 	mounted() {
@@ -87,7 +87,7 @@ component('example-section', './components/example-section.html', {
 });
 
 // Feature Card Component
-component('feature-card', './components/feature-card.html', {
+wiet('feature-card', './widgets/feature-card.html', {
 	attrs: ['icon', 'title', 'description', 'color'],
 	
 	mounted() {

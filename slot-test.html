@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,16 +12,19 @@
 			margin: 50px auto;
 			padding: 20px;
 		}
+
 		.test-section {
 			border: 2px solid #333;
 			padding: 20px;
 			margin: 20px 0;
 		}
+
 		.shadow-test {
 			border: 2px solid green;
 			padding: 10px;
 			margin: 10px 0;
 		}
+
 		.light-test {
 			border: 2px solid red;
 			padding: 10px;
@@ -28,6 +32,7 @@
 		}
 	</style>
 </head>
+
 <body>
 	<h1>Native Slot Behavior Test</h1>
 
@@ -114,9 +119,12 @@
 		<h2>What You'll See:</h2>
 		<ul>
 			<li><strong>Shadow DOM (green box):</strong> Slots work! Content is properly inserted.</li>
-			<li><strong>Light DOM (red box):</strong> Slots DON'T work! You'll see the literal <code>&lt;slot&gt;</code> tags or nothing at all.</li>
+			<li><strong>Light DOM (red box):</strong> Slots DON'T work! You'll see the literal <code>&lt;slot&gt;</code>
+				tags or nothing at all.</li>
 		</ul>
-		<p><strong>Conclusion:</strong> The manual slot implementation in component-factory.js is necessary to make slots work in Light DOM mode, since the browser only processes slots natively in Shadow DOM.</p>
+		<p><strong>Conclusion:</strong> The manual slot implementation in wiet.js is necessary to make slots work in
+			Light DOM mode, since the browser only processes slots natively in Shadow DOM.</p>
 	</div>
 </body>
+
 </html>

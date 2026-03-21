@@ -11,10 +11,10 @@
 ### 2. Consistency Validation
 - ✅ All 7 examples use `<page-header>` component
 - ✅ All 7 examples use `<event-log>` component  
-- ✅ All examples import `components.js`
+- ✅ All examples import `widgets.js`
 - ✅ All examples have `logEvent()` function
 - ✅ All examples use setTimeout for init logs
-- ✅ Bootstrap 5.3.2 across all files
+- ✅ Bootstrap 5.3.8 across all files
 - ✅ Bootstrap Icons 1.11.3 across all files
 
 ### 3. Source Code Examples
@@ -23,8 +23,8 @@
 - ✅ Fixed JavaScript code snippets
 
 ### 4. Documentation
-- ✅ Added header comments to component-factory.js
-- ✅ Added header comments to components.js
+- ✅ Added header comments to wiet.js
+- ✅ Added header comments to widgets.js
 - ✅ Updated README with slot examples
 - ✅ All examples have proper code documentation
 
@@ -32,9 +32,9 @@
 ```
 /
 ├── index.html                      ✅ Main page
-├── component-factory.js            ✅ Core factory (100 lines)
-├── components.js                   ✅ Shared components (86 lines)
-├── components/                     ✅ Component templates
+├── wiet.js            ✅ Core factory (100 lines)
+├── widgets.js                   ✅ Shared components (86 lines)
+├── widgets/                     ✅ Component templates
 │   ├── page-header.html
 │   ├── event-log.html
 │   ├── example-section.html
@@ -72,7 +72,7 @@
 - ✅ Proper error handling
 - ✅ Consistent styling
 
-### Component Factory Features:
+### Wiet Features:
 - ✅ Template or external HTML files
 - ✅ Shadow DOM support
 - ✅ Slot support (default and named)

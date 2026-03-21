@@ -1,10 +1,10 @@
-# Web Component Factory - Complete Example
+# Wiet: Web Component Factory
 
-This is a comprehensive demonstration of the minimal, dynamic component factory with all features.
+This is a comprehensive demonstration of the minimal, dynamic Wiet with all features.
 
 ## Files Included
 
-- `component-factory.js` - The minimal component factory (30 lines)
+- `wiet.js` - The minimal Wiet (30 lines)
 - `index.html` - Complete demo with all features
 - `user-card.html` - External HTML component file
 - `product-card.html` - External HTML component file (with Shadow DOM)
@@ -56,10 +56,10 @@ This is a comprehensive demonstration of the minimal, dynamic component factory 
 
 Or simply open `index.html` in a browser that supports ES modules served from file:// (some browsers restrict this).
 
-## Component Factory API
+## Wiet API
 
 ```javascript
-component(tagName, templateSource, config)
+wiet(tagName, templateSource, config)
 ```
 
 ### Parameters
@@ -87,17 +87,17 @@ component(tagName, templateSource, config)
 
 ### Basic Component
 ```javascript
-component('my-button', '#button-template');
+wiet('my-button', '#button-template');
 ```
 
 ### With Shadow DOM
 ```javascript
-component('my-card', './card.html', { shadow: true });
+wiet('my-card', './card.html', { shadow: true });
 ```
 
 ### With Everything
 ```javascript
-component('user-profile', './profile.html', {
+wiet('user-profile', './profile.html', {
   shadow: true,
   attrs: ['username', 'email'],
   
@@ -140,7 +140,7 @@ component('user-profile', './profile.html', {
 </template>
 
 // Component
-component('my-card', '#card-template');
+wiet('my-card', '#card-template');
 
 // Usage
 <my-card>

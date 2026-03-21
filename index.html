@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Component Factory - Examples</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Wiet - Examples</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     .hero-section {
@@ -13,13 +14,16 @@
       padding: 4rem 0;
       margin-bottom: 2rem;
     }
+
     .example-card {
       transition: transform 0.2s;
       height: 100%;
     }
+
     .example-card:hover {
       transform: translateY(-5px);
     }
+
     .badge-feature {
       font-size: 0.75rem;
       margin-right: 0.25rem;
@@ -27,11 +31,12 @@
     }
   </style>
 </head>
+
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <i class="bi bi-boxes"></i> Component Factory
+        <i class="bi bi-boxes"></i> Wiet
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
@@ -56,7 +61,7 @@
   <div class="hero-section text-center">
     <div class="container">
       <h1 class="display-4 fw-bold mb-3">
-        <i class="bi bi-lightning-charge-fill"></i> Web Component Factory
+        <i class="bi bi-lightning-charge-fill"></i> Wiet
       </h1>
       <p class="lead mb-4">A minimal, dynamic factory for creating web components with zero build steps</p>
       <div class="d-flex justify-content-center gap-2">
@@ -75,27 +80,18 @@
         </h2>
         <div class="row g-3">
           <div class="col-md-4">
-            <feature-card 
-              icon="bi bi-file-earmark-code" 
-              title="Template or File" 
-              description="Use inline &lt;template&gt; tags or external HTML files"
-              color="primary">
+            <feature-card icon="bi bi-file-earmark-code" title="Template or File"
+              description="Use inline &lt;template&gt; tags or external HTML files" color="primary">
             </feature-card>
           </div>
           <div class="col-md-4">
-            <feature-card 
-              icon="bi bi-shield-check" 
-              title="Shadow DOM" 
-              description="Optional style encapsulation with Shadow DOM"
-              color="success">
+            <feature-card icon="bi bi-shield-check" title="Shadow DOM"
+              description="Optional style encapsulation with Shadow DOM" color="success">
             </feature-card>
           </div>
           <div class="col-md-4">
-            <feature-card 
-              icon="bi bi-lightning" 
-              title="Events & Lifecycle" 
-              description="Standard events, custom events, and lifecycle hooks"
-              color="info">
+            <feature-card icon="bi bi-lightning" title="Events & Lifecycle"
+              description="Standard events, custom events, and lifecycle hooks" color="info">
             </feature-card>
           </div>
         </div>
@@ -258,9 +254,9 @@
         <div class="card">
           <div class="card-body">
             <h4 class="card-title"><i class="bi bi-code-square"></i> Quick Start</h4>
-            <pre class="bg-dark text-light p-3 rounded"><code>		import { component } from './component-factory.js';
+            <pre class="bg-dark text-light p-3 rounded"><code>		import { wiet } from './wiet.js';
 
-component('my-button', '#button-template', {
+wiet('my-button', '#button-template', {
   attrs: ['label'],
   mounted() {
     console.log('Button ready!');
@@ -282,28 +278,29 @@ component('my-button', '#button-template', {
   <footer class="bg-dark text-light py-4 mt-5">
     <div class="container text-center">
       <p class="mb-0">
-        <i class="bi bi-lightning-charge"></i> Web Component Factory - Minimal, Dynamic, Powerful
+        <i class="bi bi-lightning-charge"></i> Wiet - Minimal, Dynamic, Powerful
       </p>
       <p class="text-muted small mb-0">Built with vanilla JavaScript and Bootstrap 5</p>
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module">
-				import './components.js';
-    
+    import './widgets.js';
+
     // Theme toggle
     const themeToggle = document.getElementById('themeToggle');
     const html = document.documentElement;
-    
+
     themeToggle.addEventListener('click', () => {
       const currentTheme = html.getAttribute('data-bs-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-bs-theme', newTheme);
-      
+
       const icon = themeToggle.querySelector('i');
       icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
     });
   </script>
 </body>
+
 </html>
