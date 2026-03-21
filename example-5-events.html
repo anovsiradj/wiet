@@ -44,7 +44,6 @@
       </div>
     </div>
   </div>
-  </div>
 
   <template id="counter-template">
     <style>
@@ -105,7 +104,7 @@
         }
       },
 
-      on: {
+      handles: {
         '.btn-inc': {
           click() {
             this.count++;
@@ -152,8 +151,6 @@
     document.addEventListener('count-changed', (e) => {
       logEvent(`📢 Custom event 'count-changed' caught! Action: ${e.detail.action}, Count: ${e.detail.count}`, 'info');
     });
-
-    // Clear log button
 
     setTimeout(() => logEvent('🚀 Component with events initialized', 'success'), 100);
   </script>

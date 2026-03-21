@@ -1,173 +1,109 @@
-# Wiet: Web Component Factory
+# Wiet
 
-This is a comprehensive demonstration of the minimal, dynamic Wiet with all features.
+A lightweight web component factory for defining custom elements from inline templates or external HTML files.
 
-## Files Included
+## Project Files
 
-- `wiet.js` - The minimal Wiet (30 lines)
-- `index.html` - Complete demo with all features
-- `user-card.html` - External HTML component file
-- `product-card.html` - External HTML component file (with Shadow DOM)
+- `wiet.js` - Core factory (`wiet`) and base class (`WietStaticElement`)
+- `widgets.js` - Shared demo widgets used by example pages
+- `widgets/` - External templates for shared widgets
+- `index.html` - Example index page
+- `example-1-template.html` to `example-7-slots.html` - Focused feature demos
+- `user-card.html`, `product-card.html` - External component templates used by examples
 
-## Features Demonstrated
+## Features
 
-### 1. Template Tag (No Shadow DOM)
-- Component: `<greeting-card>`
-- Uses inline `<template>` tag
-- Renders to light DOM
-- Has attributes, events, and lifecycle hooks
+- Define components from:
+	- Inline `<template>` by id (for example `#card-template`)
+	- External HTML file path (for example `./card.html`)
+- Optional Shadow DOM rendering (`shadow: true`)
+- Slot support (default and named slots with fallback content)
+- Declarative event binding via `config.handles`
+- Lifecycle hooks:
+	- `mounted(root)`
+	- `unmounted()`
+	- `changed(attr, oldVal, newVal)`
+- Reactive attributes through `attrs`
+- Instance methods through `methods`
 
-### 2. Template Tag (With Shadow DOM)
-- Component: `<shadow-button>`
-- Uses inline `<template>` tag
-- Renders to Shadow DOM for style encapsulation
-- Demonstrates isolated styling
+## Quick Start
 
-### 3. External HTML File (No Shadow DOM)
-- Component: `<user-card>`
-- Loads HTML from `user-card.html`
-- Demonstrates file-based components
-- Has click handlers and custom events
+1. Serve this folder with any local web server:
 
-### 4. External HTML File (With Shadow DOM)
-- Component: `<product-card>`
-- Loads HTML from `product-card.html`
-- Uses Shadow DOM with external file
-- Complete style isolation
+```bash
+python -m http.server 8000
+```
 
-### 5. Events & Custom Events
-- Component: `<counter-widget>`
-- Standard events (click)
-- Custom events with `dispatchEvent`
-- Event bubbling demonstration
+2. Open [http://localhost:8000](http://localhost:8000)
+3. Start from `index.html` and open any example card
 
-### 6. Lifecycle Hooks
-- Component: `<lifecycle-demo>`
-- `mounted()` - Called when component is added to DOM
-- `unmounted()` - Called when component is removed
-- `changed()` - Called when attributes change
-- Interactive demo with add/remove buttons
+## API
 
-## How to Run
-
-1. Make sure all files are in the same directory
-2. Start a local server (the example includes instructions)
-3. Open `http://localhost:8000` in your browser
-
-Or simply open `index.html` in a browser that supports ES modules served from file:// (some browsers restrict this).
-
-## Wiet API
-
-```javascript
-wiet(tagName, templateSource, config)
+```js
+wiet(tag, template, config)
 ```
 
 ### Parameters
 
-- `tagName` (string) - The custom element name (must contain a hyphen)
-- `templateSource` (string) - Either:
-  - `#template-id` - ID of a `<template>` tag
-  - `./file.html` - Path to an external HTML file
-- `config` (object) - Optional configuration:
-  - `shadow` (boolean) - Use Shadow DOM
-  - `attrs` (array) - Observable attributes
-  - `mounted` (function) - Called when component is added to DOM
-  - `unmounted` (function) - Called when component is removed
-  - `changed` (function) - Called when attributes change
-  - `on` (object) - Event handlers in format:
-    ```javascript
-    {
-      'selector': {
-        'event': handlerFunction
-      }
-    }
-    ```
+- `tag` (`string`)
+	- Custom element name, must include `-`
+- `template` (`string`)
+	- `#template-id` for inline templates
+	- File path for external HTML templates
+- `config` (`object`, optional)
+	- `shadow` (`boolean`) - Render into shadow root
+	- `attrs` (`string[]`) - Observed attributes
+	- `mounted(root)` (`function`) - Called after render
+	- `unmounted()` (`function`) - Called on disconnect
+	- `changed(name, oldVal, newVal)` (`function`) - Called on observed attribute changes while connected
+	- `handles` (`Record<string, Record<string, Function>>`) - Event map by selector and event name
+	- `methods` (`Record<string, Function>`) - Custom instance methods mixed into the element prototype
 
-## Examples
+## Example
 
-### Basic Component
-```javascript
-wiet('my-button', '#button-template');
-```
+```js
+import { wiet } from './wiet.js';
 
-### With Shadow DOM
-```javascript
-wiet('my-card', './card.html', { shadow: true });
-```
-
-### With Everything
-```javascript
-wiet('user-profile', './profile.html', {
-  shadow: true,
-  attrs: ['username', 'email'],
-  
-  mounted() {
-    console.log('Component ready!');
-  },
-  
-  changed(attr, oldVal, newVal) {
-    console.log(`${attr} changed from ${oldVal} to ${newVal}`);
-  },
-  
-  on: {
-    'button.save': {
-      click() {
-        this.dispatchEvent(new CustomEvent('profile-saved', {
-          bubbles: true,
-          detail: { username: this.getAttribute('username') }
-        }));
-      }
-    }
-  }
+wiet('hello-card', '#hello-template', {
+	attrs: ['name'],
+	mounted() {
+		this.renderName();
+	},
+	changed(attr) {
+		if (attr === 'name') this.renderName();
+	},
+	handles: {
+		'.btn-hello': {
+			click() {
+				alert(`Hello ${this.getAttribute('name') || 'Guest'}!`);
+			}
+		}
+	},
+	methods: {
+		renderName() {
+			this.querySelector('.name').textContent = this.getAttribute('name') || 'Guest';
+		}
+	}
 });
 ```
 
-### With Slots
-```javascript
-// Template
-<template id="card-template">
-  <div class="card">
-    <div class="card-header">
-      <slot name="header">Default Header</slot>
-    </div>
-    <div class="card-body">
-      <slot>Default content</slot>
-    </div>
-    <div class="card-footer">
-      <slot name="footer"></slot>
-    </div>
-  </div>
-</template>
+## Demo Coverage
 
-// Component
-wiet('my-card', '#card-template');
+- `example-1-template.html` - Template + light DOM + attrs/events
+- `example-2-shadow.html` - Template + shadow DOM
+- `example-3-external.html` - External template + light DOM
+- `example-4-external-shadow.html` - External template + shadow DOM
+- `example-5-events.html` - Native and custom events
+- `example-6-lifecycle.html` - `mounted`, `unmounted`, `changed`
+- `example-7-slots.html` - Default and named slots
 
-// Usage
-<my-card>
-  <h3 slot="header">Custom Header</h3>
-  <p>This goes in the default slot</p>
-  <button slot="footer">Click Me</button>
-</my-card>
-```
+## Browser Support
 
-## Key Features
+Requires browsers with support for:
 
-✅ **Minimal** - Only ~30 lines of code
-✅ **Dynamic** - Create components on the fly
-✅ **Template or File** - Use inline templates or external HTML files
-✅ **Shadow DOM** - Optional style encapsulation
-✅ **Events** - Both standard and custom events
-✅ **Attributes** - Reactive attribute system
-✅ **Lifecycle** - mounted, unmounted, changed hooks
-✅ **Slots** - Default and named slots for content composition
-✅ **No Build Step** - Works directly in the browser
-✅ **ES6 Modules** - Modern JavaScript
-
-## Browser Requirements
-
-- ES6 Modules support
-- Custom Elements v1
-- Shadow DOM v1
+- ES modules
+- Custom elements
+- Shadow DOM
 - Fetch API
 
-All modern browsers (Chrome, Firefox, Safari, Edge) support these features.
+Modern Chrome, Edge, Firefox, and Safari are supported.

@@ -11,6 +11,7 @@ wiet('page-header', './widgets/page-header.html', {
 		// Setup theme toggle
 		const toggleBtn = this.querySelector('.theme-toggle');
 		const html = document.documentElement;
+		if (!toggleBtn) return;
 		
 		toggleBtn.addEventListener('click', () => {
 			const currentTheme = html.getAttribute('data-bs-theme');
@@ -18,7 +19,9 @@ wiet('page-header', './widgets/page-header.html', {
 			html.setAttribute('data-bs-theme', newTheme);
 			
 			const icon = toggleBtn.querySelector('i');
-			icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
+			if (icon) {
+				icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
+			}
 		});
 	}
 });
@@ -27,9 +30,11 @@ wiet('page-header', './widgets/page-header.html', {
 wiet('event-log', './widgets/event-log.html', {
 	mounted() {
 		const clearBtn = this.querySelector('.clear-log-btn');
-		clearBtn.addEventListener('click', () => {
-			this.clear();
-		});
+		if (clearBtn) {
+			clearBtn.addEventListener('click', () => {
+				this.clear();
+			});
+		}
 		this._ready = true;
 	},
 	
@@ -42,6 +47,7 @@ wiet('event-log', './widgets/event-log.html', {
 			}
 			
 			const logContent = this.querySelector('.event-log-content');
+			if (!logContent) return;
 			const entry = document.createElement('div');
 			const time = new Date().toLocaleTimeString();
 			const colors = {
@@ -58,6 +64,7 @@ wiet('event-log', './widgets/event-log.html', {
 		
 		clear() {
 			const logContent = this.querySelector('.event-log-content');
+			if (!logContent) return;
 			logContent.innerHTML = '<div class="text-success">Log cleared!</div>';
 		}
 	}
@@ -70,18 +77,31 @@ wiet('example-section', './widgets/example-section.html', {
 	mounted() {
 		this.updateContent();
 	},
+
+	changed() {
+		this.updateContent();
+	},
 	
 	methods: {
 		updateContent() {
 			const variant = this.getAttribute('variant') || 'primary';
 			const alert = this.querySelector('.alert');
+			if (!alert) return;
 			alert.className = `alert alert-${variant} example-section`;
 			
 			const icon = this.querySelector('.example-icon');
-			icon.className = this.getAttribute('icon') || 'bi bi-info-circle';
+			if (icon) {
+				icon.className = this.getAttribute('icon') || 'bi bi-info-circle';
+			}
 			
-			this.querySelector('.example-title').textContent = this.getAttribute('title') || 'Example';
-			this.querySelector('.example-description').textContent = this.getAttribute('description') || '';
+			const title = this.querySelector('.example-title');
+			if (title) {
+				title.textContent = this.getAttribute('title') || 'Example';
+			}
+			const description = this.querySelector('.example-description');
+			if (description) {
+				description.textContent = this.getAttribute('description') || '';
+			}
 		}
 	}
 });
@@ -93,18 +113,31 @@ wiet('feature-card', './widgets/feature-card.html', {
 	mounted() {
 		this.updateContent();
 	},
+
+	changed() {
+		this.updateContent();
+	},
 	
 	methods: {
 		updateContent() {
 			const color = this.getAttribute('color') || 'primary';
 			const card = this.querySelector('.feature-card');
+			if (!card) return;
 			card.className = `card feature-card bg-${color} text-white`;
 			
 			const icon = this.querySelector('.feature-icon');
-			icon.className = this.getAttribute('icon') || 'bi bi-star';
+			if (icon) {
+				icon.className = this.getAttribute('icon') || 'bi bi-star';
+			}
 			
-			this.querySelector('.feature-title').textContent = this.getAttribute('title') || 'Feature';
-			this.querySelector('.feature-description').textContent = this.getAttribute('description') || '';
+			const title = this.querySelector('.feature-title');
+			if (title) {
+				title.textContent = this.getAttribute('title') || 'Feature';
+			}
+			const description = this.querySelector('.feature-description');
+			if (description) {
+				description.textContent = this.getAttribute('description') || '';
+			}
 		}
 	}
 });

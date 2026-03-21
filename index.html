@@ -65,7 +65,7 @@
       </h1>
       <p class="lead mb-4">A minimal, dynamic factory for creating web components with zero build steps</p>
       <div class="d-flex justify-content-center gap-2">
-        <span class="badge bg-light text-dark">30 Lines of Code</span>
+        <span class="badge bg-light text-dark">Small Footprint</span>
         <span class="badge bg-light text-dark">Zero Dependencies</span>
         <span class="badge bg-light text-dark">Pure ES6</span>
       </div>
@@ -261,7 +261,7 @@ wiet('my-button', '#button-template', {
   mounted() {
     console.log('Button ready!');
   },
-  on: {
+  handles: {
     'button': {
       click() {
         alert('Clicked!');

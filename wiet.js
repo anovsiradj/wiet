@@ -12,121 +12,194 @@
  * - Custom methods
  */
 
-export function wiet(tag, template, config = {}) {
-  class ComponentClass extends HTMLElement {
-    constructor() {
-      super();
-      this._isConnected = false;
+class WietStaticElement extends HTMLElement {
+  constructor() {
+    super();
+    this._isConnected = false;
+    this._renderVersion = 0;
+  }
+
+  nextRenderVersion() {
+    this._renderVersion += 1;
+    return this._renderVersion;
+  }
+
+  isRenderStale(renderVersion) {
+    return renderVersion !== this._renderVersion || !this.isConnected;
+  }
+
+  markConnected() {
+    this._isConnected = true;
+  }
+
+  markDisconnected() {
+    this._isConnected = false;
+  }
+
+  async loadTemplate(template) {
+    if (template.startsWith('#')) {
+      const sourceTemplate = document.getElementById(template.slice(1));
+      if (!sourceTemplate) {
+        throw new Error(`Template "${template}" not found`);
+      }
+      return sourceTemplate.innerHTML;
     }
-    
+
+    const response = await fetch(template);
+    if (!response.ok) {
+      throw new Error(`Failed to load template "${template}" (${response.status})`);
+    }
+    return response.text();
+  }
+
+  resolveRoot(useShadow) {
+    return useShadow
+      ? (this.shadowRoot || this.attachShadow({ mode: 'open' }))
+      : this;
+  }
+
+  processSlots(root, slotContent) {
+    if (!slotContent.trim()) return;
+
+    const slots = root.querySelectorAll('slot');
+    if (slots.length === 0) return;
+
+    // Create a temporary container to parse slot content
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = slotContent;
+
+    slots.forEach(slot => {
+      const slotName = slot.getAttribute('name');
+      if (slotName) {
+        const slottedNodes = tempDiv.querySelectorAll(`[slot="${slotName}"]`);
+        this.replaceWithContentOrFallback(slot, slottedNodes);
+        return;
+      }
+
+      const defaultContent = this.collectDefaultSlotNodes(tempDiv);
+      this.replaceWithContentOrFallback(slot, defaultContent);
+    });
+  }
+
+  collectDefaultSlotNodes(tempDiv) {
+    return Array.from(tempDiv.childNodes).filter(node => {
+      if (node.nodeType === 1) return !node.hasAttribute('slot');
+      return node.nodeType === 3 && node.textContent.trim();
+    });
+  }
+
+  replaceWithContentOrFallback(slot, nodes) {
+    if (nodes.length > 0) {
+      const fragment = document.createDocumentFragment();
+      nodes.forEach(node => {
+        const cloned = node.cloneNode(true);
+        if (cloned.nodeType === 1) {
+          cloned.removeAttribute('slot');
+        }
+        fragment.appendChild(cloned);
+      });
+      slot.replaceWith(fragment);
+      return;
+    }
+
+    // Keep default content if no matching content provided
+    const fallback = slot.innerHTML;
+    if (fallback.trim()) {
+      const wrapper = document.createElement('span');
+      wrapper.innerHTML = fallback;
+      slot.replaceWith(wrapper);
+    }
+  }
+
+  bindConfiguredEvents(root, eventsMap, thisArg = this) {
+    if (!eventsMap) return;
+    Object.entries(eventsMap).forEach(([selector, events]) => {
+      Object.entries(events).forEach(([event, handler]) => {
+        root.querySelectorAll(selector).forEach(el => {
+          el.addEventListener(event, handler.bind(thisArg));
+        });
+      });
+    });
+  }
+
+  runChanged(config, name, oldVal, newVal) {
+    if (this._isConnected) {
+      config.changed?.call(this, name, oldVal, newVal);
+    }
+  }
+
+  logTemplateError(tag, error) {
+    console.error(`[wiet] ${tag}: template load error`, error);
+  }
+}
+
+function wiet(tag, template, config = {}) {
+  class WietDynamicElement extends WietStaticElement {
     async connectedCallback() {
+      const renderVersion = this.nextRenderVersion();
+
       // Save slot content before replacing innerHTML
       const slotContent = this.innerHTML;
-      
+
       // Load template
-      const html = template.startsWith('#') 
-        ? document.getElementById(template.slice(1)).innerHTML
-        : await fetch(template).then(r => r.text());
-      
+      let html = '';
+      try {
+        html = await this.loadTemplate(template);
+      } catch (error) {
+        this.logTemplateError(tag, error);
+        return;
+      }
+
+      if (this.isRenderStale(renderVersion)) {
+        return;
+      }
+
       // Render
-      const root = config.shadow ? this.attachShadow({ mode: 'open' }) : this;
+      const root = this.resolveRoot(config.shadow);
       root.innerHTML = html;
-      
-      // Process slots
-      if (slotContent.trim()) {
-        const slots = root.querySelectorAll('slot');
-        
-        if (slots.length > 0) {
-          // Create a temporary container to parse slot content
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = slotContent;
-          
-          slots.forEach(slot => {
-            const slotName = slot.getAttribute('name');
-            
-            if (slotName) {
-              // Named slot: find matching content
-              const slotted = tempDiv.querySelector(`[slot="${slotName}"]`);
-              if (slotted) {
-                slot.replaceWith(slotted.cloneNode(true));
-              } else {
-                // Keep default content if no matching slot provided
-                const defaultContent = slot.innerHTML;
-                if (defaultContent.trim()) {
-                  const wrapper = document.createElement('span');
-                  wrapper.innerHTML = defaultContent;
-                  slot.replaceWith(wrapper);
-                }
-              }
-            } else {
-              // Default slot: insert all non-slotted content
-              const defaultContent = Array.from(tempDiv.childNodes)
-                .filter(node => {
-                  if (node.nodeType === 1) { // Element node
-                    return !node.hasAttribute('slot');
-                  }
-                  return node.nodeType === 3 && node.textContent.trim(); // Text node
-                });
-              
-              if (defaultContent.length > 0) {
-                const fragment = document.createDocumentFragment();
-                defaultContent.forEach(node => fragment.appendChild(node.cloneNode(true)));
-                slot.replaceWith(fragment);
-              } else {
-                // Keep default content if no content provided
-                const defaultSlotContent = slot.innerHTML;
-                if (defaultSlotContent.trim()) {
-                  const wrapper = document.createElement('span');
-                  wrapper.innerHTML = defaultSlotContent;
-                  slot.replaceWith(wrapper);
-                }
-              }
-            }
-          });
-        }
-      }
-      
+
+      this.processSlots(root, slotContent);
+
       // Mark as connected
-      this._isConnected = true;
-      
+      this.markConnected();
+
       // Bind events
-      if (config.on) {
-        Object.entries(config.on).forEach(([selector, events]) => {
-          Object.entries(events).forEach(([event, handler]) => {
-            root.querySelectorAll(selector).forEach(el => {
-              el.addEventListener(event, handler.bind(this));
-            });
-          });
-        });
-      }
-      
+      this.bindConfiguredEvents(root, config.handles);
+
       // Lifecycle
       config.mounted?.call(this, root);
     }
-    
+
     disconnectedCallback() {
-      this._isConnected = false;
+      this.markDisconnected();
       config.unmounted?.call(this);
     }
-    
+
     // Expose attributes as properties
     static get observedAttributes() {
       return config.attrs || [];
     }
-    
+
     attributeChangedCallback(name, oldVal, newVal) {
-      // Only call changed callback after component is connected and rendered
-      if (this._isConnected) {
-        config.changed?.call(this, name, oldVal, newVal);
-      }
+      this.runChanged(config, name, oldVal, newVal);
     }
   }
-  
+
   // Add custom methods if provided
   if (config.methods) {
-    Object.assign(ComponentClass.prototype, config.methods);
+    Object.assign(WietDynamicElement.prototype, config.methods);
   }
-  
-  customElements.define(tag, ComponentClass);
-  return ComponentClass;
+
+  const existingDefinition = customElements.get(tag);
+  if (existingDefinition) {
+    return existingDefinition;
+  }
+
+  customElements.define(tag, WietDynamicElement);
+  return WietDynamicElement;
+}
+
+export {
+  wiet,
+  WietStaticElement,
 }

@@ -100,7 +100,7 @@
     this.updateUserInfo();
   },
   
-  on: {
+  handles: {
     '.edit': {
       click() {
         this.dispatchEvent(new CustomEvent('user-edit', {
@@ -139,7 +139,6 @@
 
     </div>
   </div>
-  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module">
@@ -164,7 +163,7 @@
         this.updateUserInfo();
       },
 
-      on: {
+      handles: {
         '.edit': {
           click() {
             const userName = this.getAttribute('user-name');

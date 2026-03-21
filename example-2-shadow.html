@@ -96,7 +96,7 @@
     }
   },
   
-  on: {
+  handles: {
     'button': {
       click() {
         this.dispatchEvent(new CustomEvent('shadow-click', {
@@ -128,7 +128,6 @@
         </ul>
       </div>
     </div>
-  </div>
   </div>
 
   <template id="shadow-button-template">
@@ -181,7 +180,7 @@
         }
       },
 
-      on: {
+      handles: {
         'button': {
           click() {
             const label = this.getAttribute('label');
