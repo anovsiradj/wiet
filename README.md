@@ -97,6 +97,18 @@ wiet('hello-card', '#hello-template', {
 - `example-6-lifecycle.html` - `mounted`, `unmounted`, `changed`
 - `example-7-slots.html` - Default and named slots
 
+## Example pages: source viewer
+
+Demo pages use the `<view-code>` widget (from `widgets.js` / `widgets/view-code.html`). Mark anything you want listed with `class="source"` (live demo regions, `<template>`, module `<script>`, and so on). After the window `load` event, each block is shown in a collapsible **Source Code** panel.
+
+For external HTML files, add a hidden fetch placeholder:
+
+```html
+<code class="source" data-fetch="user-card.html" hidden></code>
+```
+
+The widget fills `textContent` from the file before serializing.
+
 ## Browser Support
 
 Requires browsers with support for:

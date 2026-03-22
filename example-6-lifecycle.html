@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en" data-bs-theme="dark">
 
 <head>
@@ -15,15 +16,13 @@
   <div class="container my-5">
     <div class="row">
       <div class="col-lg-8 mx-auto">
-        <example-section icon="bi bi-6-circle-fill" title="Example 6: Lifecycle Hooks"
-          description="Demonstrates component lifecycle: <code>mounted()</code>, <code>unmounted()</code>, and <code>changed()</code> callbacks."
-          variant="secondary"></example-section>
+        <example-section icon="bi bi-6-circle-fill" title="Example 6: Lifecycle Hooks" description="Demonstrates component lifecycle: <code>mounted()</code>, <code>unmounted()</code>, and <code>changed()</code> callbacks." variant="secondary"></example-section>
 
         <div class="card mb-4">
           <div class="card-header">
             <h5 class="mb-0"><i class="bi bi-gear"></i> Lifecycle Controls</h5>
           </div>
-          <div class="card-body">
+          <div class="card-body source">
             <div class="d-flex gap-2 mb-3">
               <button class="btn btn-success" id="addComponent">
                 <i class="bi bi-plus-circle"></i> Add Component
@@ -49,44 +48,14 @@
 
         <event-log id="eventLog"></event-log>
 
+        <view-code></view-code>
+
         <div class="card mt-4">
           <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-code-square"></i> Source Code</h5>
+            <h5 class="mb-0"><i class="bi bi-arrow-down-up"></i> Lifecycle Flow</h5>
           </div>
           <div class="card-body">
-            <h6>Lifecycle Hooks Configuration:</h6>
-            <pre class="bg-dark text-light p-3 rounded"><code>wiet('lifecycle-demo', '#lifecycle-template', {
-  attrs: ['data'],
-  
-  // Called when component is added to DOM
-  mounted() {
-    console.log('Component mounted!');
-    this.querySelector('.status').textContent = 'Status: Mounted';
-    this.updateData();
-  },
-  
-  // Called when component is removed from DOM
-  unmounted() {
-    console.log('Component unmounted!');
-  },
-  
-  // Called when observed attributes change
-  changed(attr, oldVal, newVal) {
-    console.log(\`Attribute "\${attr}" changed from "\${oldVal}" to "\${newVal}"\`);
-    this.querySelector('.status').textContent = \`Status: Attribute "\${attr}" changed\`;
-    this.updateData();
-  },
-  
-  methods: {
-    updateData() {
-      const data = this.getAttribute('data') || 'No data';
-      this.querySelector('.data-display').textContent = \`Data: \${data}\`;
-    }
-  }
-});</code></pre>
-
-            <h6 class="mt-3">Lifecycle Flow:</h6>
-            <pre class="bg-dark text-light p-3 rounded"><code>1. Component created
+            <pre class="bg-dark text-light p-3 rounded mb-0"><code>1. Component created
    ↓
 2. mounted() callback fires
    ↓
@@ -139,7 +108,7 @@
     </div>
   </div>
 
-  <template id="lifecycle-template">
+  <template id="lifecycle-template" class="source">
     <style>
       .lifecycle {
         background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
@@ -174,7 +143,7 @@
   </template>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  <script type="module">
+  <script type="module" class="source">
     import { wiet } from './wiet.js';
     import './widgets.js';
     const eventLog = document.getElementById('eventLog');

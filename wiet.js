@@ -199,7 +199,29 @@ function wiet(tag, template, config = {}) {
   return WietDynamicElement;
 }
 
+function make(tagName, config) {
+  config ??= {}
+  config = {
+    createOptions: {},
+    attrs: {},
+    props: {},
+    handle: (element) => element,
+    ...config,
+  }
+  let element = document.createElement(tagName, config.createOptions)
+
+  for (let attr in config.attrs) {
+    element.setAttribute(attr, config.attrs[attr])
+  }
+  for (let prop in config.props) {
+    element[prop] = config.props[prop]
+  }
+
+  return config.handle(element)
+}
+
 export {
+  make,
   wiet,
   WietStaticElement,
 }

@@ -3,7 +3,56 @@
  * Reusable components used across all example pages
  */
 
-import { wiet } from './wiet.js';
+import { make, wiet } from './wiet.js';
+
+wiet('view-code', './widgets/view-code.html', {
+	mounted() {
+		this.collapsible();
+
+		const selector = this.getAttribute('selector') || '.source';
+		const output = this.querySelector('.card-body');
+
+		void (async () => {
+			await new Promise(resolve => {
+				if (document.readyState === 'complete') {
+					resolve();
+				} else {
+					window.addEventListener('load', resolve, { once: true });
+				}
+			});
+
+			const sourcesAfterLoad = document.querySelectorAll(selector);
+			for (const source of sourcesAfterLoad) {
+				if (source.dataset.fetch) {
+					try {
+						source.textContent = await fetch(source.dataset.fetch).then(r => r.text());
+					} catch (e) {
+						source.textContent = `/* failed to load ${source.dataset.fetch} */`;
+					}
+				}
+				output.appendChild(make('pre', {
+					props: {
+						className: 'bg-dark text-light p-3 rounded small mb-2 overflow-auto',
+						textContent: source.outerHTML,
+					},
+				}));
+			}
+		})();
+	},
+	methods: {
+		collapsible() {
+			const id = 'source-' + Date.now().toString(36);
+			const header = this.querySelector('.card-header');
+			const output = this.querySelector('.card-body');
+
+			header.setAttribute('data-bs-target', `#${id}`);
+			header.setAttribute('aria-expanded', 'false');
+			header.setAttribute('role', 'button');
+			header.classList.add('cursor-pointer');
+			output.setAttribute('id', id);
+		},
+	},
+})
 
 // Page Header Component
 wiet('page-header', './widgets/page-header.html', {

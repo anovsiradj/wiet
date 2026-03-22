@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en" data-bs-theme="dark">
 
 <head>
@@ -15,16 +16,14 @@
   <div class="container my-5">
     <div class="row">
       <div class="col-lg-8 mx-auto">
-        <example-section icon="bi bi-1-circle-fill" title="Example 1: Template Tag (Light DOM)"
-          description="Component using inline &lt;template&gt; tag with light DOM rendering. Features attributes, events, and custom event dispatching."
-          variant="primary">
+        <example-section icon="bi bi-1-circle-fill" title="Example 1: Template Tag (Light DOM)" description="Component using inline &lt;template&gt; tag with light DOM rendering. Features attributes, events, and custom event dispatching." variant="primary">
         </example-section>
 
         <div class="card mb-4">
           <div class="card-header">
             <h5 class="mb-0"><i class="bi bi-eye"></i> Live Demo</h5>
           </div>
-          <div class="card-body">
+          <div class="card-body source">
             <greeting-card name="Alice" message="Welcome to the Wiet demo!"></greeting-card>
 
             <div class="mt-4">
@@ -46,71 +45,12 @@
 
         <event-log id="eventLog"></event-log>
 
-        <div class="card mt-4">
-          <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-code-square"></i> Source Code</h5>
-          </div>
-          <div class="card-body">
-            <h6>HTML Template:</h6>
-            <pre class="bg-dark text-light p-3 rounded"><code>&lt;template id="greeting-template"&gt;
-  &lt;style&gt;
-    .greeting {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-    }
-  &lt;/style&gt;
-  &lt;div class="greeting"&gt;
-    &lt;h3 class="greeting-text"&gt;Hello!&lt;/h3&gt;
-    &lt;p class="message-text"&gt;&lt;/p&gt;
-    &lt;button class="btn btn-light greet-btn"&gt;👋 Send Greeting&lt;/button&gt;
-  &lt;/div&gt;
-&lt;/template&gt;</code></pre>
-
-            <h6 class="mt-3">JavaScript:</h6>
-            <pre class="bg-dark text-light p-3 rounded"><code>wiet('greeting-card', '#greeting-template', {
-  attrs: ['name', 'message'],
-  
-  mounted() {
-    this.updateGreeting();
-  },
-  
-  changed(attr, oldVal, newVal) {
-    if (attr === 'name' || attr === 'message') {
-      this.updateGreeting();
-    }
-  },
-  
-  handles: {
-    '.greet-btn': {
-      click() {
-        const name = this.getAttribute('name') || 'Guest';
-        this.dispatchEvent(new CustomEvent('greeting-sent', {
-          bubbles: true,
-          detail: { name, timestamp: Date.now() }
-        }));
-      }
-    }
-  },
-  
-  methods: {
-    updateGreeting() {
-      const name = this.getAttribute('name') || 'Guest';
-      const message = this.getAttribute('message') || 'Welcome!';
-      this.querySelector('.greeting-text').textContent = \`Hello, \${name}!\`;
-      this.querySelector('.message-text').textContent = message;
-    }
-  }
-});</code></pre>
-          </div>
-        </div>
+        <view-code></view-code>
       </div>
     </div>
   </div>
 
-  <template id="greeting-template">
+  <template id="greeting-template" class="source">
     <style>
       .greeting {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -136,7 +76,7 @@
   </template>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  <script type="module">
+  <script type="module" class="source">
     import { wiet } from './wiet.js';
     import './widgets.js';
     const eventLog = document.getElementById('eventLog');

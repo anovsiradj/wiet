@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en" data-bs-theme="dark">
 
 <head>
@@ -15,16 +16,14 @@
 	<div class="container my-5">
 		<div class="row">
 			<div class="col-lg-8 mx-auto">
-				<example-section icon="bi bi-7-circle-fill" title="Example 7: Slots"
-					description="Demonstrates slot usage for customizable component content. Supports default slots and named slots."
-					variant="dark">
+				<example-section icon="bi bi-7-circle-fill" title="Example 7: Slots" description="Demonstrates slot usage for customizable component content. Supports default slots and named slots." variant="dark">
 				</example-section>
 
 				<div class="card mb-4">
 					<div class="card-header">
 						<h5 class="mb-0"><i class="bi bi-eye"></i> Default Slot Demo</h5>
 					</div>
-					<div class="card-body">
+					<div class="card-body source">
 						<h6>Basic Card with Default Slot:</h6>
 						<card-component>
 							<p>This content is passed through the default slot!</p>
@@ -40,7 +39,7 @@
 					<div class="card-header">
 						<h5 class="mb-0"><i class="bi bi-eye"></i> Named Slots Demo</h5>
 					</div>
-					<div class="card-body">
+					<div class="card-body source">
 						<h6>Dialog with Named Slots:</h6>
 						<dialog-component>
 							<span slot="title">Confirmation Required</span>
@@ -67,7 +66,7 @@
 					<div class="card-header">
 						<h5 class="mb-0"><i class="bi bi-eye"></i> Mixed Slots Demo</h5>
 					</div>
-					<div class="card-body">
+					<div class="card-body source">
 						<h6>Article with Mixed Slots:</h6>
 						<article-component>
 							<h3 slot="header">Introduction to Web Components</h3>
@@ -83,55 +82,7 @@
 
 				<event-log id="eventLog"></event-log>
 
-				<div class="card mt-4">
-					<div class="card-header">
-						<h5 class="mb-0"><i class="bi bi-code-square"></i> Source Code</h5>
-					</div>
-					<div class="card-body">
-						<h6>Default Slot Template:</h6>
-						<pre class="bg-dark text-light p-3 rounded"><code>&lt;template id="card-template"&gt;
-  &lt;div class="card"&gt;
-    &lt;div class="card-body"&gt;
-      &lt;slot&gt;Default content goes here&lt;/slot&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/template&gt;</code></pre>
-
-						<h6 class="mt-3">Named Slots Template:</h6>
-						<pre class="bg-dark text-light p-3 rounded"><code>&lt;template id="dialog-template"&gt;
-  &lt;div class="dialog"&gt;
-    &lt;div class="dialog-header"&gt;
-      &lt;slot name="title"&gt;Default Title&lt;/slot&gt;
-    &lt;/div&gt;
-    &lt;div class="dialog-body"&gt;
-      &lt;slot name="content"&gt;Default content&lt;/slot&gt;
-    &lt;/div&gt;
-    &lt;div class="dialog-footer"&gt;
-      &lt;slot name="footer"&gt;
-        &lt;button class="btn btn-primary"&gt;OK&lt;/button&gt;
-      &lt;/slot&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/template&gt;</code></pre>
-
-						<h6 class="mt-3">Usage:</h6>
-						<pre class="bg-dark text-light p-3 rounded"><code>&lt;!-- Default slot --&gt;
-&lt;card-component&gt;
-  &lt;p&gt;This goes in the default slot&lt;/p&gt;
-&lt;/card-component&gt;
-
-&lt;!-- Named slots --&gt;
-&lt;dialog-component&gt;
-  &lt;span slot="title"&gt;My Title&lt;/span&gt;
-  &lt;span slot="content"&gt;My Content&lt;/span&gt;
-  &lt;span slot="footer"&gt;My Footer&lt;/span&gt;
-&lt;/dialog-component&gt;</code></pre>
-
-						<h6 class="mt-3">JavaScript:</h6>
-						<pre class="bg-dark text-light p-3 rounded"><code>wiet('card-component', '#card-template');
-wiet('dialog-component', '#dialog-template');</code></pre>
-					</div>
-				</div>
+				<view-code></view-code>
 
 				<div class="card mt-4">
 					<div class="card-header">
@@ -173,7 +124,7 @@ wiet('dialog-component', '#dialog-template');</code></pre>
 	</div>
 
 	<!-- Templates -->
-	<template id="card-template">
+	<template id="card-template" class="source">
 		<style>
 			.card {
 				border: 2px solid #3498db;
@@ -191,7 +142,7 @@ wiet('dialog-component', '#dialog-template');</code></pre>
 		</div>
 	</template>
 
-	<template id="dialog-template">
+	<template id="dialog-template" class="source">
 		<style>
 			.dialog {
 				border: 2px solid #9b59b6;
@@ -235,7 +186,7 @@ wiet('dialog-component', '#dialog-template');</code></pre>
 		</div>
 	</template>
 
-	<template id="article-template">
+	<template id="article-template" class="source">
 		<style>
 			.article {
 				border: 1px solid #ddd;
@@ -288,7 +239,7 @@ wiet('dialog-component', '#dialog-template');</code></pre>
 	</template>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-	<script type="module">
+	<script type="module" class="source">
 		import { wiet } from './wiet.js';
 		import './widgets.js';
 		const eventLog = document.getElementById('eventLog');
