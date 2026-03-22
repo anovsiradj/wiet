@@ -126,13 +126,15 @@
 	<!-- Templates -->
 	<template id="card-template" class="source">
 		<style>
-			.card {
-				border: 2px solid #3498db;
-				border-radius: 8px;
-				padding: 20px;
-				background: #2c3e50;
-				color: white;
-				margin: 10px 0;
+			@scope {
+				.card {
+					border: 2px solid #3498db;
+					border-radius: 8px;
+					padding: 20px;
+					background: #2c3e50;
+					color: white;
+					margin: 10px 0;
+				}
 			}
 		</style>
 		<div class="card">
@@ -144,31 +146,33 @@
 
 	<template id="dialog-template" class="source">
 		<style>
-			.dialog {
-				border: 2px solid #9b59b6;
-				border-radius: 8px;
-				background: white;
-				color: #333;
-				margin: 10px 0;
-				overflow: hidden;
-			}
+			@scope {
+				.dialog {
+					border: 2px solid #9b59b6;
+					border-radius: 8px;
+					background: white;
+					color: #333;
+					margin: 10px 0;
+					overflow: hidden;
+				}
 
-			.dialog-header {
-				background: #9b59b6;
-				color: white;
-				padding: 15px;
-				font-weight: bold;
-				font-size: 1.2em;
-			}
+				.dialog-header {
+					background: #9b59b6;
+					color: white;
+					padding: 15px;
+					font-weight: bold;
+					font-size: 1.2em;
+				}
 
-			.dialog-body {
-				padding: 20px;
-			}
+				.dialog-body {
+					padding: 20px;
+				}
 
-			.dialog-footer {
-				background: #ecf0f1;
-				padding: 15px;
-				text-align: right;
+				.dialog-footer {
+					background: #ecf0f1;
+					padding: 15px;
+					text-align: right;
+				}
 			}
 		</style>
 		<div class="dialog">
@@ -188,38 +192,41 @@
 
 	<template id="article-template" class="source">
 		<style>
-			.article {
-				border: 1px solid #ddd;
-				border-radius: 8px;
-				background: white;
-				color: #333;
-				margin: 10px 0;
-			}
+			@scope {
 
-			.article-header {
-				background: #34495e;
-				color: white;
-				padding: 20px;
-			}
+				.article {
+					border: 1px solid #ddd;
+					border-radius: 8px;
+					background: white;
+					color: #333;
+					margin: 10px 0;
+				}
 
-			.article-header h3 {
-				margin: 0 0 10px 0;
-			}
+				.article-header {
+					background: #34495e;
+					color: white;
+					padding: 20px;
+				}
 
-			.article-author {
-				font-size: 0.9em;
-				color: #ecf0f1;
-			}
+				.article-header h3 {
+					margin: 0 0 10px 0;
+				}
 
-			.article-body {
-				padding: 20px;
-			}
+				.article-author {
+					font-size: 0.9em;
+					color: #ecf0f1;
+				}
 
-			.article-footer {
-				background: #f8f9fa;
-				padding: 15px;
-				font-size: 0.9em;
-				color: #6c757d;
+				.article-body {
+					padding: 20px;
+				}
+
+				.article-footer {
+					background: #f8f9fa;
+					padding: 15px;
+					font-size: 0.9em;
+					color: #6c757d;
+				}
 			}
 		</style>
 		<article class="article">
@@ -271,7 +278,7 @@
 
 		setTimeout(() => {
 			logEvent('🚀 Slots demo initialized', 'success');
-		}, 100);
+		}, 0);
 	</script>
 </body>
 

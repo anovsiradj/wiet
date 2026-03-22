@@ -110,29 +110,31 @@
 
   <template id="lifecycle-template" class="source">
     <style>
-      .lifecycle {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        color: white;
-        padding: 20px;
-        border-radius: 8px;
-      }
+      @scope {
+        .lifecycle {
+          background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+          color: white;
+          padding: 20px;
+          border-radius: 8px;
+        }
 
-      .lifecycle h4 {
-        margin: 0 0 10px 0;
-      }
+        .lifecycle h4 {
+          margin: 0 0 10px 0;
+        }
 
-      .lifecycle .status {
-        font-family: monospace;
-        font-size: 0.9em;
-        padding: 8px;
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
-        margin-bottom: 10px;
-      }
+        .lifecycle .status {
+          font-family: monospace;
+          font-size: 0.9em;
+          padding: 8px;
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 4px;
+          margin-bottom: 10px;
+        }
 
-      .lifecycle .data-display {
-        font-size: 1.1em;
-        font-weight: bold;
+        .lifecycle .data-display {
+          font-size: 1.1em;
+          font-weight: bold;
+        }
       }
     </style>
     <div class="lifecycle">
