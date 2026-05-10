@@ -12,10 +12,13 @@
  * - Custom methods
  */
 
+const templateCache = new Map();
+
 class WietStaticElement extends HTMLElement {
   constructor() {
     super();
     this._isConnected = false;
+    this._hasRendered = false;
     this._renderVersion = 0;
   }
 
@@ -37,19 +40,30 @@ class WietStaticElement extends HTMLElement {
   }
 
   async loadTemplate(template) {
-    if (template.startsWith('#')) {
-      const sourceTemplate = document.getElementById(template.slice(1));
-      if (!sourceTemplate) {
-        throw new Error(`Template "${template}" not found`);
-      }
-      return sourceTemplate.innerHTML;
+    if (templateCache.has(template)) {
+      return templateCache.get(template);
     }
 
-    const response = await fetch(template);
-    if (!response.ok) {
-      throw new Error(`Failed to load template "${template}" (${response.status})`);
+    let promise;
+    if (template.startsWith('#')) {
+      promise = Promise.resolve().then(() => {
+        const sourceTemplate = document.getElementById(template.slice(1));
+        if (!sourceTemplate) {
+          throw new Error(`Template "${template}" not found`);
+        }
+        return sourceTemplate.innerHTML;
+      });
+    } else {
+      promise = fetch(template).then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load template "${template}" (${response.status})`);
+        }
+        return response.text();
+      });
     }
-    return response.text();
+
+    templateCache.set(template, promise);
+    return promise;
   }
 
   resolveRoot(useShadow) {
@@ -134,8 +148,21 @@ class WietStaticElement extends HTMLElement {
 }
 
 function wiet(tag, template, config = {}) {
+  const existingDefinition = customElements.get(tag);
+  if (existingDefinition) {
+    return existingDefinition;
+  }
+
   class WietDynamicElement extends WietStaticElement {
     async connectedCallback() {
+      if (this._hasRendered) {
+        this.markConnected();
+        const root = this.resolveRoot(config.shadow);
+        this.bindConfiguredEvents(root, config.handles);
+        config.mounted?.call(this, root);
+        return;
+      }
+
       const renderVersion = this.nextRenderVersion();
 
       // Save slot content before replacing innerHTML
@@ -158,7 +185,11 @@ function wiet(tag, template, config = {}) {
       const root = this.resolveRoot(config.shadow);
       root.innerHTML = html;
 
-      this.processSlots(root, slotContent);
+      if (!config.shadow) {
+        this.processSlots(root, slotContent);
+      }
+
+      this._hasRendered = true;
 
       // Mark as connected
       this.markConnected();
@@ -187,12 +218,8 @@ function wiet(tag, template, config = {}) {
 
   // Add custom methods if provided
   if (config.methods) {
-    Object.assign(WietDynamicElement.prototype, config.methods);
-  }
-
-  const existingDefinition = customElements.get(tag);
-  if (existingDefinition) {
-    return existingDefinition;
+    const descriptors = Object.getOwnPropertyDescriptors(config.methods);
+    Object.defineProperties(WietDynamicElement.prototype, descriptors);
   }
 
   customElements.define(tag, WietDynamicElement);
