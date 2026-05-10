@@ -59,7 +59,9 @@ wiet(tag, template, config)
 	- `handles` (`Record<string, Record<string, Function>>`) - Event map by selector and event name
 	- `methods` (`Record<string, Function>`) - Custom instance methods mixed into the element prototype
 
-## Example
+## Examples
+
+Each example is also a test case and can be used as an demo / documentation for the code.
 
 ```js
 import { wiet } from './wiet.js';
