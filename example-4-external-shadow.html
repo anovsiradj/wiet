@@ -16,7 +16,7 @@
   <div class="container my-5">
     <div class="row">
       <div class="col-lg-8 mx-auto">
-        <example-section icon="bi bi-4-circle-fill" title="Example 4: External HTML + Shadow DOM" description="Component loaded from external file (product-card.html) with Shadow DOM for complete style isolation." variant="warning"></example-section>
+        <example-section icon="bi bi-4-circle-fill" title="Example 4: External HTML + Shadow DOM" description="Component loaded from external widget file (widgets/product-card.html) with Shadow DOM for complete style isolation." variant="warning"></example-section>
 
         <div class="card mb-4">
           <div class="card-header">
@@ -65,7 +65,7 @@
 
         <event-log id="eventLog"></event-log>
 
-        <code class="source" data-fetch="product-card.html" hidden></code>
+        <code class="source" data-fetch="widgets/product-card.html" hidden></code>
         <view-code></view-code>
 
       </div>
@@ -99,24 +99,20 @@
       }
     }
 
-    wiet('product-card', './product-card.html', {
+    wiet('product-card', './widgets/product-card.html', {
       shadow: true,
       attrs: ['product-name', 'price', 'description'],
 
       mounted(root) {
-        logEvent(`✅ product-card mounted: ${this.getAttribute('product-name')}`);
-        this.updateProduct();
-      },
-
-      changed(attr) {
+        logEvent(`✅ product-card mounted: ${this.productName}`);
         this.updateProduct();
       },
 
       handles: {
         '.add-to-cart': {
           click() {
-            const productName = this.getAttribute('product-name');
-            const price = this.getAttribute('price');
+            const productName = this.productName;
+            const price = this.price;
             logEvent(`🛒 Added to cart: ${productName} ($${price})`);
             this.dispatchEvent(new CustomEvent('add-to-cart', {
               bubbles: true,
@@ -132,9 +128,9 @@
       methods: {
         updateProduct() {
           const root = this.shadowRoot;
-          root.querySelector('.product-name').textContent = this.getAttribute('product-name') || 'Product';
-          root.querySelector('.description').textContent = this.getAttribute('description') || 'No description';
-          root.querySelector('.price').textContent = `$${this.getAttribute('price') || '0.00'}`;
+          root.querySelector('.product-name').textContent = this.productName || 'Product';
+          root.querySelector('.description').textContent = this.description || 'No description';
+          root.querySelector('.price').textContent = `$${this.price || '0.00'}`;
         }
       }
     });
@@ -161,9 +157,9 @@
       col.className = 'col-md-6 mb-3';
 
       const card = document.createElement('product-card');
-      card.setAttribute('product-name', name);
-      card.setAttribute('price', price);
-      card.setAttribute('description', desc);
+      card.productName = name;
+      card.price = price;
+      card.description = desc;
 
       col.appendChild(card);
       document.getElementById('newProducts').appendChild(col);

@@ -126,30 +126,26 @@ wiet('example-section', './widgets/example-section.html', {
 	mounted() {
 		this.updateContent();
 	},
-
-	changed() {
-		this.updateContent();
-	},
 	
 	methods: {
 		updateContent() {
-			const variant = this.getAttribute('variant') || 'primary';
+			const variant = this.variant || 'primary';
 			const alert = this.querySelector('.alert');
 			if (!alert) return;
 			alert.className = `alert alert-${variant} example-section`;
 			
 			const icon = this.querySelector('.example-icon');
 			if (icon) {
-				icon.className = this.getAttribute('icon') || 'bi bi-info-circle';
+				icon.className = this.icon || 'bi bi-info-circle';
 			}
 			
 			const title = this.querySelector('.example-title');
 			if (title) {
-				title.textContent = this.getAttribute('title') || 'Example';
+				title.textContent = this.title || 'Example';
 			}
 			const description = this.querySelector('.example-description');
 			if (description) {
-				description.textContent = this.getAttribute('description') || '';
+				description.textContent = this.description || '';
 			}
 		}
 	}
@@ -162,30 +158,25 @@ wiet('feature-card', './widgets/feature-card.html', {
 	mounted() {
 		this.updateContent();
 	},
-
-	changed() {
-		this.updateContent();
-	},
 	
 	methods: {
 		updateContent() {
-			const color = this.getAttribute('color') || 'primary';
+const color = this.color || 'primary';
 			const card = this.querySelector('.feature-card');
 			if (!card) return;
 			card.className = `card feature-card bg-${color} text-white`;
 			
 			const icon = this.querySelector('.feature-icon');
 			if (icon) {
-				icon.className = this.getAttribute('icon') || 'bi bi-star';
+				icon.className = this.icon || 'bi bi-star';
 			}
-			
 			const title = this.querySelector('.feature-title');
 			if (title) {
-				title.textContent = this.getAttribute('title') || 'Feature';
+				title.textContent = this.title || 'Feature';
 			}
 			const description = this.querySelector('.feature-description');
 			if (description) {
-				description.textContent = this.getAttribute('description') || '';
+				description.textContent = this.description || '';
 			}
 		}
 	}

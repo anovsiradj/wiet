@@ -16,7 +16,7 @@
   <div class="container my-5">
     <div class="row">
       <div class="col-lg-8 mx-auto">
-        <example-section icon="bi bi-3-circle-fill" title="Example 3: External HTML File" description="Component HTML loaded from external file (user-card.html). Demonstrates file-based component organization with light DOM." variant="info">
+        <example-section icon="bi bi-3-circle-fill" title="Example 3: External HTML File" description="Component HTML loaded from external widget file (widgets/user-card.html). Demonstrates file-based component organization with light DOM." variant="info">
         </example-section>
 
         <div class="card mb-4">
@@ -58,7 +58,7 @@
 
         <event-log id="eventLog"></event-log>
 
-        <code class="source" data-fetch="user-card.html" hidden></code>
+        <code class="source" data-fetch="widgets/user-card.html" hidden></code>
         <view-code></view-code>
       </div>
     </div>
@@ -74,36 +74,37 @@
       eventLog.log(message, type);
     }
 
-    wiet('user-card', './user-card.html', {
+    wiet('user-card', './widgets/user-card.html', {
       attrs: ['user-name', 'email', 'role'],
 
       mounted() {
-        logEvent(`✅ user-card mounted: ${this.getAttribute('user-name')}`);
+        logEvent(`✅ user-card mounted: ${this.userName}`);
         this.updateUserInfo();
       },
 
       changed(attr) {
-        logEvent(`🔄 user-card attribute "${attr}" changed`);
-        this.updateUserInfo();
+        if (attr === 'user-name' || attr === 'email' || attr === 'role') {
+          this.updateUserInfo();
+        }
       },
 
       handles: {
         '.edit': {
           click() {
-            const userName = this.getAttribute('user-name');
+            const userName = this.userName;
             logEvent(`✏️ Edit clicked for user: ${userName}`);
             this.dispatchEvent(new CustomEvent('user-edit', {
               bubbles: true,
               detail: {
-                name: this.getAttribute('user-name'),
-                email: this.getAttribute('email')
+                name: this.userName,
+                email: this.email
               }
             }));
           }
         },
         '.delete': {
           click() {
-            const userName = this.getAttribute('user-name');
+            const userName = this.userName;
             logEvent(`🗑️ Delete clicked for user: ${userName}`);
             if (confirm(`Delete user ${userName}?`)) {
               this.dispatchEvent(new CustomEvent('user-delete', {
@@ -118,9 +119,9 @@
 
       methods: {
         updateUserInfo() {
-          this.querySelector('.name').textContent = this.getAttribute('user-name') || 'Unknown';
-          this.querySelector('.email').textContent = `Email: ${this.getAttribute('email') || 'N/A'}`;
-          this.querySelector('.role').textContent = `Role: ${this.getAttribute('role') || 'Member'}`;
+          this.querySelector('.name').textContent = this.userName || 'Unknown';
+          this.querySelector('.email').textContent = `Email: ${this.email || 'N/A'}`;
+          this.querySelector('.role').textContent = `Role: ${this.role || 'Member'}`;
         }
       }
     });
@@ -147,9 +148,9 @@
       }
 
       const card = document.createElement('user-card');
-      card.setAttribute('user-name', name);
-      card.setAttribute('email', email);
-      card.setAttribute('role', role);
+      card.userName = name;
+      card.email = email;
+      card.role = role;
       card.className = 'mt-3';
 
       document.getElementById('newUsers').appendChild(card);

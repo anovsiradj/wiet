@@ -52,7 +52,7 @@
 
   <template id="greeting-template" class="source">
     <style>
-      @scope {
+      
         .greeting {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
@@ -68,7 +68,7 @@
         .greeting button {
           margin-top: 10px;
         }
-      }
+      
     </style>
     <div class="greeting">
       <h3 class="greeting-text">Hello!</h3>
@@ -95,17 +95,10 @@
         this.updateGreeting();
       },
 
-      changed(attr, oldVal, newVal) {
-        logEvent(`🔄 Attribute "${attr}" changed: "${oldVal}" → "${newVal}"`);
-        if (attr === 'name' || attr === 'message') {
-          this.updateGreeting();
-        }
-      },
-
       handles: {
         '.greet-btn': {
           click() {
-            const name = this.getAttribute('name') || 'Guest';
+            const name = this.name || 'Guest';
             logEvent(`👋 Greeting sent from ${name}`);
             this.dispatchEvent(new CustomEvent('greeting-sent', {
               bubbles: true,
@@ -117,8 +110,8 @@
 
       methods: {
         updateGreeting() {
-          const name = this.getAttribute('name') || 'Guest';
-          const message = this.getAttribute('message') || 'Welcome!';
+          const name = this.name || 'Guest';
+          const message = this.message || 'Welcome!';
           this.querySelector('.greeting-text').textContent = `Hello, ${name}!`;
           this.querySelector('.message-text').textContent = message;
         }
@@ -133,8 +126,9 @@
     // Update button handler
     document.getElementById('updateBtn').addEventListener('click', () => {
       const card = document.querySelector('greeting-card');
-      card.setAttribute('name', document.getElementById('nameInput').value);
-      card.setAttribute('message', document.getElementById('messageInput').value);
+      card.name = document.getElementById('nameInput').value;
+      card.message = document.getElementById('messageInput').value;
+      card.updateGreeting();
     });
 
     setTimeout(() => logEvent('🚀 Component initialized'), 100);

@@ -1,18 +1,35 @@
 /**
  * Wiet
- * A minimal, dynamic factory for creating web components
+ * A minimal, standards-friendly web component factory
  * 
  * Features:
- * - Template or external HTML files
+ * - Inline and external templates
  * - Shadow DOM support
- * - Slot support (default and named)
- * - Event binding
+ * - Native event delegation
  * - Lifecycle hooks
- * - Reactive attributes
- * - Custom methods
+ * - Observed attributes
+ * - Custom prototype methods
  */
 
 const templateCache = new Map();
+
+const attrNameToProp = attr => attr.replace(/-([a-z])/g, (_, ch) => ch.toUpperCase());
+
+const normalizeAttrs = attrs => {
+  if (!Array.isArray(attrs)) return [];
+  return attrs.map(entry => {
+    if (typeof entry === 'string') {
+      return { attr: entry, prop: attrNameToProp(entry) };
+    }
+
+    const attr = entry.attr || entry.name;
+    if (!attr) return null;
+    return {
+      attr,
+      prop: entry.prop || entry.property || attrNameToProp(attr),
+    };
+  }).filter(Boolean);
+};
 
 class WietStaticElement extends HTMLElement {
   constructor() {
@@ -20,23 +37,27 @@ class WietStaticElement extends HTMLElement {
     this._isConnected = false;
     this._hasRendered = false;
     this._renderVersion = 0;
+    this._renderRoot = null;
+    this._eventDelegates = [];
   }
 
   nextRenderVersion() {
-    this._renderVersion += 1;
-    return this._renderVersion;
+    return ++this._renderVersion;
   }
 
   isRenderStale(renderVersion) {
-    return renderVersion !== this._renderVersion || !this.isConnected;
+    return renderVersion !== this._renderVersion;
   }
 
-  markConnected() {
-    this._isConnected = true;
-  }
+  resolveRoot(useShadow) {
+    if (useShadow) {
+      if (!this.shadowRoot) {
+        this.attachShadow({ mode: 'open' });
+      }
+      return this.shadowRoot;
+    }
 
-  markDisconnected() {
-    this._isConnected = false;
+    return this;
   }
 
   async loadTemplate(template) {
@@ -44,32 +65,60 @@ class WietStaticElement extends HTMLElement {
       return templateCache.get(template);
     }
 
-    let promise;
-    if (template.startsWith('#')) {
-      promise = Promise.resolve().then(() => {
+    const promise = template.startsWith('#')
+      ? Promise.resolve().then(() => {
         const sourceTemplate = document.getElementById(template.slice(1));
         if (!sourceTemplate) {
           throw new Error(`Template "${template}" not found`);
         }
         return sourceTemplate.innerHTML;
-      });
-    } else {
-      promise = fetch(template).then(response => {
+      })
+      : fetch(template).then(response => {
         if (!response.ok) {
           throw new Error(`Failed to load template "${template}" (${response.status})`);
         }
         return response.text();
       });
-    }
 
     templateCache.set(template, promise);
     return promise;
   }
 
-  resolveRoot(useShadow) {
-    return useShadow
-      ? (this.shadowRoot || this.attachShadow({ mode: 'open' }))
-      : this;
+  createEventDelegates(root, eventsMap, thisArg = this) {
+    if (!eventsMap) return;
+
+    const grouped = new Map();
+    Object.entries(eventsMap).forEach(([selector, events]) => {
+      Object.entries(events || {}).forEach(([type, handler]) => {
+        if (typeof handler !== 'function') return;
+        if (!grouped.has(type)) {
+          grouped.set(type, []);
+        }
+        grouped.get(type).push({ selector, handler });
+      });
+    });
+
+    grouped.forEach((handlers, type) => {
+      const listener = event => {
+        const target = event.target;
+        handlers.forEach(({ selector, handler }) => {
+          const match = target.closest(selector);
+          if (match && root.contains(match)) {
+            handler.call(thisArg, event);
+          }
+        });
+      };
+
+      root.addEventListener(type, listener);
+      this._eventDelegates.push({ root, type, listener });
+    });
+  }
+
+  cleanupEventDelegates() {
+    this._eventDelegates.forEach(({ root, type, listener }) => {
+      root.removeEventListener(type, listener);
+    });
+    this._eventDelegates.length = 0;
   }
 
   processSlots(root, slotContent) {
@@ -78,7 +127,6 @@ class WietStaticElement extends HTMLElement {
     const slots = root.querySelectorAll('slot');
     if (slots.length === 0) return;
 
-    // Create a temporary container to parse slot content
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = slotContent;
 
@@ -97,8 +145,8 @@ class WietStaticElement extends HTMLElement {
 
   collectDefaultSlotNodes(tempDiv) {
     return Array.from(tempDiv.childNodes).filter(node => {
-      if (node.nodeType === 1) return !node.hasAttribute('slot');
-      return node.nodeType === 3 && node.textContent.trim();
+      if (node.nodeType === Node.ELEMENT_NODE) return !node.hasAttribute('slot');
+      return node.nodeType === Node.TEXT_NODE && node.textContent.trim();
     });
   }
 
@@ -107,7 +155,7 @@ class WietStaticElement extends HTMLElement {
       const fragment = document.createDocumentFragment();
       nodes.forEach(node => {
         const cloned = node.cloneNode(true);
-        if (cloned.nodeType === 1) {
+        if (cloned.nodeType === Node.ELEMENT_NODE) {
           cloned.removeAttribute('slot');
         }
         fragment.appendChild(cloned);
@@ -116,7 +164,6 @@ class WietStaticElement extends HTMLElement {
       return;
     }
 
-    // Keep default content if no matching content provided
     const fallback = slot.innerHTML;
     if (fallback.trim()) {
       const wrapper = document.createElement('span');
@@ -125,19 +172,8 @@ class WietStaticElement extends HTMLElement {
     }
   }
 
-  bindConfiguredEvents(root, eventsMap, thisArg = this) {
-    if (!eventsMap) return;
-    Object.entries(eventsMap).forEach(([selector, events]) => {
-      Object.entries(events).forEach(([event, handler]) => {
-        root.querySelectorAll(selector).forEach(el => {
-          el.addEventListener(event, handler.bind(thisArg));
-        });
-      });
-    });
-  }
-
   runChanged(config, name, oldVal, newVal) {
-    if (this._isConnected) {
+    if (this._hasRendered) {
       config.changed?.call(this, name, oldVal, newVal);
     }
   }
@@ -153,22 +189,28 @@ function wiet(tag, template, config = {}) {
     return existingDefinition;
   }
 
+  const normalizedAttrs = normalizeAttrs(config.attrs);
+
   class WietDynamicElement extends WietStaticElement {
     async connectedCallback() {
-      if (this._hasRendered) {
-        this.markConnected();
-        const root = this.resolveRoot(config.shadow);
-        this.bindConfiguredEvents(root, config.handles);
-        config.mounted?.call(this, root);
-        return;
+      if (!this._hasRendered) {
+        await this.render(tag, template, config);
       }
 
+      this._isConnected = true;
+      config.mounted?.call(this, this._renderRoot);
+    }
+
+    disconnectedCallback() {
+      this._isConnected = false;
+      config.unmounted?.call(this);
+    }
+
+    async render(tag, template, config) {
       const renderVersion = this.nextRenderVersion();
+      const root = this.resolveRoot(config.shadow);
+      const slotContent = config.shadow ? '' : this.innerHTML;
 
-      // Save slot content before replacing innerHTML
-      const slotContent = this.innerHTML;
-
-      // Load template
       let html = '';
       try {
         html = await this.loadTemplate(template);
@@ -181,70 +223,80 @@ function wiet(tag, template, config = {}) {
         return;
       }
 
-      // Render
-      const root = this.resolveRoot(config.shadow);
+      this._renderRoot = root;
       root.innerHTML = html;
 
       if (!config.shadow) {
         this.processSlots(root, slotContent);
       }
 
+      this.cleanupEventDelegates();
+      this.createEventDelegates(root, config.handles);
       this._hasRendered = true;
-
-      // Mark as connected
-      this.markConnected();
-
-      // Bind events
-      this.bindConfiguredEvents(root, config.handles);
-
-      // Lifecycle
-      config.mounted?.call(this, root);
-    }
-
-    disconnectedCallback() {
-      this.markDisconnected();
-      config.unmounted?.call(this);
-    }
-
-    // Expose attributes as properties
-    static get observedAttributes() {
-      return config.attrs || [];
-    }
-
-    attributeChangedCallback(name, oldVal, newVal) {
-      this.runChanged(config, name, oldVal, newVal);
     }
   }
 
-  // Add custom methods if provided
   if (config.methods) {
     const descriptors = Object.getOwnPropertyDescriptors(config.methods);
     Object.defineProperties(WietDynamicElement.prototype, descriptors);
   }
+
+  if (config.changed) {
+    Object.defineProperty(WietDynamicElement, 'observedAttributes', {
+      value: normalizedAttrs.map(entry => entry.attr),
+    });
+
+    WietDynamicElement.prototype.attributeChangedCallback = function(name, oldVal, newVal) {
+      this.runChanged(config, name, oldVal, newVal);
+    };
+  }
+
+  normalizedAttrs.forEach(({ attr, prop }) => {
+    if (prop in WietDynamicElement.prototype) {
+      return;
+    }
+
+    Object.defineProperty(WietDynamicElement.prototype, prop, {
+      get() {
+        return this.getAttribute(attr);
+      },
+      set(value) {
+        if (value == null) {
+          this.removeAttribute(attr);
+        } else {
+          this.setAttribute(attr, String(value));
+        }
+      },
+      configurable: true,
+      enumerable: true,
+    });
+  });
 
   customElements.define(tag, WietDynamicElement);
   return WietDynamicElement;
 }
 
 function make(tagName, config) {
-  config ??= {}
+  config ??= {};
   config = {
     createOptions: {},
     attrs: {},
     props: {},
     handle: (element) => element,
     ...config,
-  }
-  let element = document.createElement(tagName, config.createOptions)
+  };
 
-  for (let attr in config.attrs) {
-    element.setAttribute(attr, config.attrs[attr])
-  }
-  for (let prop in config.props) {
-    element[prop] = config.props[prop]
+  const element = document.createElement(tagName, config.createOptions);
+
+  for (const attr in config.attrs) {
+    element.setAttribute(attr, config.attrs[attr]);
   }
 
-  return config.handle(element)
+  for (const prop in config.props) {
+    element[prop] = config.props[prop];
+  }
+
+  return config.handle(element);
 }
 
 export {

@@ -1,0 +1,49 @@
+<style>
+  .article {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    color: #333;
+    margin: 10px 0;
+  }
+
+  .article-header {
+    background: #34495e;
+    color: white;
+    padding: 20px;
+  }
+
+  .article-header h3 {
+    margin: 0 0 10px 0;
+  }
+
+  .article-author {
+    font-size: 0.9em;
+    color: #ecf0f1;
+  }
+
+  .article-body {
+    padding: 20px;
+  }
+
+  .article-footer {
+    background: #f8f9fa;
+    padding: 15px;
+    font-size: 0.9em;
+    color: #6c757d;
+  }
+</style>
+<article class="article">
+  <header class="article-header">
+    <slot name="header"></slot>
+    <div class="article-author">
+      <slot name="author">Anonymous</slot>
+    </div>
+  </header>
+  <div class="article-body">
+    <slot>Article content goes here.</slot>
+  </div>
+  <footer class="article-footer">
+    <slot name="footer"></slot>
+  </footer>
+</article>

@@ -1,5 +1,5 @@
 @author : anovsiradj
-@version: 20260131, 20260321, 20260510.
-@agent  : 1. claude (web), 2. auto (cursor), 3 gemini (antig).
+@version: 20260524, 20260131, 20260321, 20260510.
+@agent  : 1. claude (web), 2. auto (cursor), 3 gemini (antig), 4 vscode (mixed).
 @status : kinda slop but not very slop
 @todos  : ...

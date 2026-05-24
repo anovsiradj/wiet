@@ -70,7 +70,7 @@
 
   <template id="shadow-button-template" class="source">
     <style>
-      @scope {
+      
         button {
           padding: 12px 24px;
           font-size: 16px;
@@ -89,7 +89,7 @@
         button:active {
           transform: scale(0.95);
         }
-      }
+      
     </style>
     <button></button>
   </template>
@@ -109,21 +109,14 @@
       attrs: ['label', 'color'],
 
       mounted(root) {
-        logEvent(`✅ shadow-button mounted: "${this.getAttribute('label')}"`);
+        logEvent(`✅ shadow-button mounted: "${this.label}"`);
         this.updateButton();
-      },
-
-      changed(attr) {
-        logEvent(`🔄 Attribute "${attr}" changed`);
-        if (attr === 'label' || attr === 'color') {
-          this.updateButton();
-        }
       },
 
       handles: {
         'button': {
           click() {
-            const label = this.getAttribute('label');
+            const label = this.label;
             logEvent(`🔘 Button clicked: "${label}"`);
             this.dispatchEvent(new CustomEvent('shadow-click', {
               bubbles: true,
@@ -136,8 +129,8 @@
       methods: {
         updateButton() {
           const btn = this.shadowRoot.querySelector('button');
-          btn.textContent = this.getAttribute('label') || 'Click';
-          btn.style.background = this.getAttribute('color') || '#3498db';
+          btn.textContent = this.label || 'Click';
+          btn.style.background = this.color || '#3498db';
         }
       }
     });
@@ -153,8 +146,8 @@
       const color = document.getElementById('colorInput').value;
 
       const btn = document.createElement('shadow-button');
-      btn.setAttribute('label', label);
-      btn.setAttribute('color', color);
+      btn.label = label;
+      btn.color = color;
       btn.className = 'mb-2';
 
       document.getElementById('customButtons').appendChild(btn);

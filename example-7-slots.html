@@ -123,128 +123,6 @@
 		</div>
 	</div>
 
-	<!-- Templates -->
-	<template id="card-template" class="source">
-		<style>
-			@scope {
-				.card {
-					border: 2px solid #3498db;
-					border-radius: 8px;
-					padding: 20px;
-					background: #2c3e50;
-					color: white;
-					margin: 10px 0;
-				}
-			}
-		</style>
-		<div class="card">
-			<div class="card-body">
-				<slot>This is the default content shown when no slot content is provided.</slot>
-			</div>
-		</div>
-	</template>
-
-	<template id="dialog-template" class="source">
-		<style>
-			@scope {
-				.dialog {
-					border: 2px solid #9b59b6;
-					border-radius: 8px;
-					background: white;
-					color: #333;
-					margin: 10px 0;
-					overflow: hidden;
-				}
-
-				.dialog-header {
-					background: #9b59b6;
-					color: white;
-					padding: 15px;
-					font-weight: bold;
-					font-size: 1.2em;
-				}
-
-				.dialog-body {
-					padding: 20px;
-				}
-
-				.dialog-footer {
-					background: #ecf0f1;
-					padding: 15px;
-					text-align: right;
-				}
-			}
-		</style>
-		<div class="dialog">
-			<div class="dialog-header">
-				<slot name="title">Dialog Title</slot>
-			</div>
-			<div class="dialog-body">
-				<slot name="content">Dialog content goes here.</slot>
-			</div>
-			<div class="dialog-footer">
-				<slot name="footer">
-					<button class="btn btn-sm btn-primary">OK</button>
-				</slot>
-			</div>
-		</div>
-	</template>
-
-	<template id="article-template" class="source">
-		<style>
-			@scope {
-
-				.article {
-					border: 1px solid #ddd;
-					border-radius: 8px;
-					background: white;
-					color: #333;
-					margin: 10px 0;
-				}
-
-				.article-header {
-					background: #34495e;
-					color: white;
-					padding: 20px;
-				}
-
-				.article-header h3 {
-					margin: 0 0 10px 0;
-				}
-
-				.article-author {
-					font-size: 0.9em;
-					color: #ecf0f1;
-				}
-
-				.article-body {
-					padding: 20px;
-				}
-
-				.article-footer {
-					background: #f8f9fa;
-					padding: 15px;
-					font-size: 0.9em;
-					color: #6c757d;
-				}
-			}
-		</style>
-		<article class="article">
-			<header class="article-header">
-				<slot name="header"></slot>
-				<div class="article-author">
-					<slot name="author">Anonymous</slot>
-				</div>
-			</header>
-			<div class="article-body">
-				<slot>Article content goes here.</slot>
-			</div>
-			<footer class="article-footer">
-				<slot name="footer"></slot>
-			</footer>
-		</article>
-	</template>
-
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module" class="source">
 		import { wiet } from './wiet.js';
@@ -256,21 +134,24 @@
 		}
 
 		// Card component with default slot
-		wiet('card-component', '#card-template', {
+		wiet('card-component', './widgets/card-component.html', {
+			shadow: true,
 			mounted() {
 				logEvent('✅ card-component mounted');
 			}
 		});
 
 		// Dialog component with named slots
-		wiet('dialog-component', '#dialog-template', {
+		wiet('dialog-component', './widgets/dialog-component.html', {
+			shadow: true,
 			mounted() {
 				logEvent('✅ dialog-component mounted');
 			}
 		});
 
 		// Article component with mixed slots
-		wiet('article-component', '#article-template', {
+		wiet('article-component', './widgets/article-component.html', {
+			shadow: true,
 			mounted() {
 				logEvent('✅ article-component mounted');
 			}
