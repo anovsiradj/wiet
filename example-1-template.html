@@ -73,7 +73,7 @@
     <div class="greeting">
       <h3 class="greeting-text">Hello!</h3>
       <p class="message-text"></p>
-      <button class="btn btn-light greet-btn">👋 Send Greeting</button>
+      <button class="btn btn-light greet-btn"><i class="bi bi-emoji-smile me-1"></i> Send Greeting</button>
     </div>
   </template>
 
@@ -97,7 +97,7 @@
           '.greet-btn': {
             click() {
               const name = this.name || 'Guest';
-              logEvent(`👋 Greeting sent from ${name}`);
+              logEvent(`Greeting sent from ${name}`);
               this.dispatchEvent(new CustomEvent('greeting-sent', {
                 bubbles: true,
                 detail: { name, timestamp: Date.now() }
