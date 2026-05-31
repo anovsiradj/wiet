@@ -49,7 +49,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" class="source">
-    import { wiet } from './wiet.js';
+    import { wiet, mixin } from './wiet.js';
     import './widgets.js';
     const eventLog = document.getElementById('eventLog');
 
@@ -57,55 +57,57 @@
       eventLog.log(message, type);
     }
 
-    wiet('counter-widget', './widgets/counter-widget.html', {
-      attrs: ['start'],
+    wiet('counter-widget', class extends mixin() {
+      static attrs = ['start'];
+
+      constructor() {
+        super();
+        this.template = './widgets/counter-widget.html';
+        this.handles = {
+          '.btn-inc': {
+            click() {
+              this.count++;
+              this.updateDisplay();
+              logEvent(`➕ Increment button clicked (count: ${this.count})`, 'success');
+              this.dispatchEvent(new CustomEvent('count-changed', {
+                bubbles: true,
+                detail: { count: this.count, action: 'increment' }
+              }));
+            }
+          },
+          '.btn-dec': {
+            click() {
+              this.count--;
+              this.updateDisplay();
+              logEvent(`➖ Decrement button clicked (count: ${this.count})`, 'danger');
+              this.dispatchEvent(new CustomEvent('count-changed', {
+                bubbles: true,
+                detail: { count: this.count, action: 'decrement' }
+              }));
+            }
+          },
+          '.btn-reset': {
+            click() {
+              this.count = 0;
+              this.updateDisplay();
+              logEvent(`🔄 Reset button clicked (count: ${this.count})`, 'warning');
+              this.dispatchEvent(new CustomEvent('count-changed', {
+                bubbles: true,
+                detail: { count: this.count, action: 'reset' }
+              }));
+            }
+          }
+        };
+      }
 
       mounted() {
         logEvent('✅ counter-widget mounted', 'success');
         this.count = parseInt(this.start) || 0;
         this.updateDisplay();
-      },
+      }
 
-      handles: {
-        '.btn-inc': {
-          click() {
-            this.count++;
-            this.updateDisplay();
-            logEvent(`➕ Increment button clicked (count: ${this.count})`, 'success');
-            this.dispatchEvent(new CustomEvent('count-changed', {
-              bubbles: true,
-              detail: { count: this.count, action: 'increment' }
-            }));
-          }
-        },
-        '.btn-dec': {
-          click() {
-            this.count--;
-            this.updateDisplay();
-            logEvent(`➖ Decrement button clicked (count: ${this.count})`, 'danger');
-            this.dispatchEvent(new CustomEvent('count-changed', {
-              bubbles: true,
-              detail: { count: this.count, action: 'decrement' }
-            }));
-          }
-        },
-        '.btn-reset': {
-          click() {
-            this.count = 0;
-            this.updateDisplay();
-            logEvent(`🔄 Reset button clicked (count: ${this.count})`, 'warning');
-            this.dispatchEvent(new CustomEvent('count-changed', {
-              bubbles: true,
-              detail: { count: this.count, action: 'reset' }
-            }));
-          }
-        }
-      },
-
-      methods: {
-        updateDisplay() {
-          this.querySelector('.counter-display').textContent = this.count;
-        }
+      updateDisplay() {
+        this.querySelector('.counter-display').textContent = this.count;
       }
     });
 

@@ -31,7 +31,50 @@ const normalizeAttrs = attrs => {
   }).filter(Boolean);
 };
 
-class WietStaticElement extends HTMLElement {
+export function wiet(tag, ComponentClass, options = {}) {
+  if (ComponentClass.attrs) {
+    const normalizedAttrs = normalizeAttrs(ComponentClass.attrs);
+
+    if (!Object.getOwnPropertyDescriptor(ComponentClass, 'observedAttributes')) {
+      Object.defineProperty(ComponentClass, 'observedAttributes', {
+        get() {
+          return normalizedAttrs.map(entry => entry.attr);
+        },
+        configurable: true,
+        enumerable: true
+      });
+    }
+
+    normalizedAttrs.forEach(({ attr, prop }) => {
+      if (!(prop in ComponentClass.prototype)) {
+        Object.defineProperty(ComponentClass.prototype, prop, {
+          get() {
+            return this.getAttribute(attr);
+          },
+          set(value) {
+            if (value == null) {
+              this.removeAttribute(attr);
+            } else {
+              this.setAttribute(attr, String(value));
+            }
+          },
+          configurable: true,
+          enumerable: true,
+        });
+      }
+    });
+  }
+
+  if (typeof tag === 'object' && tag.extends) {
+    customElements.define(tag.name, ComponentClass, { extends: tag.extends });
+  } else {
+    customElements.define(tag, ComponentClass, options);
+  }
+
+  return ComponentClass;
+}
+
+const mixin = (Base = HTMLElement) => class extends Base {
   constructor() {
     super();
     this._isConnected = false;
@@ -172,111 +215,81 @@ class WietStaticElement extends HTMLElement {
     }
   }
 
-  runChanged(config, name, oldVal, newVal) {
+  runChanged(name, oldVal, newVal) {
     if (this._hasRendered) {
-      config.changed?.call(this, name, oldVal, newVal);
+      this.changed?.(name, oldVal, newVal);
     }
   }
 
   logTemplateError(tag, error) {
     console.error(`[wiet] ${tag}: template load error`, error);
   }
-}
 
-function wiet(tag, template, config = {}) {
-  const existingDefinition = customElements.get(tag);
-  if (existingDefinition) {
-    return existingDefinition;
+  // --- Standard Lifecycle Hooks ---
+
+  async connectedCallback() {
+    if (!this._hasRendered) {
+      await this.render();
+    }
+
+    this._isConnected = true;
+    this.mounted?.(this._renderRoot);
   }
 
-  const normalizedAttrs = normalizeAttrs(config.attrs);
+  disconnectedCallback() {
+    this._isConnected = false;
+    this.unmounted?.();
+    this.cleanupEventDelegates();
+  }
 
-  class WietDynamicElement extends WietStaticElement {
-    async connectedCallback() {
-      if (!this._hasRendered) {
-        await this.render(tag, template, config);
-      }
+  adoptedCallback() {
+    this.adopted?.();
+  }
 
-      this._isConnected = true;
-      config.mounted?.call(this, this._renderRoot);
-    }
+  attributeChangedCallback(name, oldVal, newVal) {
+    this.runChanged(name, oldVal, newVal);
+  }
 
-    disconnectedCallback() {
-      this._isConnected = false;
-      config.unmounted?.call(this);
-    }
+  // --- Rendering ---
 
-    async render(tag, template, config) {
-      const renderVersion = this.nextRenderVersion();
-      const root = this.resolveRoot(config.shadow);
-      const slotContent = config.shadow ? '' : this.innerHTML;
+  async render() {
+    const renderVersion = this.nextRenderVersion();
+    const root = this.resolveRoot(this.useShadow);
+    const slotContent = this.useShadow ? '' : this.innerHTML;
 
-      let html = '';
+    let html = '';
+    if (this.template) {
       try {
-        html = await this.loadTemplate(template);
+        html = await this.loadTemplate(this.template);
       } catch (error) {
-        this.logTemplateError(tag, error);
+        this.logTemplateError(this.tagName.toLowerCase(), error);
         return;
       }
-
-      if (this.isRenderStale(renderVersion)) {
-        return;
-      }
-
-      this._renderRoot = root;
-      root.innerHTML = html;
-
-      if (!config.shadow) {
-        this.processSlots(root, slotContent);
-      }
-
-      this.cleanupEventDelegates();
-      this.createEventDelegates(root, config.handles);
-      this._hasRendered = true;
     }
-  }
 
-  if (config.methods) {
-    const descriptors = Object.getOwnPropertyDescriptors(config.methods);
-    Object.defineProperties(WietDynamicElement.prototype, descriptors);
-  }
-
-  if (config.changed) {
-    Object.defineProperty(WietDynamicElement, 'observedAttributes', {
-      value: normalizedAttrs.map(entry => entry.attr),
-    });
-
-    WietDynamicElement.prototype.attributeChangedCallback = function(name, oldVal, newVal) {
-      this.runChanged(config, name, oldVal, newVal);
-    };
-  }
-
-  normalizedAttrs.forEach(({ attr, prop }) => {
-    if (prop in WietDynamicElement.prototype) {
+    if (this.isRenderStale(renderVersion)) {
       return;
     }
 
-    Object.defineProperty(WietDynamicElement.prototype, prop, {
-      get() {
-        return this.getAttribute(attr);
-      },
-      set(value) {
-        if (value == null) {
-          this.removeAttribute(attr);
-        } else {
-          this.setAttribute(attr, String(value));
-        }
-      },
-      configurable: true,
-      enumerable: true,
-    });
-  });
+    this._renderRoot = root;
+    if (this.template) {
+      root.innerHTML = html;
+    }
 
-  customElements.define(tag, WietDynamicElement);
-  return WietDynamicElement;
-}
+    if (!this.useShadow && this.template) {
+      this.processSlots(root, slotContent);
+    }
 
-function make(tagName, config) {
+    this.cleanupEventDelegates();
+    if (this.handles) {
+      this.createEventDelegates(root, this.handles);
+    }
+    
+    this._hasRendered = true;
+  }
+};
+
+export function create(tagName, config) {
   config ??= {};
   config = {
     createOptions: {},
@@ -299,8 +312,4 @@ function make(tagName, config) {
   return config.handle(element);
 }
 
-export {
-  make,
-  wiet,
-  WietStaticElement,
-}
+export { mixin };

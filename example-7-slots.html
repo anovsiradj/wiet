@@ -125,7 +125,7 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module" class="source">
-		import { wiet } from './wiet.js';
+		import { wiet, mixin } from './wiet.js';
 		import './widgets.js';
 		const eventLog = document.getElementById('eventLog');
 
@@ -134,24 +134,36 @@
 		}
 
 		// Card component with default slot
-		wiet('card-component', './widgets/card-component.html', {
-			shadow: true,
+		wiet('card-component', class extends mixin() {
+			constructor() {
+				super();
+				this.template = './widgets/card-component.html';
+				this.useShadow = true;
+			}
 			mounted() {
 				logEvent('✅ card-component mounted');
 			}
 		});
 
 		// Dialog component with named slots
-		wiet('dialog-component', './widgets/dialog-component.html', {
-			shadow: true,
+		wiet('dialog-component', class extends mixin() {
+			constructor() {
+				super();
+				this.template = './widgets/dialog-component.html';
+				this.useShadow = true;
+			}
 			mounted() {
 				logEvent('✅ dialog-component mounted');
 			}
 		});
 
 		// Article component with mixed slots
-		wiet('article-component', './widgets/article-component.html', {
-			shadow: true,
+		wiet('article-component', class extends mixin() {
+			constructor() {
+				super();
+				this.template = './widgets/article-component.html';
+				this.useShadow = true;
+			}
 			mounted() {
 				logEvent('✅ article-component mounted');
 			}

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="en" data-bs-theme="dark">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Example 10 - Attr Mapping | Wiet</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+	<page-header></page-header>
+
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-lg-8 mx-auto">
+				<example-section icon="bi bi-fonts" title="Example 10: Attribute Mapping" description="wiet auto-converts hyphenated attribute names to camelCase JS properties (kebab-case → camelCase). You can also declare explicit attr/prop mappings using the object form of static attrs." variant="info"></example-section>
+
+				<div class="card mb-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-eye"></i> Live Demo — User Profile Card</h5>
+					</div>
+					<div class="card-body source">
+						<p class="text-muted small">
+							The component uses hyphenated HTML attributes. Wiet maps them automatically to camelCase JS properties.
+						</p>
+
+						<user-profile
+							first-name="Jane"
+							last-name="Doe"
+							job-title="Senior Engineer"
+							avatar-url="https://i.pravatar.cc/80?img=47"
+							is-online="true">
+						</user-profile>
+
+						<div class="mt-4">
+							<h6>Update via JS properties (camelCase):</h6>
+							<div class="row g-2">
+								<div class="col-6">
+									<input type="text" class="form-control form-control-sm" id="firstNameInput" placeholder="firstName">
+								</div>
+								<div class="col-6">
+									<input type="text" class="form-control form-control-sm" id="lastNameInput" placeholder="lastName">
+								</div>
+								<div class="col-12">
+									<input type="text" class="form-control form-control-sm" id="jobTitleInput" placeholder="jobTitle">
+								</div>
+								<div class="col-12">
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" id="isOnlineInput" checked>
+										<label class="form-check-label" for="isOnlineInput">isOnline</label>
+									</div>
+								</div>
+								<div class="col-auto">
+									<button class="btn btn-info btn-sm" id="applyProps">
+										<i class="bi bi-arrow-repeat"></i> Apply
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card mb-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-braces"></i> Explicit Mapping (object form)</h5>
+					</div>
+					<div class="card-body source">
+						<p class="text-muted small">
+							Use the object form of <code>static attrs</code> to override the auto-generated property name.
+						</p>
+						<score-badge
+							pts="42"
+							max-pts="100"
+							label="Quiz Score">
+						</score-badge>
+					</div>
+				</div>
+
+				<event-log id="eventLog"></event-log>
+				<view-code></view-code>
+
+				<div class="card mt-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-table"></i> Mapping Rules</h5>
+					</div>
+					<div class="card-body">
+						<table class="table table-bordered table-sm">
+							<thead>
+								<tr>
+									<th>HTML Attribute</th>
+									<th>Auto JS Property</th>
+									<th>Override (object form)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td><code>first-name</code></td><td><code>firstName</code></td><td><code>{ attr: 'first-name', prop: 'firstName' }</code></td></tr>
+								<tr><td><code>job-title</code></td><td><code>jobTitle</code></td><td><code>{ attr: 'job-title', prop: 'title' }</code> ← custom</td></tr>
+								<tr><td><code>is-online</code></td><td><code>isOnline</code></td><td></td></tr>
+								<tr><td><code>pts</code></td><td><code>pts</code></td><td><code>{ attr: 'pts', prop: 'points' }</code> ← custom</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<template id="user-profile-tpl">
+		<style>
+			.profile-card {
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				background: var(--bs-card-bg, #1e1e2e);
+				border: 1px solid var(--bs-border-color);
+				border-radius: 12px;
+				padding: 20px;
+			}
+			.avatar { position: relative; flex-shrink: 0; }
+			.avatar img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--bs-primary); }
+			.status-dot {
+				position: absolute;
+				bottom: 2px; right: 2px;
+				width: 14px; height: 14px;
+				border-radius: 50%;
+				border: 2px solid var(--bs-body-bg, #1e1e2e);
+				background: #6c757d;
+			}
+			.status-dot.online { background: #198754; }
+			.info .name { font-size: 1.15rem; font-weight: 600; margin: 0 0 2px; }
+			.info .title { color: var(--bs-secondary-color); font-size: .9rem; margin: 0; }
+		</style>
+		<div class="profile-card">
+			<div class="avatar">
+				<img src="" alt="avatar" class="avatar-img">
+				<span class="status-dot"></span>
+			</div>
+			<div class="info">
+				<p class="name full-name"></p>
+				<p class="title job-title-text"></p>
+			</div>
+		</div>
+	</template>
+
+	<template id="score-badge-tpl">
+		<style>
+			.score-wrap { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; }
+			.score-label { font-size: .8rem; color: var(--bs-secondary-color); text-transform: uppercase; letter-spacing: .08em; }
+			.score-bar-wrap { background: var(--bs-border-color); border-radius: 999px; height: 10px; width: 200px; overflow: hidden; }
+			.score-bar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #0d6efd, #6610f2); transition: width .4s ease; }
+			.score-value { font-size: 1.4rem; font-weight: 700; }
+		</style>
+		<div class="score-wrap">
+			<span class="score-label"></span>
+			<div class="score-value"></div>
+			<div class="score-bar-wrap"><div class="score-bar" style="width:0%"></div></div>
+		</div>
+	</template>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" class="source">
+		import { wiet, mixin } from './wiet.js';
+		import './widgets.js';
+		const eventLog = document.getElementById('eventLog');
+
+		// --- user-profile: auto kebab-case → camelCase ---
+		wiet('user-profile', class extends mixin() {
+			// wiet auto-generates: firstName, lastName, jobTitle, avatarUrl, isOnline
+			static attrs = ['first-name', 'last-name', 'job-title', 'avatar-url', 'is-online'];
+
+			constructor() {
+				super();
+				this.template = '#user-profile-tpl';
+			}
+
+			mounted() {
+				this.update();
+				eventLog.log('✅ user-profile mounted', 'success');
+			}
+
+			changed(attr, oldVal, newVal) {
+				this.update();
+				eventLog.log(`🔄 ${attr}: "${oldVal}" → "${newVal}"`, 'info');
+			}
+
+			update() {
+				// Access via auto-generated camelCase properties
+				const first = this.firstName || '';
+				const last = this.lastName || '';
+				const job = this.jobTitle || '';
+				const avatar = this.avatarUrl || 'https://i.pravatar.cc/80';
+				const online = this.isOnline === 'true';
+
+				this.querySelector('.full-name').textContent = `${first} ${last}`.trim();
+				this.querySelector('.job-title-text').textContent = job;
+				this.querySelector('.avatar-img').src = avatar;
+
+				const dot = this.querySelector('.status-dot');
+				dot.classList.toggle('online', online);
+				dot.title = online ? 'Online' : 'Offline';
+			}
+		});
+
+		// --- score-badge: explicit attr → prop override ---
+		wiet('score-badge', class extends mixin() {
+			static attrs = [
+				{ attr: 'pts', prop: 'points' },      // attr "pts" → this.points
+				{ attr: 'max-pts', prop: 'maxPoints' }, // attr "max-pts" → this.maxPoints
+				'label',
+			];
+
+			constructor() {
+				super();
+				this.template = '#score-badge-tpl';
+			}
+
+			mounted() {
+				this.update();
+				eventLog.log('✅ score-badge mounted', 'success');
+			}
+
+			changed() {
+				this.update();
+			}
+
+			update() {
+				// Using custom property names defined by explicit mapping
+				const pts = Number(this.points) || 0;
+				const max = Number(this.maxPoints) || 100;
+				const pct = Math.min(100, Math.round((pts / max) * 100));
+
+				this.querySelector('.score-label').textContent = this.label || 'Score';
+				this.querySelector('.score-value').textContent = `${pts} / ${max}`;
+				this.querySelector('.score-bar').style.width = `${pct}%`;
+			}
+		});
+
+		// Apply button
+		document.getElementById('applyProps').addEventListener('click', () => {
+			const profile = document.querySelector('user-profile');
+			const fn = document.getElementById('firstNameInput').value.trim();
+			const ln = document.getElementById('lastNameInput').value.trim();
+			const jt = document.getElementById('jobTitleInput').value.trim();
+			const online = document.getElementById('isOnlineInput').checked;
+
+			// Set via camelCase JS properties — wiet maps back to attrs
+			if (fn) profile.firstName = fn;
+			if (ln) profile.lastName = ln;
+			if (jt) profile.jobTitle = jt;
+			profile.isOnline = String(online);
+		});
+
+		setTimeout(() => eventLog.log('🚀 Attr mapping demo ready', 'success'), 100);
+	</script>
+</body>
+
+</html>

@@ -110,7 +110,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" class="source">
-    import { wiet } from './wiet.js';
+    import { wiet, mixin } from './wiet.js';
     import './widgets.js';
     const eventLog = document.getElementById('eventLog');
 
@@ -121,30 +121,33 @@
     let componentCount = 0;
     let currentComponent = null;
 
-    wiet('lifecycle-demo', './widgets/lifecycle-demo.html', {
-      attrs: ['data'],
+    wiet('lifecycle-demo', class extends mixin() {
+      static attrs = ['data'];
+
+      constructor() {
+        super();
+        this.template = './widgets/lifecycle-demo.html';
+      }
 
       mounted() {
         logEvent('✅ MOUNTED: Component added to DOM', 'success');
         this.querySelector('.status').textContent = 'Status: Mounted';
         this.updateData();
-      },
+      }
 
       unmounted() {
         logEvent('❌ UNMOUNTED: Component removed from DOM', 'danger');
-      },
+      }
 
       changed(attr, oldVal, newVal) {
         logEvent(`🔄 CHANGED: Attribute "${attr}" = "${newVal}" (was "${oldVal}")`, 'warning');
         this.querySelector('.status').textContent = `Status: Attribute "${attr}" changed`;
         this.updateData();
-      },
+      }
 
-      methods: {
-        updateData() {
-          const data = this.data || 'No data';
-          this.querySelector('.data-display').textContent = `Data: ${data}`;
-        }
+      updateData() {
+        const data = this.data || 'No data';
+        this.querySelector('.data-display').textContent = `Data: ${data}`;
       }
     });
 
@@ -190,6 +193,14 @@
 
       const newData = document.getElementById('dataInput').value || `Updated at ${new Date().toLocaleTimeString()}`;
       logEvent(`📝 Updating attribute to: "${newData}"`, 'info');
-        currentComponent.data = newData;
+      currentComponent.data = newData;
+    });
+
+    // Wait for event-log component to be ready before logging
+    setTimeout(() => {
+      logEvent('🚀 Lifecycle demo initialized', 'success');
+    }, 100);
+  </script>
+</body>
 
 </html>

@@ -74,7 +74,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" class="source">
-    import { wiet } from './wiet.js';
+    import { wiet, mixin } from './wiet.js';
     import './widgets.js';
     const eventLog = document.getElementById('eventLog');
 
@@ -99,39 +99,41 @@
       }
     }
 
-    wiet('product-card', './widgets/product-card.html', {
-      shadow: true,
-      attrs: ['product-name', 'price', 'description'],
+    wiet('product-card', class extends mixin() {
+      static attrs = ['product-name', 'price', 'description'];
 
-      mounted(root) {
+      constructor() {
+        super();
+        this.template = './widgets/product-card.html';
+        this.useShadow = true;
+        this.handles = {
+          '.add-to-cart': {
+            click() {
+              const productName = this.productName;
+              const price = this.price;
+              logEvent(`🛒 Added to cart: ${productName} ($${price})`);
+              this.dispatchEvent(new CustomEvent('add-to-cart', {
+                bubbles: true,
+                detail: {
+                  product: productName,
+                  price: parseFloat(price)
+                }
+              }));
+            }
+          }
+        };
+      }
+
+      mounted() {
         logEvent(`✅ product-card mounted: ${this.productName}`);
         this.updateProduct();
-      },
+      }
 
-      handles: {
-        '.add-to-cart': {
-          click() {
-            const productName = this.productName;
-            const price = this.price;
-            logEvent(`🛒 Added to cart: ${productName} ($${price})`);
-            this.dispatchEvent(new CustomEvent('add-to-cart', {
-              bubbles: true,
-              detail: {
-                product: productName,
-                price: parseFloat(price)
-              }
-            }));
-          }
-        }
-      },
-
-      methods: {
-        updateProduct() {
-          const root = this.shadowRoot;
-          root.querySelector('.product-name').textContent = this.productName || 'Product';
-          root.querySelector('.description').textContent = this.description || 'No description';
-          root.querySelector('.price').textContent = `$${this.price || '0.00'}`;
-        }
+      updateProduct() {
+        const root = this.shadowRoot;
+        root.querySelector('.product-name').textContent = this.productName || 'Product';
+        root.querySelector('.description').textContent = this.description || 'No description';
+        root.querySelector('.price').textContent = `$${this.price || '0.00'}`;
       }
     });
 

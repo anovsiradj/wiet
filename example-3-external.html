@@ -66,7 +66,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" class="source">
-    import { wiet } from './wiet.js';
+    import { wiet, mixin } from './wiet.js';
     import './widgets.js';
     const eventLog = document.getElementById('eventLog');
 
@@ -74,55 +74,57 @@
       eventLog.log(message, type);
     }
 
-    wiet('user-card', './widgets/user-card.html', {
-      attrs: ['user-name', 'email', 'role'],
+    wiet('user-card', class extends mixin() {
+      static attrs = ['user-name', 'email', 'role'];
+
+      constructor() {
+        super();
+        this.template = './widgets/user-card.html';
+        this.handles = {
+          '.edit': {
+            click() {
+              const userName = this.userName;
+              logEvent(`✏️ Edit clicked for user: ${userName}`);
+              this.dispatchEvent(new CustomEvent('user-edit', {
+                bubbles: true,
+                detail: {
+                  name: this.userName,
+                  email: this.email
+                }
+              }));
+            }
+          },
+          '.delete': {
+            click() {
+              const userName = this.userName;
+              logEvent(`🗑️ Delete clicked for user: ${userName}`);
+              if (confirm(`Delete user ${userName}?`)) {
+                this.dispatchEvent(new CustomEvent('user-delete', {
+                  bubbles: true,
+                  detail: { name: userName }
+                }));
+                this.remove();
+              }
+            }
+          }
+        };
+      }
 
       mounted() {
         logEvent(`✅ user-card mounted: ${this.userName}`);
         this.updateUserInfo();
-      },
+      }
 
       changed(attr) {
         if (attr === 'user-name' || attr === 'email' || attr === 'role') {
           this.updateUserInfo();
         }
-      },
+      }
 
-      handles: {
-        '.edit': {
-          click() {
-            const userName = this.userName;
-            logEvent(`✏️ Edit clicked for user: ${userName}`);
-            this.dispatchEvent(new CustomEvent('user-edit', {
-              bubbles: true,
-              detail: {
-                name: this.userName,
-                email: this.email
-              }
-            }));
-          }
-        },
-        '.delete': {
-          click() {
-            const userName = this.userName;
-            logEvent(`🗑️ Delete clicked for user: ${userName}`);
-            if (confirm(`Delete user ${userName}?`)) {
-              this.dispatchEvent(new CustomEvent('user-delete', {
-                bubbles: true,
-                detail: { name: userName }
-              }));
-              this.remove();
-            }
-          }
-        }
-      },
-
-      methods: {
-        updateUserInfo() {
-          this.querySelector('.name').textContent = this.userName || 'Unknown';
-          this.querySelector('.email').textContent = `Email: ${this.email || 'N/A'}`;
-          this.querySelector('.role').textContent = `Role: ${this.role || 'Member'}`;
-        }
+      updateUserInfo() {
+        this.querySelector('.name').textContent = this.userName || 'Unknown';
+        this.querySelector('.email').textContent = `Email: ${this.email || 'N/A'}`;
+        this.querySelector('.role').textContent = `Role: ${this.role || 'Member'}`;
       }
     });
 

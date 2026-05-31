@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en" data-bs-theme="dark">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Example 11 - Component Composition | Wiet</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+	<page-header></page-header>
+
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-lg-8 mx-auto">
+				<example-section icon="bi bi-diagram-3-fill" title="Example 11: Component Composition" description="Multiple wiet components working together. Children dispatch custom events that bubble up to a parent orchestrator. No shared globals — pure DOM event communication." variant="warning"></example-section>
+
+				<!-- Composed App: Shopping Cart -->
+				<div class="card mb-4 source">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-bag-fill"></i> Shopping Cart Demo</h5>
+					</div>
+					<div class="card-body">
+						<div class="row g-3">
+							<div class="col-md-7">
+								<h6 class="text-muted mb-2">Products</h6>
+								<div id="productList" class="d-flex flex-column gap-2">
+									<product-item name="Mechanical Keyboard" price="89.99" stock="5"></product-item>
+									<product-item name="USB-C Hub" price="34.99" stock="12"></product-item>
+									<product-item name="Monitor Stand" price="49.99" stock="3"></product-item>
+									<product-item name="Webcam Pro" price="129.99" stock="0"></product-item>
+								</div>
+							</div>
+							<div class="col-md-5">
+								<h6 class="text-muted mb-2">Cart</h6>
+								<cart-panel id="cartPanel"></cart-panel>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<event-log id="eventLog"></event-log>
+				<view-code></view-code>
+
+				<div class="card mt-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-info-circle"></i> Communication Pattern</h5>
+					</div>
+					<div class="card-body">
+						<pre class="bg-dark text-light p-3 rounded small"><code>// Child dispatches a bubbling CustomEvent
+this.dispatchEvent(new CustomEvent('cart:add', {
+  bubbles: true,
+  detail: { name, price }
+}));
+
+// Parent or document listens — no tight coupling
+document.addEventListener('cart:add', (e) => {
+  const { name, price } = e.detail;
+  // update cart state
+});</code></pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- product-item template -->
+	<template id="product-item-tpl">
+		<style>
+			:host-context([data-bs-theme="dark"]) .product-row { background: #2b2d3e; }
+			.product-row {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				padding: 12px;
+				border-radius: 8px;
+				background: #f8f9fa;
+				border: 1px solid var(--bs-border-color);
+			}
+			.product-info { flex: 1; }
+			.product-name { font-weight: 600; margin: 0; font-size: .95rem; }
+			.product-price { color: #0d6efd; font-weight: 700; margin: 0; }
+			.product-stock { font-size: .75rem; color: var(--bs-secondary-color); }
+		</style>
+		<div class="product-row">
+			<div class="product-info">
+				<p class="product-name"></p>
+				<p class="product-price"></p>
+				<p class="product-stock"></p>
+			</div>
+			<button class="btn btn-sm btn-primary add-btn">
+				<i class="bi bi-cart-plus"></i> Add
+			</button>
+		</div>
+	</template>
+
+	<!-- cart-panel template -->
+	<template id="cart-panel-tpl">
+		<style>
+			.cart-wrap { border: 1px solid var(--bs-border-color); border-radius: 8px; padding: 12px; height: 100%; }
+			.cart-items { min-height: 80px; }
+			.cart-item { display: flex; justify-content: space-between; font-size: .88rem; padding: 4px 0; border-bottom: 1px solid var(--bs-border-color); }
+			.cart-empty { color: var(--bs-secondary-color); font-size: .9rem; text-align: center; padding: 24px 0; }
+			.cart-total { font-weight: 700; text-align: right; margin-top: 8px; font-size: 1rem; }
+			.checkout-btn { width: 100%; margin-top: 8px; }
+		</style>
+		<div class="cart-wrap">
+			<div class="cart-items"></div>
+			<div class="cart-total">Total: $0.00</div>
+			<button class="btn btn-success btn-sm checkout-btn" disabled>
+				<i class="bi bi-credit-card"></i> Checkout
+			</button>
+		</div>
+	</template>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" class="source">
+		import { wiet, mixin } from './wiet.js';
+		import './widgets.js';
+		const eventLog = document.getElementById('eventLog');
+
+		// --- product-item: child component ---
+		wiet('product-item', class extends mixin() {
+			static attrs = ['name', 'price', 'stock'];
+
+			constructor() {
+				super();
+				this.template = '#product-item-tpl';
+			}
+
+			mounted() {
+				this.update();
+			}
+
+			changed() {
+				this.update();
+			}
+
+			update() {
+				const stock = Number(this.stock);
+				this.querySelector('.product-name').textContent = this.name || '';
+				this.querySelector('.product-price').textContent = `$${Number(this.price).toFixed(2)}`;
+				this.querySelector('.product-stock').textContent =
+					stock > 0 ? `${stock} in stock` : 'Out of stock';
+
+				const btn = this.querySelector('.add-btn');
+				btn.disabled = stock === 0;
+
+				// Dispatch bubbling custom event on click
+				btn.onclick = () => {
+					if (stock === 0) return;
+					this.dispatchEvent(new CustomEvent('cart:add', {
+						bubbles: true,
+						detail: { name: this.name, price: Number(this.price) },
+					}));
+				};
+			}
+		});
+
+		// --- cart-panel: parent/orchestrator component ---
+		wiet('cart-panel', class extends mixin() {
+			constructor() {
+				super();
+				this.template = '#cart-panel-tpl';
+				this._items = [];
+			}
+
+			mounted() {
+				// Listen for events from ANY child (bubbled from product-item)
+				document.addEventListener('cart:add', (e) => {
+					this._items.push(e.detail);
+					this.renderCart();
+					eventLog.log(`🛒 Added to cart: ${e.detail.name} — $${e.detail.price.toFixed(2)}`, 'success');
+				});
+
+				// Checkout
+				this.querySelector('.checkout-btn').addEventListener('click', () => {
+					const total = this._items.reduce((s, i) => s + i.price, 0);
+					eventLog.log(`💳 Checkout! ${this._items.length} item(s) — Total: $${total.toFixed(2)}`, 'info');
+					this._items = [];
+					this.renderCart();
+				});
+			}
+
+			renderCart() {
+				const container = this.querySelector('.cart-items');
+				const totalEl = this.querySelector('.cart-total');
+				const checkoutBtn = this.querySelector('.checkout-btn');
+
+				if (this._items.length === 0) {
+					container.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+					totalEl.textContent = 'Total: $0.00';
+					checkoutBtn.disabled = true;
+					return;
+				}
+
+				container.innerHTML = this._items.map((item, i) => `
+					<div class="cart-item">
+						<span>${item.name}</span>
+						<span>$${item.price.toFixed(2)} <button class="btn btn-sm p-0 ms-2 text-danger remove-item" data-idx="${i}"><i class="bi bi-x"></i></button></span>
+					</div>
+				`).join('');
+
+				container.querySelectorAll('.remove-item').forEach(btn => {
+					btn.addEventListener('click', () => {
+						const idx = Number(btn.dataset.idx);
+						const removed = this._items.splice(idx, 1)[0];
+						eventLog.log(`🗑️ Removed: ${removed.name}`, 'warning');
+						this.renderCart();
+					});
+				});
+
+				const total = this._items.reduce((s, i) => s + i.price, 0);
+				totalEl.textContent = `Total: $${total.toFixed(2)}`;
+				checkoutBtn.disabled = false;
+			}
+		});
+
+		setTimeout(() => eventLog.log('🚀 Composition demo ready', 'success'), 100);
+	</script>
+</body>
+
+</html>

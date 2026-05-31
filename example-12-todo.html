@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="en" data-bs-theme="dark">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Example 12 - Todo App (Complex) | Wiet</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<style>
+		.todo-item.done .todo-text { text-decoration: line-through; opacity: .5; }
+		.todo-item { transition: opacity .2s; }
+		.filter-bar .btn.active { box-shadow: 0 0 0 2px var(--bs-primary); }
+		.priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+		.priority-dot.high { background: #dc3545; }
+		.priority-dot.medium { background: #ffc107; }
+		.priority-dot.low { background: #198754; }
+		.progress-label { font-size: .8rem; color: var(--bs-secondary-color); }
+	</style>
+</head>
+
+<body>
+	<page-header></page-header>
+
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-lg-8 mx-auto">
+				<example-section icon="bi bi-check2-square" title="Example 12: Todo App (Complex)" description="A real-world todo list built from multiple wiet components — each responsible for a single concern. Demonstrates composition, lifecycle, attribute mapping, event delegation, custom events, and the create() utility." variant="danger"></example-section>
+
+				<todo-app id="todoApp" class="source"></todo-app>
+
+				<view-code></view-code>
+
+				<div class="card mt-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-diagram-3"></i> Component Tree</h5>
+					</div>
+					<div class="card-body">
+						<pre class="bg-dark text-light p-3 rounded small mb-0"><code>&lt;todo-app&gt;               ← orchestrator: owns state, listens to events
+  &lt;todo-form&gt;            ← input form: dispatches "todo:add"
+  &lt;todo-stats&gt;           ← progress bar: updates via "todo:changed"
+  &lt;todo-filter&gt;          ← filter tabs: dispatches "todo:filter"
+  &lt;todo-list&gt;            ← list: re-renders on state change
+    &lt;todo-item&gt; ×N       ← per-item: dispatches "todo:toggle", "todo:delete"
+  &lt;/todo-list&gt;
+&lt;/todo-app&gt;</code></pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- todo-form template -->
+	<template id="todo-form-tpl">
+		<form class="d-flex gap-2 mb-3 todo-form-el" novalidate>
+			<input type="text" class="form-control" id="todoInput" placeholder="What needs to be done?" required>
+			<select class="form-select" style="width:auto;flex-shrink:0" id="prioritySelect">
+				<option value="low">🟢 Low</option>
+				<option value="medium" selected>🟡 Medium</option>
+				<option value="high">🔴 High</option>
+			</select>
+			<button type="submit" class="btn btn-danger flex-shrink-0">
+				<i class="bi bi-plus-lg"></i>
+			</button>
+		</form>
+	</template>
+
+	<!-- todo-stats template -->
+	<template id="todo-stats-tpl">
+		<div class="mb-3">
+			<div class="d-flex justify-content-between mb-1">
+				<span class="progress-label stats-label">0 of 0 done</span>
+				<span class="progress-label stats-pct">0%</span>
+			</div>
+			<div class="progress" style="height:6px">
+				<div class="progress-bar bg-danger stats-bar" style="width:0%;transition:width .4s ease"></div>
+			</div>
+		</div>
+	</template>
+
+	<!-- todo-filter template -->
+	<template id="todo-filter-tpl">
+		<div class="d-flex gap-2 mb-3 filter-bar">
+			<button class="btn btn-sm btn-outline-secondary active" data-filter="all">All</button>
+			<button class="btn btn-sm btn-outline-secondary" data-filter="active">Active</button>
+			<button class="btn btn-sm btn-outline-secondary" data-filter="done">Done</button>
+		</div>
+	</template>
+
+	<!-- todo-list template -->
+	<template id="todo-list-tpl">
+		<div class="todo-list-wrap">
+			<div class="todo-items list-group"></div>
+			<div class="d-flex justify-content-between mt-2">
+				<small class="text-muted list-count"></small>
+				<button class="btn btn-sm btn-link text-danger p-0 clear-done-btn">Clear done</button>
+			</div>
+		</div>
+	</template>
+
+	<!-- todo-item template -->
+	<template id="todo-item-tpl">
+		<div class="list-group-item todo-item d-flex align-items-center gap-2 px-3 py-2">
+			<input type="checkbox" class="form-check-input todo-check" style="cursor:pointer">
+			<span class="priority-dot"></span>
+			<span class="todo-text flex-grow-1" style="cursor:pointer"></span>
+			<button class="btn btn-sm btn-link text-danger p-0 delete-btn" title="Delete">
+				<i class="bi bi-trash3"></i>
+			</button>
+		</div>
+	</template>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" class="source">
+		import { wiet, mixin, create } from './wiet.js';
+		import './widgets.js';
+
+		// --- Shared state store (plain object, no framework needed) ---
+		const store = {
+			todos: [
+				{ id: 1, text: 'Read wiet docs', priority: 'low', done: true },
+				{ id: 2, text: 'Build a custom element', priority: 'medium', done: false },
+				{ id: 3, text: 'Write unit tests', priority: 'high', done: false },
+			],
+			filter: 'all',
+			nextId: 4,
+		};
+
+		function filteredTodos() {
+			if (store.filter === 'active') return store.todos.filter(t => !t.done);
+			if (store.filter === 'done') return store.todos.filter(t => t.done);
+			return store.todos;
+		}
+
+		function notify(eventName, detail = {}) {
+			document.dispatchEvent(new CustomEvent(eventName, { bubbles: true, detail }));
+		}
+
+		// --- todo-form ---
+		wiet('todo-form', class extends mixin() {
+			constructor() {
+				super();
+				this.template = '#todo-form-tpl';
+				this.handles = {
+					'.todo-form-el': {
+						submit(e) {
+							e.preventDefault();
+							const input = this.querySelector('#todoInput');
+							const text = input.value.trim();
+							if (!text) return;
+							const priority = this.querySelector('#prioritySelect').value;
+							// Dispatch upward — todo-app will handle it
+							this.dispatchEvent(new CustomEvent('todo:add', {
+								bubbles: true,
+								detail: { text, priority },
+							}));
+							input.value = '';
+							input.focus();
+						},
+					},
+				};
+			}
+		});
+
+		// --- todo-stats ---
+		wiet('todo-stats', class extends mixin() {
+			constructor() {
+				super();
+				this.template = '#todo-stats-tpl';
+			}
+
+			mounted() {
+				document.addEventListener('todo:changed', () => this.update());
+				this.update();
+			}
+
+			update() {
+				const total = store.todos.length;
+				const done = store.todos.filter(t => t.done).length;
+				const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+
+				this.querySelector('.stats-label').textContent = `${done} of ${total} done`;
+				this.querySelector('.stats-pct').textContent = `${pct}%`;
+				this.querySelector('.stats-bar').style.width = `${pct}%`;
+			}
+		});
+
+		// --- todo-filter ---
+		wiet('todo-filter', class extends mixin() {
+			constructor() {
+				super();
+				this.template = '#todo-filter-tpl';
+				this.handles = {
+					'[data-filter]': {
+						click(e) {
+							const filter = e.target.closest('[data-filter]').dataset.filter;
+							this.dispatchEvent(new CustomEvent('todo:filter', {
+								bubbles: true,
+								detail: { filter },
+							}));
+						},
+					},
+				};
+			}
+
+			mounted() {
+				document.addEventListener('todo:changed', () => this.updateActive());
+			}
+
+			updateActive() {
+				this.querySelectorAll('[data-filter]').forEach(btn => {
+					btn.classList.toggle('active', btn.dataset.filter === store.filter);
+				});
+			}
+		});
+
+		// --- todo-item ---
+		wiet('todo-item', class extends mixin() {
+			static attrs = ['todo-id'];
+
+			constructor() {
+				super();
+				this.template = '#todo-item-tpl';
+			}
+
+			mounted() {
+				this.render();
+
+				this.querySelector('.todo-check').addEventListener('change', () => {
+					this.dispatchEvent(new CustomEvent('todo:toggle', {
+						bubbles: true,
+						detail: { id: Number(this.todoId) },
+					}));
+				});
+
+				this.querySelector('.delete-btn').addEventListener('click', () => {
+					this.dispatchEvent(new CustomEvent('todo:delete', {
+						bubbles: true,
+						detail: { id: Number(this.todoId) },
+					}));
+				});
+
+				this.querySelector('.todo-text').addEventListener('dblclick', () => {
+					const todo = store.todos.find(t => t.id === Number(this.todoId));
+					if (!todo) return;
+					const newText = prompt('Edit todo:', todo.text);
+					if (newText !== null && newText.trim()) {
+						todo.text = newText.trim();
+						notify('todo:changed');
+					}
+				});
+			}
+
+			render() {
+				const todo = store.todos.find(t => t.id === Number(this.todoId));
+				if (!todo) return;
+
+				const item = this.querySelector('.todo-item');
+				item.classList.toggle('done', todo.done);
+
+				this.querySelector('.todo-check').checked = todo.done;
+				this.querySelector('.todo-text').textContent = todo.text;
+
+				const dot = this.querySelector('.priority-dot');
+				dot.className = `priority-dot ${todo.priority}`;
+				dot.title = `Priority: ${todo.priority}`;
+			}
+
+			changed() { this.render(); }
+		});
+
+		// --- todo-list ---
+		wiet('todo-list', class extends mixin() {
+			constructor() {
+				super();
+				this.template = '#todo-list-tpl';
+			}
+
+			mounted() {
+				document.addEventListener('todo:changed', () => this.renderItems());
+				this.querySelector('.clear-done-btn').addEventListener('click', () => {
+					store.todos = store.todos.filter(t => !t.done);
+					notify('todo:changed');
+				});
+				this.renderItems();
+			}
+
+			renderItems() {
+				const container = this.querySelector('.todo-items');
+				const visible = filteredTodos();
+
+				container.innerHTML = '';
+				if (visible.length === 0) {
+					container.appendChild(create('div', {
+						props: {
+							className: 'list-group-item text-muted text-center py-4',
+							textContent: store.filter === 'done' ? 'No completed tasks yet.' : 'Nothing to do — enjoy your day!',
+						},
+					}));
+				} else {
+					visible.forEach(todo => {
+						const item = create('todo-item', {
+							attrs: { 'todo-id': String(todo.id) },
+						});
+						container.appendChild(item);
+					});
+				}
+
+				const count = visible.length;
+				this.querySelector('.list-count').textContent = `${count} item${count !== 1 ? 's' : ''}`;
+			}
+		});
+
+		// --- todo-app: top-level orchestrator ---
+		wiet('todo-app', class extends mixin() {
+			constructor() {
+				super();
+				// No external template — build inner DOM directly in mounted()
+			}
+
+			mounted() {
+				this.innerHTML = `
+					<div class="card">
+						<div class="card-header d-flex align-items-center gap-2">
+							<i class="bi bi-check2-all text-danger fs-5"></i>
+							<span class="fw-bold">Wiet Todo</span>
+						</div>
+						<div class="card-body">
+							<todo-form></todo-form>
+							<todo-stats></todo-stats>
+							<todo-filter></todo-filter>
+							<todo-list></todo-list>
+						</div>
+					</div>
+				`;
+
+				// Listen for all child events (they bubble up)
+				this.addEventListener('todo:add', (e) => {
+					store.todos.push({
+						id: store.nextId++,
+						text: e.detail.text,
+						priority: e.detail.priority,
+						done: false,
+					});
+					notify('todo:changed');
+				});
+
+				this.addEventListener('todo:toggle', (e) => {
+					const todo = store.todos.find(t => t.id === e.detail.id);
+					if (todo) todo.done = !todo.done;
+					notify('todo:changed');
+				});
+
+				this.addEventListener('todo:delete', (e) => {
+					store.todos = store.todos.filter(t => t.id !== e.detail.id);
+					notify('todo:changed');
+				});
+
+				this.addEventListener('todo:filter', (e) => {
+					store.filter = e.detail.filter;
+					notify('todo:changed');
+				});
+			}
+		});
+	</script>
+</body>
+
+</html>

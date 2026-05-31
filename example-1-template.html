@@ -79,7 +79,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" class="source">
-    import { wiet } from './wiet.js';
+    import { wiet, mixin } from './wiet.js';
     import './widgets.js';
     const eventLog = document.getElementById('eventLog');
 
@@ -87,34 +87,36 @@
       eventLog.log(message);
     }
 
-    wiet('greeting-card', '#greeting-template', {
-      attrs: ['name', 'message'],
+    wiet('greeting-card', class extends mixin() {
+      static attrs = ['name', 'message'];
+
+      constructor() {
+        super();
+        this.template = '#greeting-template';
+        this.handles = {
+          '.greet-btn': {
+            click() {
+              const name = this.name || 'Guest';
+              logEvent(`👋 Greeting sent from ${name}`);
+              this.dispatchEvent(new CustomEvent('greeting-sent', {
+                bubbles: true,
+                detail: { name, timestamp: Date.now() }
+              }));
+            }
+          }
+        };
+      }
 
       mounted() {
         logEvent('✅ greeting-card mounted');
         this.updateGreeting();
-      },
+      }
 
-      handles: {
-        '.greet-btn': {
-          click() {
-            const name = this.name || 'Guest';
-            logEvent(`👋 Greeting sent from ${name}`);
-            this.dispatchEvent(new CustomEvent('greeting-sent', {
-              bubbles: true,
-              detail: { name, timestamp: Date.now() }
-            }));
-          }
-        }
-      },
-
-      methods: {
-        updateGreeting() {
-          const name = this.name || 'Guest';
-          const message = this.message || 'Welcome!';
-          this.querySelector('.greeting-text').textContent = `Hello, ${name}!`;
-          this.querySelector('.message-text').textContent = message;
-        }
+      updateGreeting() {
+        const name = this.name || 'Guest';
+        const message = this.message || 'Welcome!';
+        this.querySelector('.greeting-text').textContent = `Hello, ${name}!`;
+        this.querySelector('.message-text').textContent = message;
       }
     });
 

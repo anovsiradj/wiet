@@ -3,9 +3,14 @@
  * Reusable components used across all example pages
  */
 
-import { make, wiet } from './wiet.js';
+import { create, wiet, mixin } from './wiet.js';
 
-wiet('view-code', './widgets/view-code.html', {
+wiet('view-code', class extends mixin() {
+	constructor() {
+		super();
+		this.template = './widgets/view-code.html';
+	}
+
 	mounted() {
 		this.collapsible();
 
@@ -30,7 +35,7 @@ wiet('view-code', './widgets/view-code.html', {
 						source.textContent = `/* failed to load ${source.dataset.fetch} */`;
 					}
 				}
-				output.appendChild(make('pre', {
+				output.appendChild(create('pre', {
 					props: {
 						className: 'bg-dark text-light p-3 rounded small mb-2 overflow-auto',
 						textContent: source.outerHTML,
@@ -38,24 +43,28 @@ wiet('view-code', './widgets/view-code.html', {
 				}));
 			}
 		})();
-	},
-	methods: {
-		collapsible() {
-			const id = 'source-' + Date.now().toString(36);
-			const header = this.querySelector('.card-header');
-			const output = this.querySelector('.card-body');
+	}
 
-			header.setAttribute('data-bs-target', `#${id}`);
-			header.setAttribute('aria-expanded', 'false');
-			header.setAttribute('role', 'button');
-			header.classList.add('cursor-pointer');
-			output.setAttribute('id', id);
-		},
-	},
-})
+	collapsible() {
+		const id = 'source-' + Date.now().toString(36);
+		const header = this.querySelector('.card-header');
+		const output = this.querySelector('.card-body');
+
+		header.setAttribute('data-bs-target', `#${id}`);
+		header.setAttribute('aria-expanded', 'false');
+		header.setAttribute('role', 'button');
+		header.classList.add('cursor-pointer');
+		output.setAttribute('id', id);
+	}
+});
 
 // Page Header Component
-wiet('page-header', './widgets/page-header.html', {
+wiet('page-header', class extends mixin() {
+	constructor() {
+		super();
+		this.template = './widgets/page-header.html';
+	}
+
 	mounted() {
 		// Setup theme toggle
 		const toggleBtn = this.querySelector('.theme-toggle');
@@ -76,7 +85,12 @@ wiet('page-header', './widgets/page-header.html', {
 });
 
 // Event Log Component
-wiet('event-log', './widgets/event-log.html', {
+wiet('event-log', class extends mixin() {
+	constructor() {
+		super();
+		this.template = './widgets/event-log.html';
+	}
+
 	mounted() {
 		const clearBtn = this.querySelector('.clear-log-btn');
 		if (clearBtn) {
@@ -85,99 +99,103 @@ wiet('event-log', './widgets/event-log.html', {
 			});
 		}
 		this._ready = true;
-	},
+	}
 	
-	methods: {
-		log(message, type = 'info') {
-			// Wait for component to be ready
-			if (!this._ready) {
-				setTimeout(() => this.log(message, type), 10);
-				return;
-			}
-			
-			const logContent = this.querySelector('.event-log-content');
-			if (!logContent) return;
-			const entry = document.createElement('div');
-			const time = new Date().toLocaleTimeString();
-			const colors = {
-				info: 'text-info',
-				success: 'text-success',
-				warning: 'text-warning',
-				danger: 'text-danger'
-			};
-			entry.className = colors[type] || 'text-info';
-			entry.textContent = `[${time}] ${message}`;
-			logContent.appendChild(entry);
-			logContent.scrollTop = logContent.scrollHeight;
-		},
-		
-		clear() {
-			const logContent = this.querySelector('.event-log-content');
-			if (!logContent) return;
-			logContent.innerHTML = '<div class="text-success">Log cleared!</div>';
+	log(message, type = 'info') {
+		// Wait for component to be ready
+		if (!this._ready) {
+			setTimeout(() => this.log(message, type), 10);
+			return;
 		}
+		
+		const logContent = this.querySelector('.event-log-content');
+		if (!logContent) return;
+		const entry = document.createElement('div');
+		const time = new Date().toLocaleTimeString();
+		const colors = {
+			info: 'text-info',
+			success: 'text-success',
+			warning: 'text-warning',
+			danger: 'text-danger'
+		};
+		entry.className = colors[type] || 'text-info';
+		entry.textContent = `[${time}] ${message}`;
+		logContent.appendChild(entry);
+		logContent.scrollTop = logContent.scrollHeight;
+	}
+	
+	clear() {
+		const logContent = this.querySelector('.event-log-content');
+		if (!logContent) return;
+		logContent.innerHTML = '<div class="text-success">Log cleared!</div>';
 	}
 });
 
 // Example Section Component
-wiet('example-section', './widgets/example-section.html', {
-	attrs: ['icon', 'title', 'description', 'variant'],
+wiet('example-section', class extends mixin() {
+	static attrs = ['icon', 'title', 'description', 'variant'];
 	
+	constructor() {
+		super();
+		this.template = './widgets/example-section.html';
+	}
+
 	mounted() {
 		this.updateContent();
-	},
+	}
 	
-	methods: {
-		updateContent() {
-			const variant = this.variant || 'primary';
-			const alert = this.querySelector('.alert');
-			if (!alert) return;
-			alert.className = `alert alert-${variant} example-section`;
-			
-			const icon = this.querySelector('.example-icon');
-			if (icon) {
-				icon.className = this.icon || 'bi bi-info-circle';
-			}
-			
-			const title = this.querySelector('.example-title');
-			if (title) {
-				title.textContent = this.title || 'Example';
-			}
-			const description = this.querySelector('.example-description');
-			if (description) {
-				description.textContent = this.description || '';
-			}
+	updateContent() {
+		const variant = this.variant || 'primary';
+		const alert = this.querySelector('.alert');
+		if (!alert) return;
+		alert.className = `alert alert-${variant} example-section`;
+		
+		const icon = this.querySelector('.example-icon');
+		if (icon) {
+			icon.className = this.icon || 'bi bi-info-circle';
+		}
+		
+		const title = this.querySelector('.example-title');
+		if (title) {
+			title.textContent = this.title || 'Example';
+		}
+		const description = this.querySelector('.example-description');
+		if (description) {
+			description.textContent = this.description || '';
 		}
 	}
 });
 
 // Feature Card Component
-wiet('feature-card', './widgets/feature-card.html', {
-	attrs: ['icon', 'title', 'description', 'color'],
+wiet('feature-card', class extends mixin() {
+	static attrs = ['icon', 'title', 'description', 'color'];
 	
+	constructor() {
+		super();
+		this.template = './widgets/feature-card.html';
+	}
+
 	mounted() {
 		this.updateContent();
-	},
+	}
 	
-	methods: {
-		updateContent() {
-const color = this.color || 'primary';
-			const card = this.querySelector('.feature-card');
-			if (!card) return;
-			card.className = `card feature-card bg-${color} text-white`;
-			
-			const icon = this.querySelector('.feature-icon');
-			if (icon) {
-				icon.className = this.icon || 'bi bi-star';
-			}
-			const title = this.querySelector('.feature-title');
-			if (title) {
-				title.textContent = this.title || 'Feature';
-			}
-			const description = this.querySelector('.feature-description');
-			if (description) {
-				description.textContent = this.description || '';
-			}
+	updateContent() {
+		const color = this.color || 'primary';
+		const card = this.querySelector('.feature-card');
+		if (!card) return;
+		card.className = `card feature-card bg-${color} text-white`;
+		
+		const icon = this.querySelector('.feature-icon');
+		if (icon) {
+			icon.className = this.icon || 'bi bi-star';
+		}
+		const title = this.querySelector('.feature-title');
+		if (title) {
+			title.textContent = this.title || 'Feature';
+		}
+		const description = this.querySelector('.feature-description');
+		if (description) {
+			description.textContent = this.description || '';
 		}
 	}
 });

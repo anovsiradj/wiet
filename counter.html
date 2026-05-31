@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Web Component Counter</title>
+
+  <!-- Load the component script -->
+  <script type="module" src="./counter.js"></script>
+</head>
+
+<body>
+  <h1>Web Component Counter</h1>
+
+  <!-- Using the custom element with an attribute -->
+  <wiet-counter initial-value="10"></wiet-counter>
+
+  <script>
+    // Listen for custom interactive events emitted by the component
+    const counter = document.querySelector('wiet-counter');
+
+    counter.addEventListener('counter-change', (event) => {
+      if (event.detail.value % 5 === 0) {
+        console.log(event)
+      }
+      console.log('New counter value:', event.detail.value);
+    });
+  </script>
+
+</body>
+
+</html>

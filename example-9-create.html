@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="en" data-bs-theme="dark">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Example 9 - create() Utility | Wiet</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+	<page-header></page-header>
+
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-lg-8 mx-auto">
+				<example-section icon="bi bi-9-circle-fill" title="Example 9: create() Utility" description="The create() helper builds DOM elements programmatically with attrs, props, and a handle callback — a concise alternative to chained document.createElement calls." variant="success"></example-section>
+
+				<div class="card mb-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-eye"></i> Live Demo — Dynamic List Builder</h5>
+					</div>
+					<div class="card-body source">
+						<div class="row g-2 mb-3">
+							<div class="col">
+								<input type="text" class="form-control" id="itemText" placeholder="Item text…">
+							</div>
+							<div class="col-auto">
+								<select class="form-select" id="itemVariant">
+									<option value="primary">Primary</option>
+									<option value="success">Success</option>
+									<option value="danger">Danger</option>
+									<option value="warning">Warning</option>
+									<option value="info">Info</option>
+								</select>
+							</div>
+							<div class="col-auto">
+								<button class="btn btn-primary" id="addItem">
+									<i class="bi bi-plus-circle"></i> Add
+								</button>
+							</div>
+						</div>
+
+						<ul class="list-group" id="dynamicList">
+							<li class="list-group-item text-muted">No items yet</li>
+						</ul>
+
+						<div class="d-flex gap-2 mt-3">
+							<button class="btn btn-outline-secondary btn-sm" id="clearList">
+								<i class="bi bi-trash"></i> Clear All
+							</button>
+							<button class="btn btn-outline-primary btn-sm" id="exportList">
+								<i class="bi bi-download"></i> Export as HTML
+							</button>
+						</div>
+
+						<pre class="bg-dark text-light p-3 rounded mt-3 small" id="exportOutput" style="display:none;max-height:200px;overflow:auto;"></pre>
+					</div>
+				</div>
+
+				<div class="card mb-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-grid-3x3-gap"></i> Badge Generator</h5>
+					</div>
+					<div class="card-body source">
+						<p class="small text-muted">Click buttons to generate badges using <code>create()</code>.</p>
+						<div class="d-flex flex-wrap gap-2 mb-3" id="badgeContainer"></div>
+						<div class="d-flex gap-2 flex-wrap">
+							<button class="btn btn-sm btn-outline-primary" data-badge="New Feature" data-color="primary">➕ New Feature</button>
+							<button class="btn btn-sm btn-outline-success" data-badge="Bug Fix" data-color="success">🐛 Bug Fix</button>
+							<button class="btn btn-sm btn-outline-danger" data-badge="Breaking" data-color="danger">⚠️ Breaking</button>
+							<button class="btn btn-sm btn-outline-info" data-badge="Docs" data-color="info">📚 Docs</button>
+						</div>
+					</div>
+				</div>
+
+				<event-log id="eventLog"></event-log>
+				<view-code></view-code>
+
+				<div class="card mt-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-code-slash"></i> create() API Reference</h5>
+					</div>
+					<div class="card-body">
+						<pre class="bg-dark text-light p-3 rounded"><code>create(tagName, {
+  attrs: { 'data-id': '1', class: 'my-class' },  // HTML attributes
+  props: { textContent: 'Hello', id: 'myEl' },    // JS properties
+  createOptions: { is: 'my-button' },             // for built-in extends
+  handle: (el) => { el.addEventListener(...); return el; }
+})</code></pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" class="source">
+		import { create, wiet, mixin } from './wiet.js';
+		import './widgets.js';
+		const eventLog = document.getElementById('eventLog');
+		const list = document.getElementById('dynamicList');
+
+		// --- Dynamic List ---
+		let items = [];
+
+		function renderList() {
+			list.innerHTML = '';
+			if (items.length === 0) {
+				list.appendChild(create('li', {
+					props: { className: 'list-group-item text-muted', textContent: 'No items yet' },
+				}));
+				return;
+			}
+
+			items.forEach((item, idx) => {
+				list.appendChild(create('li', {
+					props: { className: `list-group-item d-flex justify-content-between align-items-center` },
+					handle(el) {
+						el.innerHTML = `
+							<span>
+								<span class="badge bg-${item.variant} me-2">${idx + 1}</span>
+								${item.text}
+							</span>
+						`;
+						// Remove button via create()
+						el.appendChild(create('button', {
+							props: { className: 'btn btn-sm btn-outline-danger', innerHTML: '<i class="bi bi-x"></i>' },
+							handle(btn) {
+								btn.addEventListener('click', () => {
+									items.splice(idx, 1);
+									renderList();
+									eventLog.log(`🗑️ Removed: "${item.text}"`, 'warning');
+								});
+								return btn;
+							},
+						}));
+						return el;
+					},
+				}));
+			});
+		}
+
+		document.getElementById('addItem').addEventListener('click', () => {
+			const text = document.getElementById('itemText').value.trim();
+			const variant = document.getElementById('itemVariant').value;
+			if (!text) return;
+
+			items.push({ text, variant });
+			renderList();
+			document.getElementById('itemText').value = '';
+			eventLog.log(`➕ Added: "${text}" (${variant})`, 'success');
+		});
+
+		document.getElementById('clearList').addEventListener('click', () => {
+			items = [];
+			renderList();
+			eventLog.log('🧹 List cleared', 'info');
+		});
+
+		document.getElementById('exportList').addEventListener('click', () => {
+			const out = document.getElementById('exportOutput');
+			out.style.display = 'block';
+			out.textContent = list.outerHTML;
+			eventLog.log('📋 HTML exported', 'info');
+		});
+
+		// --- Badge Generator ---
+		document.querySelectorAll('[data-badge]').forEach(btn => {
+			btn.addEventListener('click', () => {
+				const text = btn.dataset.badge;
+				const color = btn.dataset.color;
+				const badge = create('span', {
+					props: {
+						className: `badge bg-${color} me-1`,
+						textContent: text,
+						style: 'cursor:pointer',
+					},
+					handle(el) {
+						el.addEventListener('click', () => {
+							el.remove();
+							eventLog.log(`🗑️ Removed badge: ${text}`, 'warning');
+						});
+						el.title = 'Click to remove';
+						return el;
+					},
+				});
+				document.getElementById('badgeContainer').appendChild(badge);
+				eventLog.log(`🏷️ Badge created: ${text}`, 'success');
+			});
+		});
+
+		renderList();
+		setTimeout(() => eventLog.log('🚀 create() demo ready', 'success'), 100);
+	</script>
+</body>
+
+</html>

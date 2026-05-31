@@ -96,7 +96,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" class="source">
-    import { wiet } from './wiet.js';
+    import { wiet, mixin } from './wiet.js';
     import './widgets.js';
     const eventLog = document.getElementById('eventLog');
 
@@ -104,34 +104,36 @@
       eventLog.log(message, type);
     }
 
-    wiet('shadow-button', '#shadow-button-template', {
-      shadow: true,
-      attrs: ['label', 'color'],
+    wiet('shadow-button', class extends mixin() {
+      static attrs = ['label', 'color'];
 
-      mounted(root) {
+      constructor() {
+        super();
+        this.template = '#shadow-button-template';
+        this.useShadow = true;
+        this.handles = {
+          'button': {
+            click() {
+              const label = this.label;
+              logEvent(`🔘 Button clicked: "${label}"`);
+              this.dispatchEvent(new CustomEvent('shadow-click', {
+                bubbles: true,
+                detail: { label }
+              }));
+            }
+          }
+        };
+      }
+
+      mounted() {
         logEvent(`✅ shadow-button mounted: "${this.label}"`);
         this.updateButton();
-      },
+      }
 
-      handles: {
-        'button': {
-          click() {
-            const label = this.label;
-            logEvent(`🔘 Button clicked: "${label}"`);
-            this.dispatchEvent(new CustomEvent('shadow-click', {
-              bubbles: true,
-              detail: { label }
-            }));
-          }
-        }
-      },
-
-      methods: {
-        updateButton() {
-          const btn = this.shadowRoot.querySelector('button');
-          btn.textContent = this.label || 'Click';
-          btn.style.background = this.color || '#3498db';
-        }
+      updateButton() {
+        const btn = this.shadowRoot.querySelector('button');
+        btn.textContent = this.label || 'Click';
+        btn.style.background = this.color || '#3498db';
       }
     });
 
