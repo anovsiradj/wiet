@@ -229,7 +229,23 @@ const mixin = (Base = HTMLElement) => class extends Base {
 
   async connectedCallback() {
     if (!this._hasRendered) {
-      await this.render();
+      // Render the template/content managed by the mixin (non-overridable)
+      await this._renderTemplate();
+
+      // If the component defines its own `render` method (for updating
+      // content inside the already-inserted template), call it now. This
+      // avoids child classes accidentally overriding the mixin's template
+      // loader by defining `render`.
+      if (typeof this.render === 'function' && this.render !== this._renderTemplate) {
+        try {
+          const maybePromise = this.render();
+          if (maybePromise && typeof maybePromise.then === 'function') {
+            await maybePromise;
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
     }
 
     this._isConnected = true;
@@ -252,7 +268,7 @@ const mixin = (Base = HTMLElement) => class extends Base {
 
   // --- Rendering ---
 
-  async render() {
+  async _renderTemplate() {
     const renderVersion = this.nextRenderVersion();
     const root = this.resolveRoot(this.useShadow);
     const slotContent = this.useShadow ? '' : this.innerHTML;
