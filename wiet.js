@@ -32,56 +32,61 @@ const normalizeAttrs = attrs => {
 };
 
 export function wiet(tag, ComponentClass, options = {}) {
-  if (ComponentClass.attrs) {
-    const normalizedAttrs = normalizeAttrs(ComponentClass.attrs);
+  try {
+    if (ComponentClass.attrs) {
+      const normalizedAttrs = normalizeAttrs(ComponentClass.attrs);
 
-    if (!Object.getOwnPropertyDescriptor(ComponentClass, 'observedAttributes')) {
-      Object.defineProperty(ComponentClass, 'observedAttributes', {
-        get() {
-          return normalizedAttrs.map(entry => entry.attr);
-        },
-        configurable: true,
-        enumerable: true
+      if (!Object.getOwnPropertyDescriptor(ComponentClass, 'observedAttributes')) {
+        Object.defineProperty(ComponentClass, 'observedAttributes', {
+          get() {
+            return normalizedAttrs.map(entry => entry.attr);
+          },
+          configurable: true,
+          enumerable: true
+        });
+      }
+
+      normalizedAttrs.forEach(({ attr, prop }) => {
+        if (!(prop in ComponentClass.prototype)) {
+          Object.defineProperty(ComponentClass.prototype, prop, {
+            get() {
+              return this.getAttribute(attr);
+            },
+            set(value) {
+              if (value == null) {
+                this.removeAttribute(attr);
+              } else {
+                this.setAttribute(attr, String(value));
+              }
+            },
+            configurable: true,
+            enumerable: true,
+          });
+        }
       });
     }
 
-    normalizedAttrs.forEach(({ attr, prop }) => {
-      if (!(prop in ComponentClass.prototype)) {
-        Object.defineProperty(ComponentClass.prototype, prop, {
-          get() {
-            return this.getAttribute(attr);
-          },
-          set(value) {
-            if (value == null) {
-              this.removeAttribute(attr);
-            } else {
-              this.setAttribute(attr, String(value));
-            }
-          },
-          configurable: true,
-          enumerable: true,
-        });
-      }
-    });
-  }
+    if (typeof tag === 'object' && tag.extends) {
+      customElements.define(tag.name, ComponentClass, { extends: tag.extends });
+    } else {
+      customElements.define(tag, ComponentClass, options);
+    }
 
-  if (typeof tag === 'object' && tag.extends) {
-    customElements.define(tag.name, ComponentClass, { extends: tag.extends });
-  } else {
-    customElements.define(tag, ComponentClass, options);
+    return ComponentClass;
+  } catch (error) {
+    console.error(`[wiet] registration error for tag "${typeof tag === 'object' ? tag.name : tag}"`, error);
+    throw error;
   }
-
-  return ComponentClass;
 }
 
 const mixin = (Base = HTMLElement) => class extends Base {
   constructor() {
     super();
-    this._isConnected = false;
     this._hasRendered = false;
     this._renderVersion = 0;
     this._renderRoot = null;
     this._eventDelegates = [];
+    this._originalSlotContent = null;
   }
 
   nextRenderVersion() {
@@ -110,31 +115,36 @@ const mixin = (Base = HTMLElement) => class extends Base {
     }
 
     const promise = (async () => {
-      if (template.startsWith('#')) {
-        const source = document.getElementById(template.slice(1));
-        if (!source) {
-          throw new Error(`Template "${template}" not found`);
+      try {
+        if (template.startsWith('#')) {
+          const source = document.getElementById(template.slice(1));
+          if (!source) {
+            throw new Error(`Template "${template}" not found`);
+          }
+
+          // If the source is already a <template>, reuse it; otherwise wrap its
+          // innerHTML in a new <template> so we can clone its `.content` later.
+          if (source.tagName && source.tagName.toLowerCase() === 'template') {
+            return source;
+          }
+
+          const t = document.createElement('template');
+          t.innerHTML = source.innerHTML;
+          return t;
         }
 
-        // If the source is already a <template>, reuse it; otherwise wrap its
-        // innerHTML in a new <template> so we can clone its `.content` later.
-        if (source.tagName && source.tagName.toLowerCase() === 'template') {
-          return source;
+        const resp = await fetch(template);
+        if (!resp.ok) {
+          throw new Error(`Failed to load template "${template}" (${resp.status})`);
         }
-
+        const text = await resp.text();
         const t = document.createElement('template');
-        t.innerHTML = source.innerHTML;
+        t.innerHTML = text;
         return t;
+      } catch (error) {
+        console.error(`[wiet] template load error for "${template}"`, error);
+        throw error;
       }
-
-      const resp = await fetch(template);
-      if (!resp.ok) {
-        throw new Error(`Failed to load template "${template}" (${resp.status})`);
-      }
-      const text = await resp.text();
-      const t = document.createElement('template');
-      t.innerHTML = text;
-      return t;
     })();
 
     templateCache.set(template, promise);
@@ -144,63 +154,86 @@ const mixin = (Base = HTMLElement) => class extends Base {
   createEventDelegates(root, eventsMap, thisArg = this) {
     if (!eventsMap) return;
 
-    const grouped = new Map();
-    Object.entries(eventsMap).forEach(([selector, events]) => {
-      Object.entries(events || {}).forEach(([type, handler]) => {
-        if (typeof handler !== 'function') return;
-        if (!grouped.has(type)) {
-          grouped.set(type, []);
-        }
-        grouped.get(type).push({ selector, handler });
-      });
-    });
-
-    grouped.forEach((handlers, type) => {
-      const listener = event => {
-        const target = event.target;
-        handlers.forEach(({ selector, handler }) => {
-          const match = target.closest(selector);
-          if (match && root.contains(match)) {
-            handler.call(thisArg, event);
+    try {
+      const grouped = new Map();
+      Object.entries(eventsMap).forEach(([selector, events]) => {
+        Object.entries(events || {}).forEach(([type, handler]) => {
+          if (typeof handler !== 'function') return;
+          if (!grouped.has(type)) {
+            grouped.set(type, []);
           }
+          grouped.get(type).push({ selector, handler });
         });
-      };
+      });
 
-      root.addEventListener(type, listener);
-      this._eventDelegates.push({ root, type, listener });
-    });
+      grouped.forEach((handlers, type) => {
+        const listener = event => {
+          try {
+            const target = event.target;
+            handlers.forEach(({ selector, handler }) => {
+              try {
+                const match = target.closest(selector);
+                if (match && root.contains(match)) {
+                  handler.call(thisArg, event);
+                }
+              } catch (error) {
+                console.error(`[wiet] ${this.tagName.toLowerCase()}: handler for "${selector}" error`, error);
+              }
+            });
+          } catch (error) {
+            console.error(`[wiet] ${this.tagName.toLowerCase()}: event listener error`, error);
+          }
+        };
+
+        root.addEventListener(type, listener);
+        this._eventDelegates.push({ root, type, listener });
+      });
+    } catch (error) {
+      console.error(`[wiet] ${this.tagName.toLowerCase()}: createEventDelegates error`, error);
+    }
   }
 
   cleanupEventDelegates() {
-    this._eventDelegates.forEach(({ root, type, listener }) => {
-      root.removeEventListener(type, listener);
-    });
-    this._eventDelegates.length = 0;
+    try {
+      this._eventDelegates.forEach(({ root, type, listener }) => {
+        root.removeEventListener(type, listener);
+      });
+      this._eventDelegates.length = 0;
+    } catch (error) {
+      console.error(`[wiet] ${this.tagName.toLowerCase()}: cleanup error`, error);
+    }
   }
 
   processSlots(root, slotContent) {
+    // IMPORTANT: Slot processing is for Light DOM only!
+    // Shadow DOM has native browser implementation for <slot> elements.
+    // Manually replacing <slot> in Shadow DOM breaks reactivity and fallbacks.
     if (!slotContent || !slotContent.trim()) return;
 
     const slots = root.querySelectorAll('slot');
     if (slots.length === 0) return;
 
-    // Parse slot content using a <template> so the browser does the HTML parsing
-    // and we can work with a DocumentFragment rather than an element hack.
-    const tempTemplate = document.createElement('template');
-    tempTemplate.innerHTML = slotContent;
-    const tempRoot = tempTemplate.content;
+    try {
+      // Parse slot content using a <template> so the browser does the HTML parsing
+      // and we can work with a DocumentFragment rather than an element hack.
+      const tempTemplate = document.createElement('template');
+      tempTemplate.innerHTML = slotContent;
+      const tempRoot = tempTemplate.content;
 
-    slots.forEach(slot => {
-      const slotName = slot.getAttribute('name');
-      if (slotName) {
-        const slottedNodes = tempRoot.querySelectorAll(`[slot="${slotName}"]`);
-        this.replaceWithContentOrFallback(slot, slottedNodes);
-        return;
-      }
+      slots.forEach(slot => {
+        const slotName = slot.getAttribute('name');
+        if (slotName) {
+          const slottedNodes = tempRoot.querySelectorAll(`[slot="${slotName}"]`);
+          this.replaceWithContentOrFallback(slot, slottedNodes);
+          return;
+        }
 
-      const defaultContent = this.collectDefaultSlotNodes(tempRoot);
-      this.replaceWithContentOrFallback(slot, defaultContent);
-    });
+        const defaultContent = this.collectDefaultSlotNodes(tempRoot);
+        this.replaceWithContentOrFallback(slot, defaultContent);
+      });
+    } catch (error) {
+      console.error(`[wiet] ${this.tagName.toLowerCase()}: slot processing error`, error);
+    }
   }
 
   collectDefaultSlotNodes(tempDiv) {
@@ -211,72 +244,92 @@ const mixin = (Base = HTMLElement) => class extends Base {
   }
 
   replaceWithContentOrFallback(slot, nodes) {
-    if (nodes.length > 0) {
-      const fragment = document.createDocumentFragment();
-      nodes.forEach(node => {
-        const cloned = node.cloneNode(true);
-        if (cloned.nodeType === Node.ELEMENT_NODE) {
-          cloned.removeAttribute('slot');
-        }
-        fragment.appendChild(cloned);
-      });
-      slot.replaceWith(fragment);
-      return;
-    }
+    try {
+      if (nodes.length > 0) {
+        const fragment = document.createDocumentFragment();
+        nodes.forEach(node => {
+          const cloned = node.cloneNode(true);
+          if (cloned.nodeType === Node.ELEMENT_NODE) {
+            cloned.removeAttribute('slot');
+          }
+          fragment.appendChild(cloned);
+        });
+        slot.replaceWith(fragment);
+        return;
+      }
 
-    const fallback = slot.innerHTML;
-    if (fallback.trim()) {
-      const wrapper = document.createElement('span');
-      wrapper.innerHTML = fallback;
-      slot.replaceWith(wrapper);
+      const fallback = slot.innerHTML;
+      if (fallback.trim()) {
+        const wrapper = document.createElement('span');
+        wrapper.innerHTML = fallback;
+        slot.replaceWith(wrapper);
+      }
+    } catch (error) {
+      console.error(`[wiet] ${this.tagName.toLowerCase()}: slot replacement error`, error);
     }
   }
 
   runChanged(name, oldVal, newVal) {
+    // Only fire changed() callback AFTER first render.
+    // At this point, the component's DOM is guaranteed to exist.
     if (this._hasRendered) {
-      this.changed?.(name, oldVal, newVal);
+      try {
+        this.changed?.(name, oldVal, newVal);
+      } catch (error) {
+        console.error(`[wiet] ${this.tagName.toLowerCase()}: changed() callback error`, error);
+      }
     }
-  }
-
-  logTemplateError(tag, error) {
-    console.error(`[wiet] ${tag}: template load error`, error);
   }
 
   // --- Standard Lifecycle Hooks ---
 
   async connectedCallback() {
     if (!this._hasRendered) {
-      // Render the template/content managed by the mixin (non-overridable)
-      await this._renderTemplate();
+      try {
+        // Render the template/content managed by the mixin (non-overridable)
+        await this._renderTemplate();
 
-      // If the component defines its own `render` method (for updating
-      // content inside the already-inserted template), call it now. This
-      // avoids child classes accidentally overriding the mixin's template
-      // loader by defining `render`.
-      if (typeof this.render === 'function' && this.render !== this._renderTemplate) {
-        try {
-          const maybePromise = this.render();
-          if (maybePromise && typeof maybePromise.then === 'function') {
-            await maybePromise;
+        // If the component defines its own `render` method (for updating
+        // content inside the already-inserted template), call it now. This
+        // avoids child classes accidentally overriding the mixin's template
+        // loader by defining `render`.
+        if (typeof this.render === 'function' && this.render !== this._renderTemplate) {
+          try {
+            const maybePromise = this.render();
+            if (maybePromise && typeof maybePromise.then === 'function') {
+              await maybePromise;
+            }
+          } catch (err) {
+            console.error(`[wiet] ${this.tagName.toLowerCase()}: render() error`, err);
           }
-        } catch (err) {
-          console.error(err);
         }
+      } catch (error) {
+        console.error(`[wiet] ${this.tagName.toLowerCase()}: connectedCallback error`, error);
       }
     }
 
-    this._isConnected = true;
-    this.mounted?.(this._renderRoot);
+    try {
+      this.mounted?.(this._renderRoot);
+    } catch (error) {
+      console.error(`[wiet] ${this.tagName.toLowerCase()}: mounted() error`, error);
+    }
   }
 
   disconnectedCallback() {
-    this._isConnected = false;
-    this.unmounted?.();
+    try {
+      this.unmounted?.();
+    } catch (error) {
+      console.error(`[wiet] ${this.tagName.toLowerCase()}: unmounted() error`, error);
+    }
     this.cleanupEventDelegates();
   }
 
   adoptedCallback() {
-    this.adopted?.();
+    try {
+      this.adopted?.();
+    } catch (error) {
+      console.error(`[wiet] ${this.tagName.toLowerCase()}: adopted() error`, error);
+    }
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -288,14 +341,23 @@ const mixin = (Base = HTMLElement) => class extends Base {
   async _renderTemplate() {
     const renderVersion = this.nextRenderVersion();
     const root = this.resolveRoot(this.useShadow);
-    const slotContent = this.useShadow ? '' : this.innerHTML;
+    
+    // On first render, save the original slot content (Light DOM only).
+    // On re-connection, reuse the saved content instead of this.innerHTML,
+    // which now contains the rendered template.
+    let slotContent = '';
+    if (!this._hasRendered && !this.useShadow) {
+      this._originalSlotContent = this.innerHTML;
+      slotContent = this._originalSlotContent;
+    } else if (!this.useShadow) {
+      slotContent = this._originalSlotContent || '';
+    }
 
     let templateEl = null;
     if (this.template) {
       try {
         templateEl = await this.loadTemplate(this.template);
       } catch (error) {
-        this.logTemplateError(this.tagName.toLowerCase(), error);
         return;
       }
     }
@@ -307,17 +369,27 @@ const mixin = (Base = HTMLElement) => class extends Base {
     this._renderRoot = root;
     if (this.template && templateEl) {
       // Clear existing content and append a cloned parsed template
-      while (root.firstChild) root.removeChild(root.firstChild);
-      root.appendChild(templateEl.content.cloneNode(true));
+      try {
+        while (root.firstChild) root.removeChild(root.firstChild);
+        root.appendChild(templateEl.content.cloneNode(true));
+      } catch (error) {
+        console.error(`[wiet] ${this.tagName.toLowerCase()}: template append error`, error);
+        return;
+      }
     }
 
-    if (!this.useShadow && this.template) {
+    // Light DOM: process slots only (Shadow DOM uses native browser slots)
+    if (!this.useShadow && this.template && slotContent) {
       this.processSlots(root, slotContent);
     }
 
     this.cleanupEventDelegates();
     if (this.handles) {
-      this.createEventDelegates(root, this.handles);
+      try {
+        this.createEventDelegates(root, this.handles);
+      } catch (error) {
+        console.error(`[wiet] ${this.tagName.toLowerCase()}: event delegation error`, error);
+      }
     }
     
     this._hasRendered = true;
@@ -325,26 +397,31 @@ const mixin = (Base = HTMLElement) => class extends Base {
 };
 
 export function create(tagName, config) {
-  config ??= {};
-  config = {
-    createOptions: {},
-    attrs: {},
-    props: {},
-    handle: (element) => element,
-    ...config,
-  };
+  try {
+    config ??= {};
+    config = {
+      createOptions: {},
+      attrs: {},
+      props: {},
+      handle: (element) => element,
+      ...config,
+    };
 
-  const element = document.createElement(tagName, config.createOptions);
+    const element = document.createElement(tagName, config.createOptions);
 
-  for (const attr in config.attrs) {
-    element.setAttribute(attr, config.attrs[attr]);
+    for (const attr in config.attrs) {
+      element.setAttribute(attr, config.attrs[attr]);
+    }
+
+    for (const prop in config.props) {
+      element[prop] = config.props[prop];
+    }
+
+    return config.handle(element);
+  } catch (error) {
+    console.error(`[wiet] create() error for element "${tagName}"`, error);
+    throw error;
   }
-
-  for (const prop in config.props) {
-    element[prop] = config.props[prop];
-  }
-
-  return config.handle(element);
 }
 
 export { mixin };
