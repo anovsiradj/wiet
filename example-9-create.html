@@ -96,10 +96,14 @@
 		</div>
 	</div>
 
+	<page-footer></page-footer>
+
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module" class="source">
-		import { create, wiet, mixin } from './wiet.js';
+		import './examples/layouts.js';
 		import './widgets.js';
+		import { create, wiet, mixin } from './wiet.js';
+
 		const eventLog = document.getElementById('eventLog');
 		const list = document.getElementById('dynamicList');
 

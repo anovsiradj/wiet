@@ -104,24 +104,38 @@ const mixin = (Base = HTMLElement) => class extends Base {
   }
 
   async loadTemplate(template) {
+    // Cache promises resolving to an HTMLTemplateElement
     if (templateCache.has(template)) {
       return templateCache.get(template);
     }
 
-    const promise = template.startsWith('#')
-      ? Promise.resolve().then(() => {
-        const sourceTemplate = document.getElementById(template.slice(1));
-        if (!sourceTemplate) {
+    const promise = (async () => {
+      if (template.startsWith('#')) {
+        const source = document.getElementById(template.slice(1));
+        if (!source) {
           throw new Error(`Template "${template}" not found`);
         }
-        return sourceTemplate.innerHTML;
-      })
-      : fetch(template).then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to load template "${template}" (${response.status})`);
+
+        // If the source is already a <template>, reuse it; otherwise wrap its
+        // innerHTML in a new <template> so we can clone its `.content` later.
+        if (source.tagName && source.tagName.toLowerCase() === 'template') {
+          return source;
         }
-        return response.text();
-      });
+
+        const t = document.createElement('template');
+        t.innerHTML = source.innerHTML;
+        return t;
+      }
+
+      const resp = await fetch(template);
+      if (!resp.ok) {
+        throw new Error(`Failed to load template "${template}" (${resp.status})`);
+      }
+      const text = await resp.text();
+      const t = document.createElement('template');
+      t.innerHTML = text;
+      return t;
+    })();
 
     templateCache.set(template, promise);
     return promise;
@@ -165,23 +179,26 @@ const mixin = (Base = HTMLElement) => class extends Base {
   }
 
   processSlots(root, slotContent) {
-    if (!slotContent.trim()) return;
+    if (!slotContent || !slotContent.trim()) return;
 
     const slots = root.querySelectorAll('slot');
     if (slots.length === 0) return;
 
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = slotContent;
+    // Parse slot content using a <template> so the browser does the HTML parsing
+    // and we can work with a DocumentFragment rather than an element hack.
+    const tempTemplate = document.createElement('template');
+    tempTemplate.innerHTML = slotContent;
+    const tempRoot = tempTemplate.content;
 
     slots.forEach(slot => {
       const slotName = slot.getAttribute('name');
       if (slotName) {
-        const slottedNodes = tempDiv.querySelectorAll(`[slot="${slotName}"]`);
+        const slottedNodes = tempRoot.querySelectorAll(`[slot="${slotName}"]`);
         this.replaceWithContentOrFallback(slot, slottedNodes);
         return;
       }
 
-      const defaultContent = this.collectDefaultSlotNodes(tempDiv);
+      const defaultContent = this.collectDefaultSlotNodes(tempRoot);
       this.replaceWithContentOrFallback(slot, defaultContent);
     });
   }
@@ -273,10 +290,10 @@ const mixin = (Base = HTMLElement) => class extends Base {
     const root = this.resolveRoot(this.useShadow);
     const slotContent = this.useShadow ? '' : this.innerHTML;
 
-    let html = '';
+    let templateEl = null;
     if (this.template) {
       try {
-        html = await this.loadTemplate(this.template);
+        templateEl = await this.loadTemplate(this.template);
       } catch (error) {
         this.logTemplateError(this.tagName.toLowerCase(), error);
         return;
@@ -288,8 +305,10 @@ const mixin = (Base = HTMLElement) => class extends Base {
     }
 
     this._renderRoot = root;
-    if (this.template) {
-      root.innerHTML = html;
+    if (this.template && templateEl) {
+      // Clear existing content and append a cloned parsed template
+      while (root.firstChild) root.removeChild(root.firstChild);
+      root.appendChild(templateEl.content.cloneNode(true));
     }
 
     if (!this.useShadow && this.template) {

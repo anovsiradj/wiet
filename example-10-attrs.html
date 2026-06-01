@@ -27,12 +27,7 @@
 							The component uses hyphenated HTML attributes. Wiet maps them automatically to camelCase JS properties.
 						</p>
 
-						<user-profile
-							first-name="Jane"
-							last-name="Doe"
-							job-title="Senior Engineer"
-							avatar-url="https://i.pravatar.cc/80?img=47"
-							is-online="true">
+						<user-profile first-name="Jane" last-name="Doe" job-title="Senior Engineer" avatar-url="https://i.pravatar.cc/80?img=47" is-online="true">
 						</user-profile>
 
 						<div class="mt-4">
@@ -71,10 +66,7 @@
 						<p class="text-muted small">
 							Use the object form of <code>static attrs</code> to override the auto-generated property name.
 						</p>
-						<score-badge
-							pts="42"
-							max-pts="100"
-							label="Quiz Score">
+						<score-badge pts="42" max-pts="100" label="Quiz Score">
 						</score-badge>
 					</div>
 				</div>
@@ -233,10 +225,14 @@
 		</div>
 	</template>
 
+	<page-footer></page-footer>
+
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module" class="source">
-		import { wiet, mixin } from './wiet.js';
+		import './examples/layouts.js';
 		import './widgets.js';
+		import { wiet, mixin } from './wiet.js';
+
 		const eventLog = document.getElementById('eventLog');
 
 		// --- user-profile: auto kebab-case → camelCase ---

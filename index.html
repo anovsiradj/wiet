@@ -3,377 +3,271 @@
 <html lang="en" data-bs-theme="dark">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wiet - Examples</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <style>
-    .hero-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 4rem 0;
-      margin-bottom: 2rem;
-    }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Wiet - Examples</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<style>
+		.hero-section {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			padding: 4rem 0;
+			margin-bottom: 2rem;
+		}
 
-    .example-card {
-      transition: transform 0.2s;
-      height: 100%;
-    }
+		.example-card {
+			transition: transform 0.2s;
+			height: 100%;
+		}
 
-    .example-card:hover {
-      transform: translateY(-5px);
-    }
+		.example-card:hover {
+			transform: translateY(-5px);
+		}
 
-    .badge-feature {
-      font-size: 0.75rem;
-      margin-right: 0.25rem;
-      margin-bottom: 0.25rem;
-    }
-  </style>
+		.badge-feature {
+			font-size: 0.75rem;
+			margin-right: 0.25rem;
+			margin-bottom: 0.25rem;
+		}
+	</style>
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="#">
-        <i class="bi bi-boxes"></i> Wiet
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="https://github.com/anovsiradj/wiet/" target="_blank">
-              <i class="bi bi-github"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link btn btn-sm text-light" id="themeToggle">
-              <i class="bi bi-moon-stars"></i>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container">
+			<a class="navbar-brand" href="#">
+				<i class="bi bi-boxes"></i> Wiet
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/anovsiradj/wiet/" target="_blank">
+							<i class="bi bi-github"></i>
+						</a>
+					</li>
+					<li class="nav-item">
+						<button class="nav-link btn btn-sm text-light" id="themeToggle">
+							<i class="bi bi-moon-stars"></i>
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
 
-  <div class="hero-section text-center">
-    <div class="container">
-      <h1 class="display-4 fw-bold mb-3">
-        <i class="bi bi-lightning-charge-fill"></i> Wiet
-      </h1>
-      <p class="lead mb-4">A minimal, dynamic factory for creating web components with zero build steps</p>
-      <div class="d-flex justify-content-center gap-2">
-        <span class="badge bg-light text-dark">Small Footprint</span>
-        <span class="badge bg-light text-dark">Zero Dependencies</span>
-        <span class="badge bg-light text-dark">Pure ES6</span>
-      </div>
-    </div>
-  </div>
+	<div class="hero-section text-center">
+		<div class="container">
+			<h1 class="display-4 fw-bold mb-3">
+				<i class="bi bi-lightning-charge-fill"></i> Wiet
+			</h1>
+			<p class="lead mb-4">A minimal, dynamic factory for creating web components with zero build steps</p>
+			<div class="d-flex justify-content-center gap-2">
+				<span class="badge bg-light text-dark">Small Footprint</span>
+				<span class="badge bg-light text-dark">Zero Dependencies</span>
+				<span class="badge bg-light text-dark">Pure ES6</span>
+			</div>
+		</div>
+	</div>
 
-  <div class="container mb-5">
-    <div class="row mb-4">
-      <div class="col-12">
-        <h2 class="mb-3">
-          <i class="bi bi-card-checklist"></i> Features
-        </h2>
-        <div class="row g-3">
-          <div class="col-md-4">
-            <feature-card icon="bi bi-file-earmark-code" title="Template or File" description="Use inline &lt;template&gt; tags or external HTML files" color="primary">
-            </feature-card>
-          </div>
-          <div class="col-md-4">
-            <feature-card icon="bi bi-shield-check" title="Shadow DOM" description="Optional style encapsulation with Shadow DOM" color="success">
-            </feature-card>
-          </div>
-          <div class="col-md-4">
-            <feature-card icon="bi bi-lightning" title="Events & Lifecycle" description="Standard events, custom events, and lifecycle hooks" color="info">
-            </feature-card>
-          </div>
-        </div>
-      </div>
-    </div>
+	<div class="container mb-5">
+		<div class="row mb-4">
+			<div class="col-12">
+				<h2 class="mb-3">
+					<i class="bi bi-card-checklist"></i>
+					Features
+				</h2>
 
-    <div class="row mb-4">
-      <div class="col-12">
-        <h2 class="mb-3">
-          <i class="bi bi-collection"></i> Examples
-        </h2>
-      </div>
-    </div>
+				<div class="row g-3">
+					<div class="col-md-4">
+						<feature-card icon="bi bi-file-earmark-code" title="Template or File" color="primary">
+							Use inline &lt;template&gt; tags or external HTML files
+						</feature-card>
+					</div>
 
-    <div class="row g-4">
-      <!-- Example 1 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-1-circle-fill text-primary"></i> Template Tag
-            </h5>
-            <p class="card-text">Component using inline &lt;template&gt; tag with light DOM rendering</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">Template</span>
-              <span class="badge badge-feature bg-secondary">Light DOM</span>
-              <span class="badge badge-feature bg-secondary">Attributes</span>
-              <span class="badge badge-feature bg-secondary">Events</span>
-            </div>
-            <a href="example-1-template.html" class="btn btn-primary w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+					<div class="col-md-4">
+						<feature-card icon="bi bi-shield-check" title="Shadow DOM" color="success">
+							Optional style encapsulation with Shadow DOM
+						</feature-card>
+					</div>
 
-      <!-- Example 2 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-2-circle-fill text-success"></i> Template + Shadow DOM
-            </h5>
-            <p class="card-text">Template with Shadow DOM for complete style encapsulation</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">Template</span>
-              <span class="badge badge-feature bg-secondary">Shadow DOM</span>
-              <span class="badge badge-feature bg-secondary">Isolated Styles</span>
-            </div>
-            <a href="example-2-shadow.html" class="btn btn-success w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+					<div class="col-md-4">
+						<feature-card icon="bi bi-lightning" title="Events & Lifecycle" color="info">
+							Standard events, custom events, and lifecycle hooks
+						</feature-card>
+					</div>
+				</div>
+			</div>
+		</div>
 
-      <!-- Example 3 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-3-circle-fill text-info"></i> External HTML File
-            </h5>
-            <p class="card-text">Load component HTML from external file with light DOM</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">External File</span>
-              <span class="badge badge-feature bg-secondary">Light DOM</span>
-              <span class="badge badge-feature bg-secondary">Events</span>
-            </div>
-            <a href="example-3-external.html" class="btn btn-info w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+		<div class="row mb-4">
+			<div class="col-12">
+				<h2 class="mb-3">
+					<i class="bi bi-collection"></i>
+					Examples
+				</h2>
+			</div>
+		</div>
 
-      <!-- Example 4 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-4-circle-fill text-warning"></i> External + Shadow DOM
-            </h5>
-            <p class="card-text">External HTML file with Shadow DOM encapsulation</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">External File</span>
-              <span class="badge badge-feature bg-secondary">Shadow DOM</span>
-              <span class="badge badge-feature bg-secondary">Isolated</span>
-            </div>
-            <a href="example-4-external-shadow.html" class="btn btn-warning w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+		<div class="row g-4">
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Template Tag" icon="bi bi-1-circle-fill text-primary" href="example-1-template.html">
+					<p slot="content" class="card-text">Component using inline &lt;template&gt; tag with light DOM rendering</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">Template</span>
+						<span class="badge badge-feature bg-secondary">Light DOM</span>
+						<span class="badge badge-feature bg-secondary">Attributes</span>
+						<span class="badge badge-feature bg-secondary">Events</span>
+					</div>
+				</example-card>
+			</div>
 
-      <!-- Example 5 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-5-circle-fill text-danger"></i> Events & Custom Events
-            </h5>
-            <p class="card-text">Demonstrates standard and custom event handling</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">Click Events</span>
-              <span class="badge badge-feature bg-secondary">Custom Events</span>
-              <span class="badge badge-feature bg-secondary">Event Bubbling</span>
-            </div>
-            <a href="example-5-events.html" class="btn btn-danger w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Template + Shadow DOM" icon="bi bi-2-circle-fill text-success" href="example-2-shadow.html">
+					<p slot="content" class="card-text">Template with Shadow DOM for complete style encapsulation</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">Template</span>
+						<span class="badge badge-feature bg-secondary">Shadow DOM</span>
+						<span class="badge badge-feature bg-secondary">Isolated Styles</span>
+					</div>
+				</example-card>
+			</div>
 
-      <!-- Example 6 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-6-circle-fill text-secondary"></i> Lifecycle Hooks
-            </h5>
-            <p class="card-text">Component lifecycle: mounted, unmounted, and changed</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">Mounted</span>
-              <span class="badge badge-feature bg-secondary">Unmounted</span>
-              <span class="badge badge-feature bg-secondary">Changed</span>
-            </div>
-            <a href="example-6-lifecycle.html" class="btn btn-secondary w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="External HTML File" icon="bi bi-3-circle-fill text-info" href="example-3-external.html">
+					<p slot="content" class="card-text">Load component HTML from external file with light DOM</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">External File</span>
+						<span class="badge badge-feature bg-secondary">Light DOM</span>
+						<span class="badge badge-feature bg-secondary">Events</span>
+					</div>
+				</example-card>
+			</div>
 
-      <!-- Example 7 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-7-circle-fill text-dark"></i> Slots
-            </h5>
-            <p class="card-text">Customizable components using default and named slots</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">Default Slot</span>
-              <span class="badge badge-feature bg-secondary">Named Slots</span>
-              <span class="badge badge-feature bg-secondary">Fallback Content</span>
-            </div>
-            <a href="example-7-slots.html" class="btn btn-dark w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="External + Shadow DOM" icon="bi bi-4-circle-fill text-warning" href="example-4-external-shadow.html">
+					<p slot="content" class="card-text">External HTML file with Shadow DOM encapsulation</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">External File</span>
+						<span class="badge badge-feature bg-secondary">Shadow DOM</span>
+						<span class="badge badge-feature bg-secondary">Isolated</span>
+					</div>
+				</example-card>
+			</div>
 
-      <!-- Example 8 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-8-circle-fill text-primary"></i> Extending Built-ins
-            </h5>
-            <p class="card-text">Use <code>mixin(HTMLButtonElement)</code> to extend native elements like <code>&lt;button&gt;</code></p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">mixin(Base)</span>
-              <span class="badge badge-feature bg-secondary">Customized Built-in</span>
-              <span class="badge badge-feature bg-secondary">is= attribute</span>
-            </div>
-            <a href="example-8-extends.html" class="btn btn-primary w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Events & Custom Events" icon="bi bi-5-circle-fill text-danger" href="example-5-events.html">
+					<p slot="content" class="card-text">Demonstrates standard and custom event handling</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">Click Events</span>
+						<span class="badge badge-feature bg-secondary">Custom Events</span>
+						<span class="badge badge-feature bg-secondary">Event Bubbling</span>
+					</div>
+				</example-card>
+			</div>
 
-      <!-- Example 9 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-9-circle-fill text-success"></i> create() Utility
-            </h5>
-            <p class="card-text">Build DOM elements programmatically with attrs, props, and a handle callback</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">create()</span>
-              <span class="badge badge-feature bg-secondary">Dynamic DOM</span>
-              <span class="badge badge-feature bg-secondary">Handle Callback</span>
-            </div>
-            <a href="example-9-create.html" class="btn btn-success w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Lifecycle Hooks" icon="bi bi-6-circle-fill text-secondary" href="example-6-lifecycle.html">
+					<p slot="content" class="card-text">Component lifecycle: mounted, unmounted, and changed</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">Mounted</span>
+						<span class="badge badge-feature bg-secondary">Unmounted</span>
+						<span class="badge badge-feature bg-secondary">Changed</span>
+					</div>
+				</example-card>
+			</div>
 
-      <!-- Example 10 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-fonts text-info"></i> Attribute Mapping
-            </h5>
-            <p class="card-text">Auto kebab-case → camelCase mapping. Override with explicit <code>{ attr, prop }</code> objects</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">kebab-case</span>
-              <span class="badge badge-feature bg-secondary">camelCase</span>
-              <span class="badge badge-feature bg-secondary">Explicit Mapping</span>
-            </div>
-            <a href="example-10-attrs.html" class="btn btn-info w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Slots" icon="bi bi-7-circle-fill text-dark" href="example-7-slots.html">
+					<p slot="content" class="card-text">Customizable components using default and named slots</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">Default Slot</span>
+						<span class="badge badge-feature bg-secondary">Named Slots</span>
+						<span class="badge badge-feature bg-secondary">Fallback Content</span>
+					</div>
+				</example-card>
+			</div>
 
-      <!-- Example 11 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-diagram-3-fill text-warning"></i> Component Composition
-            </h5>
-            <p class="card-text">Child components communicate with parents via bubbling custom events — no globals</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">Custom Events</span>
-              <span class="badge badge-feature bg-secondary">Bubbling</span>
-              <span class="badge badge-feature bg-secondary">Decoupled</span>
-            </div>
-            <a href="example-11-composition.html" class="btn btn-warning w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Extending Built-ins" icon="bi bi-8-circle-fill text-primary" href="example-8-extends.html">
+					<p slot="content" class="card-text">Use <code>mixin(HTMLButtonElement)</code> to extend native elements like <code>&lt;button&gt;</code></p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">mixin(Base)</span>
+						<span class="badge badge-feature bg-secondary">Customized Built-in</span>
+						<span class="badge badge-feature bg-secondary">is= attribute</span>
+					</div>
+				</example-card>
+			</div>
 
-      <!-- Example 12 -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card example-card">
-          <div class="card-body">
-            <h5 class="card-title">
-              <i class="bi bi-check2-square text-danger"></i> Todo App (Complex)
-            </h5>
-            <p class="card-text">Full real-world app: lifecycle, composition, event delegation, create(), attr mapping — all together</p>
-            <div class="mb-3">
-              <span class="badge badge-feature bg-secondary">Real-world</span>
-              <span class="badge badge-feature bg-secondary">Composition</span>
-              <span class="badge badge-feature bg-secondary">State Management</span>
-            </div>
-            <a href="example-12-todo.html" class="btn btn-danger w-100">
-              <i class="bi bi-box-arrow-up-right"></i> View Example
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="create() Utility" icon="bi bi-9-circle-fill text-success" href="example-9-create.html">
+					<p slot="content" class="card-text">Build DOM elements programmatically with attrs, props, and a handle callback</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">create()</span>
+						<span class="badge badge-feature bg-secondary">Dynamic DOM</span>
+						<span class="badge badge-feature bg-secondary">Handle Callback</span>
+					</div>
+				</example-card>
+			</div>
 
-  <footer class="bg-dark text-light py-4 mt-5">
-    <div class="container text-center">
-      <p class="mb-0">
-        <i class="bi bi-lightning-charge"></i> Wiet - Minimal, Dynamic, Powerful
-      </p>
-      <p class="text-muted small mb-0">Built with vanilla JavaScript and Bootstrap 5</p>
-    </div>
-  </footer>
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Attribute Mapping" icon="bi bi-fonts text-info" href="example-10-attrs.html">
+					<p slot="content" class="card-text">Auto kebab-case → camelCase mapping. Override with explicit <code>{ attr, prop }</code> objects</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">kebab-case</span>
+						<span class="badge badge-feature bg-secondary">camelCase</span>
+						<span class="badge badge-feature bg-secondary">Explicit Mapping</span>
+					</div>
+				</example-card>
+			</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  <script type="module">
-    import './widgets.js';
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Component Composition" icon="bi bi-diagram-3-fill text-warning" href="example-11-composition.html">
+					<p slot="content" class="card-text">Child components communicate with parents via bubbling custom events — no globals</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">Custom Events</span>
+						<span class="badge badge-feature bg-secondary">Bubbling</span>
+						<span class="badge badge-feature bg-secondary">Decoupled</span>
+					</div>
+				</example-card>
+			</div>
 
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
+			<div class="col-md-6 col-lg-4">
+				<example-card title="Todo App (Complex)" icon="bi bi-check2-square text-danger" href="example-12-todo.html">
+					<p slot="content" class="card-text">Full real-world app: lifecycle, composition, event delegation, create(), attr mapping — all together</p>
+					<div slot="category" class="mb-3">
+						<span class="badge badge-feature bg-secondary">Real-world</span>
+						<span class="badge badge-feature bg-secondary">Composition</span>
+						<span class="badge badge-feature bg-secondary">State Management</span>
+					</div>
+				</example-card>
+			</div>
+		</div>
+	</div>
 
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = html.getAttribute('data-bs-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-bs-theme', newTheme);
+	<page-footer></page-footer>
 
-      const icon = themeToggle.querySelector('i');
-      icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
-    });
-  </script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module">
+		import './examples/layouts.js'
+		import './widgets.js'
+
+		// Theme toggle
+		const themeToggle = document.getElementById('themeToggle');
+		const html = document.documentElement;
+
+		themeToggle.addEventListener('click', () => {
+			const currentTheme = html.getAttribute('data-bs-theme');
+			const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+			html.setAttribute('data-bs-theme', newTheme);
+
+			const icon = themeToggle.querySelector('i');
+			icon.className = newTheme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun-fill';
+		});
+	</script>
 </body>
 
 </html>

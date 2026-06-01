@@ -1,0 +1,18 @@
+<div class="card example-card h-100">
+  <div class="card-body d-flex flex-column h-100">
+    <h5 class="card-title">
+      <i class="example-icon me-2"></i>
+      <span class="example-title"></span>
+    </h5>
+
+    <slot name="content"></slot>
+
+    <div class="mb-3 mt-3">
+      <slot name="category"></slot>
+    </div>
+
+    <a class="btn btn-primary w-100 example-link" href="#">
+      <i class="bi bi-box-arrow-up-right"></i> View Example
+    </a>
+  </div>
+</div>

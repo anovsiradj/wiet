@@ -168,8 +168,8 @@ wiet('example-section', class extends mixin() {
 
 // Feature Card Component
 wiet('feature-card', class extends mixin() {
-	static attrs = ['icon', 'title', 'description', 'color'];
-	
+	static attrs = ['icon', 'title', 'color'];
+    
 	constructor() {
 		super();
 		this.template = './widgets/feature-card.html';
@@ -178,13 +178,13 @@ wiet('feature-card', class extends mixin() {
 	mounted() {
 		this.updateContent();
 	}
-	
+    
 	updateContent() {
 		const color = this.color || 'primary';
 		const card = this.querySelector('.feature-card');
 		if (!card) return;
 		card.className = `card feature-card bg-${color} text-white`;
-		
+        
 		const icon = this.querySelector('.feature-icon');
 		if (icon) {
 			icon.className = this.icon || 'bi bi-star';
@@ -193,9 +193,39 @@ wiet('feature-card', class extends mixin() {
 		if (title) {
 			title.textContent = this.title || 'Feature';
 		}
-		const description = this.querySelector('.feature-description');
-		if (description) {
-			description.textContent = this.description || '';
+
+		// Note: the content/description is provided via the default slot
+		// inside the template (see widgets/feature-card.html). Do not
+		// overwrite slotted content from an attribute.
+	}
+});
+
+// Example Card Component
+wiet('example-card', class extends mixin() {
+	static attrs = ['title', 'icon', 'href', 'variant'];
+
+	constructor() {
+		super();
+		this.template = './widgets/example-card.html';
+	}
+
+	mounted() {
+		this.updateContent();
+	}
+
+	updateContent() {
+		const title = this.querySelector('.example-title');
+		if (title) title.textContent = this.title || '';
+
+		const icon = this.querySelector('.example-icon');
+		if (icon) icon.className = this.icon || '';
+
+		const link = this.querySelector('.example-link');
+		if (link) {
+			link.href = this.href || '#';
+			const variant = this.variant || 'primary';
+			link.className = `btn btn-${variant} w-100 example-link`;
 		}
 	}
 });
+

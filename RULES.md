@@ -14,6 +14,8 @@
 ## Scopes
 - all implementations must be based on standard web APIs
 - all features must be able to run directly in the browser
+- everything must be straight foward with minimal boilerplate
+- everything must be straight foward with explicit interface
 
 ## examples
 - examples also be used as demos and tests

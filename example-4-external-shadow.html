@@ -3,178 +3,182 @@
 <html lang="en" data-bs-theme="dark">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Example 4 - External + Shadow | Wiet</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Example 4 - External + Shadow | Wiet</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body>
-  <page-header></page-header>
+	<page-header></page-header>
 
-  <div class="container my-5">
-    <div class="row">
-      <div class="col-lg-8 mx-auto">
-        <example-section icon="bi bi-4-circle-fill" title="Example 4: External HTML + Shadow DOM" description="Component loaded from external widget file (widgets/product-card.html) with Shadow DOM for complete style isolation." variant="warning"></example-section>
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-lg-8 mx-auto">
+				<example-section icon="bi bi-4-circle-fill" title="Example 4: External HTML + Shadow DOM" description="Component loaded from external widget file (widgets/product-card.html) with Shadow DOM for complete style isolation." variant="warning"></example-section>
 
-        <div class="card mb-4">
-          <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-eye"></i> Live Demo</h5>
-          </div>
-          <div class="card-body source">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <product-card product-name="Awesome Widget" price="29.99" description="The best widget you'll ever own!">
-                </product-card>
-              </div>
-              <div class="col-md-6 mb-3">
-                <product-card product-name="Super Gadget" price="49.99" description="A must-have gadget for everyone!">
-                </product-card>
-              </div>
-            </div>
+				<div class="card mb-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-eye"></i> Live Demo</h5>
+					</div>
+					<div class="card-body source">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<product-card product-name="Awesome Widget" price="29.99" description="The best widget you'll ever own!">
+								</product-card>
+							</div>
+							<div class="col-md-6 mb-3">
+								<product-card product-name="Super Gadget" price="49.99" description="A must-have gadget for everyone!">
+								</product-card>
+							</div>
+						</div>
 
-            <div class="mt-4">
-              <h6>Add New Product:</h6>
-              <div class="input-group mb-2">
-                <span class="input-group-text">Product Name</span>
-                <input type="text" class="form-control" id="productInput" placeholder="Enter product name">
-              </div>
-              <div class="input-group mb-2">
-                <span class="input-group-text">Price ($)</span>
-                <input type="number" class="form-control" id="priceInput" placeholder="0.00" step="0.01">
-              </div>
-              <div class="input-group mb-2">
-                <span class="input-group-text">Description</span>
-                <input type="text" class="form-control" id="descInput" placeholder="Product description">
-              </div>
-              <button class="btn btn-warning" id="addProductBtn">
-                <i class="bi bi-plus-circle"></i> Add Product
-              </button>
-            </div>
-            <div id="newProducts" class="row mt-3"></div>
+						<div class="mt-4">
+							<h6>Add New Product:</h6>
+							<div class="input-group mb-2">
+								<span class="input-group-text">Product Name</span>
+								<input type="text" class="form-control" id="productInput" placeholder="Enter product name">
+							</div>
+							<div class="input-group mb-2">
+								<span class="input-group-text">Price ($)</span>
+								<input type="number" class="form-control" id="priceInput" placeholder="0.00" step="0.01">
+							</div>
+							<div class="input-group mb-2">
+								<span class="input-group-text">Description</span>
+								<input type="text" class="form-control" id="descInput" placeholder="Product description">
+							</div>
+							<button class="btn btn-warning" id="addProductBtn">
+								<i class="bi bi-plus-circle"></i> Add Product
+							</button>
+						</div>
+						<div id="newProducts" class="row mt-3"></div>
 
-            <div class="alert alert-success mt-4">
-              <h6 class="alert-heading"><i class="bi bi-cart-check"></i> Shopping Cart</h6>
-              <div id="cart">
-                <p class="text-muted mb-0">Your cart is empty</p>
-              </div>
-            </div>
-          </div>
-        </div>
+						<div class="alert alert-success mt-4">
+							<h6 class="alert-heading"><i class="bi bi-cart-check"></i> Shopping Cart</h6>
+							<div id="cart">
+								<p class="text-muted mb-0">Your cart is empty</p>
+							</div>
+						</div>
+					</div>
+				</div>
 
-        <event-log id="eventLog"></event-log>
+				<event-log id="eventLog"></event-log>
 
-        <code class="source" data-fetch="widgets/product-card.html" hidden></code>
-        <view-code></view-code>
+				<code class="source" data-fetch="widgets/product-card.html" hidden></code>
+				<view-code></view-code>
 
-      </div>
-    </div>
-  </div>
+			</div>
+		</div>
+	</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  <script type="module" class="source">
-    import { wiet, mixin } from './wiet.js';
-    import './widgets.js';
-    const eventLog = document.getElementById('eventLog');
+	<page-footer></page-footer>
 
-    function logEvent(message, type = 'info') {
-      eventLog.log(message, type);
-    }
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" class="source">
+		import './examples/layouts.js';
+		import './widgets.js';
+		import { wiet, mixin } from './wiet.js';
 
-    let cart = [];
+		const eventLog = document.getElementById('eventLog');
 
-    function updateCart() {
-      const cartDiv = document.getElementById('cart');
-      if (cart.length === 0) {
-        cartDiv.innerHTML = '<p class="text-muted mb-0">Your cart is empty</p>';
-      } else {
-        const total = cart.reduce((sum, item) => sum + item.price, 0);
-        cartDiv.innerHTML = `
-          <ul class="list-unstyled mb-2">
-            ${cart.map(item => `<li>🛒 ${item.product} - $${item.price.toFixed(2)}</li>`).join('')}
-          </ul>
-          <strong>Total: $${total.toFixed(2)}</strong>
-        `;
-      }
-    }
+		function logEvent(message, type = 'info') {
+			eventLog.log(message, type);
+		}
 
-    wiet('product-card', class extends mixin() {
-      static attrs = ['product-name', 'price', 'description'];
+		let cart = [];
 
-      constructor() {
-        super();
-        this.template = './widgets/product-card.html';
-        this.useShadow = true;
-        this.handles = {
-          '.add-to-cart': {
-            click() {
-              const productName = this.productName;
-              const price = this.price;
-              logEvent(`🛒 Added to cart: ${productName} ($${price})`);
-              this.dispatchEvent(new CustomEvent('add-to-cart', {
-                bubbles: true,
-                detail: {
-                  product: productName,
-                  price: parseFloat(price)
-                }
-              }));
-            }
-          }
-        };
-      }
+		function updateCart() {
+			const cartDiv = document.getElementById('cart');
+			if (cart.length === 0) {
+				cartDiv.innerHTML = '<p class="text-muted mb-0">Your cart is empty</p>';
+			} else {
+				const total = cart.reduce((sum, item) => sum + item.price, 0);
+				cartDiv.innerHTML = `
+					<ul class="list-unstyled mb-2">
+						${cart.map(item => `<li>🛒 ${item.product} - $${item.price.toFixed(2)}</li>`).join('')}
+					</ul>
+					<strong>Total: $${total.toFixed(2)}</strong>
+				`;
+			}
+		}
 
-      mounted() {
-        logEvent(`✅ product-card mounted: ${this.productName}`);
-        this.updateProduct();
-      }
+		wiet('product-card', class extends mixin() {
+			static attrs = ['product-name', 'price', 'description'];
 
-      updateProduct() {
-        const root = this.shadowRoot;
-        root.querySelector('.product-name').textContent = this.productName || 'Product';
-        root.querySelector('.description').textContent = this.description || 'No description';
-        root.querySelector('.price').textContent = `$${this.price || '0.00'}`;
-      }
-    });
+			constructor() {
+				super();
+				this.template = './widgets/product-card.html';
+				this.useShadow = true;
+				this.handles = {
+					'.add-to-cart': {
+						click() {
+							const productName = this.productName;
+							const price = this.price;
+							logEvent(`🛒 Added to cart: ${productName} ($${price})`);
+							this.dispatchEvent(new CustomEvent('add-to-cart', {
+								bubbles: true,
+								detail: {
+									product: productName,
+									price: parseFloat(price)
+								}
+							}));
+						}
+					}
+				};
+			}
 
-    // Listen for add-to-cart events
-    document.addEventListener('add-to-cart', (e) => {
-      cart.push(e.detail);
-      updateCart();
-      logEvent(`📢 Cart updated: ${cart.length} item(s)`);
-    });
+			mounted() {
+				logEvent(`✅ product-card mounted: ${this.productName}`);
+				this.updateProduct();
+			}
 
-    // Add product button handler
-    document.getElementById('addProductBtn').addEventListener('click', () => {
-      const name = document.getElementById('productInput').value;
-      const price = document.getElementById('priceInput').value;
-      const desc = document.getElementById('descInput').value;
+			updateProduct() {
+				const root = this.shadowRoot;
+				root.querySelector('.product-name').textContent = this.productName || 'Product';
+				root.querySelector('.description').textContent = this.description || 'No description';
+				root.querySelector('.price').textContent = `$${this.price || '0.00'}`;
+			}
+		});
 
-      if (!name || !price) {
-        alert('Please fill in product name and price');
-        return;
-      }
+		// Listen for add-to-cart events
+		document.addEventListener('add-to-cart', (e) => {
+			cart.push(e.detail);
+			updateCart();
+			logEvent(`📢 Cart updated: ${cart.length} item(s)`);
+		});
 
-      const col = document.createElement('div');
-      col.className = 'col-md-6 mb-3';
+		// Add product button handler
+		document.getElementById('addProductBtn').addEventListener('click', () => {
+			const name = document.getElementById('productInput').value;
+			const price = document.getElementById('priceInput').value;
+			const desc = document.getElementById('descInput').value;
 
-      const card = document.createElement('product-card');
-      card.productName = name;
-      card.price = price;
-      card.description = desc;
+			if (!name || !price) {
+				alert('Please fill in product name and price');
+				return;
+			}
 
-      col.appendChild(card);
-      document.getElementById('newProducts').appendChild(col);
-      logEvent(`➕ Added new product: ${name}`);
+			const col = document.createElement('div');
+			col.className = 'col-md-6 mb-3';
 
-      // Clear inputs
-      document.getElementById('productInput').value = '';
-      document.getElementById('priceInput').value = '';
-      document.getElementById('descInput').value = '';
-    });
+			const card = document.createElement('product-card');
+			card.productName = name;
+			card.price = price;
+			card.description = desc;
 
-    setTimeout(() => logEvent('🚀 External + Shadow DOM components initialized'), 100);
-  </script>
+			col.appendChild(card);
+			document.getElementById('newProducts').appendChild(col);
+			logEvent(`➕ Added new product: ${name}`);
+
+			// Clear inputs
+			document.getElementById('productInput').value = '';
+			document.getElementById('priceInput').value = '';
+			document.getElementById('descInput').value = '';
+		});
+
+		setTimeout(() => logEvent('🚀 External + Shadow DOM components initialized'), 100);
+	</script>
 </body>
 
 </html>
