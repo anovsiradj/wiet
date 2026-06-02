@@ -49,3 +49,11 @@ wiet('hello-card', class extends mixin() {
 - Custom elements
 - Shadow DOM
 - Fetch API
+
+## Web Component API,Guides,References.
+
+- <https://developer.mozilla.org/en-US/docs/Web/API/Web_components>
+- <https://www.webcomponents.org/>
+- <https://lit.dev/>
+- <https://open-wc.org/guides/community/component-libraries/>
+- <https://stackoverflow.com/a/50416836/3036312>

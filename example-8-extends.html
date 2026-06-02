@@ -71,7 +71,7 @@
 class IconButton extends mixin(HTMLButtonElement) { ... }
 
 // Register with { extends: 'button' }
-wiet({ name: 'icon-button', extends: 'button' }, IconButton);
+wiet({ tname: 'icon-button', extends: 'button' }, IconButton);
 
 // Use with the `is` attribute in HTML
 // &lt;button is="icon-button" icon="bi-star" label="Star"&gt;&lt;/button&gt;</code></pre>
@@ -131,7 +131,7 @@ wiet({ name: 'icon-button', extends: 'button' }, IconButton);
 		}
 
 		// Register as customized built-in — tag object with `extends`
-		wiet({ name: 'icon-button', extends: 'button' }, IconButton);
+		wiet({ tname: 'icon-button', extends: 'button' }, IconButton);
 
 		// Programmatic control demo
 		document.getElementById('applyBtn').addEventListener('click', () => {
