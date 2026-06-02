@@ -91,12 +91,12 @@ wiet({ tname: 'icon-button', extends: 'button' }, IconButton);
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
 		// Extend the native HTMLButtonElement
-		class IconButton extends mixin(HTMLButtonElement) {
+		class IconButton extends WietClass(HTMLButtonElement) {
 			static attrs = ['icon', 'label', 'variant'];
 
 			constructor() {
@@ -131,7 +131,7 @@ wiet({ tname: 'icon-button', extends: 'button' }, IconButton);
 		}
 
 		// Register as customized built-in — tag object with `extends`
-		wiet({ tname: 'icon-button', extends: 'button' }, IconButton);
+		wietDefine({ tname: 'icon-button', extends: 'button' }, IconButton);
 
 		// Programmatic control demo
 		document.getElementById('applyBtn').addEventListener('click', () => {

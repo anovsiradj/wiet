@@ -78,7 +78,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -103,7 +103,7 @@
 			}
 		}
 
-		wiet('product-card', class extends mixin() {
+		const ProductCard = class extends WietClass() {
 			static attrs = ['product-name', 'price', 'description'];
 
 			constructor() {

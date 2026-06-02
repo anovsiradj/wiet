@@ -70,7 +70,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -78,7 +78,7 @@
 			eventLog.log(message, type);
 		}
 
-		wiet('user-card', class extends mixin() {
+		const UserCard = class extends WietClass() {
 			static attrs = ['user-name', 'email', 'role'];
 
 			constructor() {
@@ -130,7 +130,9 @@
 				this.querySelector('.email').textContent = `Email: ${this.email || 'N/A'}`;
 				this.querySelector('.role').textContent = `Role: ${this.role || 'Member'}`;
 			}
-		});
+		};
+
+		wietDefine('user-card', UserCard);
 
 		// Listen for custom events
 		document.addEventListener('user-edit', (e) => {

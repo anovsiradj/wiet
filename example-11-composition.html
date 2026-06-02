@@ -173,11 +173,11 @@ document.addEventListener('cart:add', (e) => {
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 		const eventLog = document.getElementById('eventLog');
 
 		// --- product-item: child component ---
-		wiet('product-item', class extends mixin() {
+		const ProductItem = class extends WietClass() {
 			static attrs = ['name', 'price', 'stock'];
 
 			constructor() {
@@ -212,10 +212,12 @@ document.addEventListener('cart:add', (e) => {
 					}));
 				};
 			}
-		});
+		};
+
+		wietDefine('product-item', ProductItem);
 
 		// --- cart-panel: parent/orchestrator component ---
-		wiet('cart-panel', class extends mixin() {
+		const CartPanel = class extends WietClass() {
 			constructor() {
 				super();
 				this.template = '#cart-panel-tpl';
@@ -271,7 +273,9 @@ document.addEventListener('cart:add', (e) => {
 				totalEl.textContent = `Total: $${total.toFixed(2)}`;
 				checkoutBtn.disabled = false;
 			}
-		});
+		};
+
+		wietDefine('cart-panel', CartPanel);
 
 		setTimeout(() => eventLog.log('🚀 Composition demo ready', 'success'), 100);
 	</script>

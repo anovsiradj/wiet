@@ -231,12 +231,12 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
 		// --- user-profile: auto kebab-case → camelCase ---
-		wiet('user-profile', class extends mixin() {
+		const UserProfile = class extends WietClass() {
 			// wiet auto-generates: firstName, lastName, jobTitle, avatarUrl, isOnline
 			static attrs = ['first-name', 'last-name', 'job-title', 'avatar-url', 'is-online'];
 
@@ -271,10 +271,12 @@
 				dot.classList.toggle('online', online);
 				dot.title = online ? 'Online' : 'Offline';
 			}
-		});
+		};
+
+		wietDefine('user-profile', UserProfile);
 
 		// --- score-badge: explicit attr → prop override ---
-		wiet('score-badge', class extends mixin() {
+		const ScoreBadge = class extends WietClass() {
 			static attrs = [
 				{ attr: 'pts', prop: 'points' },      // attr "pts" → this.points
 				{ attr: 'max-pts', prop: 'maxPoints' }, // attr "max-pts" → this.maxPoints
@@ -305,7 +307,9 @@
 				this.querySelector('.score-value').textContent = `${pts} / ${max}`;
 				this.querySelector('.score-bar').style.width = `${pct}%`;
 			}
-		});
+		};
+
+		wietDefine('score-badge', ScoreBadge);
 
 		// Apply button
 		document.getElementById('applyProps').addEventListener('click', () => {

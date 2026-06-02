@@ -98,7 +98,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -106,7 +106,7 @@
 			eventLog.log(message, type);
 		}
 
-		wiet('shadow-button', class extends mixin() {
+		const ShadowButton = class extends WietClass() {
 			static attrs = ['label', 'color'];
 
 			constructor() {
@@ -137,7 +137,9 @@
 				btn.textContent = this.label || 'Click';
 				btn.style.background = this.color || '#3498db';
 			}
-		});
+		};
+
+		wietDefine('shadow-button', ShadowButton);
 
 		// Listen for custom events
 		document.addEventListener('shadow-click', (e) => {

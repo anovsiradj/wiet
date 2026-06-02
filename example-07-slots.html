@@ -129,7 +129,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -138,7 +138,7 @@
 		}
 
 		// Card component with default slot
-		wiet('card-component', class extends mixin() {
+		const CardComponent = class extends WietClass() {
 			constructor() {
 				super();
 				this.template = './widgets/card-component.html';
@@ -147,10 +147,12 @@
 			mounted() {
 				logEvent('✅ card-component mounted');
 			}
-		});
+		};
+
+		wietDefine('card-component', CardComponent);
 
 		// Dialog component with named slots
-		wiet('dialog-component', class extends mixin() {
+		const DialogComponent = class extends WietClass() {
 			constructor() {
 				super();
 				this.template = './widgets/dialog-component.html';
@@ -159,10 +161,12 @@
 			mounted() {
 				logEvent('✅ dialog-component mounted');
 			}
-		});
+		};
+
+		wietDefine('dialog-component', DialogComponent);
 
 		// Article component with mixed slots
-		wiet('article-component', class extends mixin() {
+		const ArticleComponent = class extends WietClass() {
 			constructor() {
 				super();
 				this.template = './widgets/article-component.html';
@@ -171,7 +175,9 @@
 			mounted() {
 				logEvent('✅ article-component mounted');
 			}
-		});
+		};
+
+		wietDefine('article-component', ArticleComponent);
 
 		setTimeout(() => {
 			logEvent('🚀 Slots demo initialized', 'success');

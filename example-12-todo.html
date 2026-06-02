@@ -145,7 +145,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin, create } from './wiet.js';
+		import { wietDefine, WietClass, create } from './wiet.js';
 
 		// --- Shared state store (plain object, no framework needed) ---
 		const store = {
@@ -169,7 +169,7 @@
 		}
 
 		// --- todo-form ---
-		wiet('todo-form', class extends mixin() {
+		const TodoForm = class extends WietClass() {
 			constructor() {
 				super();
 				this.template = '#todo-form-tpl';
@@ -192,10 +192,12 @@
 					},
 				};
 			}
-		});
+		};
+
+		wietDefine('todo-form', TodoForm);
 
 		// --- todo-stats ---
-		wiet('todo-stats', class extends mixin() {
+		const TodoStats = class extends WietClass() {
 			constructor() {
 				super();
 				this.template = '#todo-stats-tpl';
@@ -215,10 +217,12 @@
 				this.querySelector('.stats-pct').textContent = `${pct}%`;
 				this.querySelector('.stats-bar').style.width = `${pct}%`;
 			}
-		});
+		};
+
+		wietDefine('todo-stats', TodoStats);
 
 		// --- todo-filter ---
-		wiet('todo-filter', class extends mixin() {
+		const TodoFilter = class extends WietClass() {
 			constructor() {
 				super();
 				this.template = '#todo-filter-tpl';
@@ -244,10 +248,12 @@
 					btn.classList.toggle('active', btn.dataset.filter === store.filter);
 				});
 			}
-		});
+		};
+
+		wietDefine('todo-filter', TodoFilter);
 
 		// --- todo-item ---
-		wiet('todo-item', class extends mixin() {
+		const TodoItem = class extends WietClass() {
 			static attrs = ['todo-id'];
 
 			constructor() {
@@ -299,10 +305,12 @@
 			}
 
 			changed() { this.render(); }
-		});
+		};
+
+		wietDefine('todo-item', TodoItem);
 
 		// --- todo-list ---
-		wiet('todo-list', class extends mixin() {
+		wietDefine('todo-list', class extends WietClass() {
 			constructor() {
 				super();
 				this.template = '#todo-list-tpl';
@@ -344,7 +352,7 @@
 		});
 
 		// --- todo-app: top-level orchestrator ---
-		wiet('todo-app', class extends mixin() {
+		wietDefine('todo-app', class extends WietClass() {
 			constructor() {
 				super();
 				// No external template — build inner DOM directly in mounted()

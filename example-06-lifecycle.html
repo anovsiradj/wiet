@@ -114,7 +114,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -125,7 +125,7 @@
 		let componentCount = 0;
 		let currentComponent = null;
 
-		wiet('lifecycle-demo', class extends mixin() {
+		const LifecycleDemo = class extends WietClass() {
 			static attrs = ['data'];
 
 			constructor() {
@@ -153,7 +153,9 @@
 				const data = this.data || 'No data';
 				this.querySelector('.data-display').textContent = `Data: ${data}`;
 			}
-		});
+		};
+
+		wietDefine('lifecycle-demo', LifecycleDemo);
 
 		// Add component button
 		document.getElementById('addComponent').addEventListener('click', () => {

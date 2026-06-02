@@ -53,7 +53,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -61,7 +61,7 @@
 			eventLog.log(message, type);
 		}
 
-		wiet('counter-widget', class extends mixin() {
+		const CounterWidget = class extends WietClass() {
 			static attrs = ['start'];
 
 			constructor() {
@@ -113,7 +113,9 @@
 			updateDisplay() {
 				this.querySelector('.counter-display').textContent = this.count;
 			}
-		});
+		};
+
+		wietDefine('counter-widget', CounterWidget);
 
 		// Listen for custom events at document level
 		document.addEventListener('count-changed', (e) => {

@@ -83,7 +83,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wiet, mixin } from './wiet.js';
+		import { wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -91,7 +91,7 @@
 			eventLog.log(message);
 		}
 
-		wiet('greeting-card', class extends mixin() {
+		const GreetingCard = class extends WietClass() {
 			static attrs = ['name', 'message'];
 
 			constructor() {
@@ -122,7 +122,9 @@
 				this.querySelector('.greeting-text').textContent = `Hello, ${name}!`;
 				this.querySelector('.message-text').textContent = message;
 			}
-		});
+		};
+
+		wietDefine('greeting-card', GreetingCard);
 
 		// Listen for custom event
 		document.addEventListener('greeting-sent', (e) => {
