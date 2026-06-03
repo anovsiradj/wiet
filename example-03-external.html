@@ -155,11 +155,9 @@
 				return;
 			}
 
-			const card = document.createElement('user-card');
-			card.userName = name;
-			card.email = email;
-			card.role = role;
-			card.className = 'mt-3';
+			const card = wietCreate('user-card', {
+				props: { userName: name, email, role, className: 'mt-3' }
+			});
 
 			document.getElementById('newUsers').appendChild(card);
 			logEvent(`➕ Added new user: ${name}`);

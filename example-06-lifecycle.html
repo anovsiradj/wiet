@@ -114,7 +114,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wietDefine, WietClass } from './wiet.js';
+		import { wietCreate, wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -168,8 +168,9 @@
 			const container = document.getElementById('componentContainer');
 			container.innerHTML = '';
 
-			currentComponent = document.createElement('lifecycle-demo');
-			currentComponent.data = `Component #${componentCount}`;
+			currentComponent = wietCreate('lifecycle-demo', {
+				props: { data: `Component #${componentCount}` }
+			});
 			container.appendChild(currentComponent);
 
 			logEvent(`➕ Creating component #${componentCount}...`, 'info');

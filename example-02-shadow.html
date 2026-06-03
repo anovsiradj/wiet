@@ -98,7 +98,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wietDefine, WietClass } from './wiet.js';
+		import { wietCreate, wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -151,10 +151,9 @@
 			const label = document.getElementById('labelInput').value;
 			const color = document.getElementById('colorInput').value;
 
-			const btn = document.createElement('shadow-button');
-			btn.label = label;
-			btn.color = color;
-			btn.className = 'mb-2';
+			const btn = wietCreate('shadow-button', {
+				props: { label, color, className: 'mb-2' }
+			});
 
 			document.getElementById('customButtons').appendChild(btn);
 			logEvent(`➕ Added new button: "${label}"`);

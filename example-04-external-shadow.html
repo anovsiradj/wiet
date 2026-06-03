@@ -78,7 +78,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wietDefine, WietClass } from './wiet.js';
+		import { wietCreate, wietDefine, WietClass } from './wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -159,13 +159,13 @@
 				return;
 			}
 
-			const col = document.createElement('div');
-			col.className = 'col-md-6 mb-3';
+			const col = wietCreate('div', {
+				props: { className: 'col-md-6 mb-3' }
+			});
 
-			const card = document.createElement('product-card');
-			card.productName = name;
-			card.price = price;
-			card.description = desc;
+			const card = wietCreate('product-card', {
+				props: { productName: name, price, description: desc }
+			});
 
 			col.appendChild(card);
 			document.getElementById('newProducts').appendChild(col);

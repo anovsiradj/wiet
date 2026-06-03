@@ -43,15 +43,17 @@ wiet('hello-card', class extends mixin() {
 </script>
 ```
 
-## Browser Requirements
+## Todos
+...
 
+## Browser Requirements
+- HTML templates
 - ES modules
-- Custom elements
+- Custom Elements
 - Shadow DOM
 - Fetch API
 
-## Web Component API,Guides,References.
-
+## API,Guides,References.
 - <https://developer.mozilla.org/en-US/docs/Web/API/Web_components>
 - <https://www.webcomponents.org/>
 - <https://lit.dev/>

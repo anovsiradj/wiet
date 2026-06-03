@@ -3,7 +3,7 @@
  * Reusable components used across all example pages
  */
 
-import { create, wiet, mixin } from './wiet.js';
+import { create, wiet, mixin, wietCreate } from './wiet.js';
 
 // Event Log Component
 wiet('event-log', class extends mixin() {
@@ -31,7 +31,6 @@ wiet('event-log', class extends mixin() {
 		
 		const logContent = this.querySelector('.event-log-content');
 		if (!logContent) return;
-		const entry = document.createElement('div');
 		const time = new Date().toLocaleTimeString();
 		const colors = {
 			info: 'text-info',
@@ -39,8 +38,9 @@ wiet('event-log', class extends mixin() {
 			warning: 'text-warning',
 			danger: 'text-danger'
 		};
-		entry.className = colors[type] || 'text-info';
-		entry.textContent = `[${time}] ${message}`;
+		const entry = wietCreate('div', {
+			props: { className: colors[type] || 'text-info', textContent: `[${time}] ${message}` }
+		});
 		logContent.appendChild(entry);
 		logContent.scrollTop = logContent.scrollHeight;
 	}
