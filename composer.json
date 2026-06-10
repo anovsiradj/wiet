@@ -1,0 +1,13 @@
+{
+    "name": "anovsiradj/wiet",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "anovsiradj",
+            "email": "anov.siradj22@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
