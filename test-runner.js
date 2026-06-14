@@ -10,11 +10,15 @@ class WietExampleTester {
   async runTests() {
     console.log('🧪 Starting Wiet Examples Tests\n');
     
-    const exampleFiles = (await fs.readdir(process.cwd()))
+    const examplesDir = path.join(process.cwd(), 'examples');
+    const exampleFiles = (await fs.readdir(examplesDir))
       .filter(function(file) {
-        return file.startsWith('example-') && file.endsWith('.html');
+        return file.endsWith('.html') && file !== 'source.html' && file !== 'footer.html' && file !== 'komplet.html' && file !== 'slot-test.html';
       })
-      .sort();
+      .sort()
+      .map(function(file) {
+        return path.join('examples', file);
+      });
     
     console.log(`📄 Found ${exampleFiles.length} example files`);
     
@@ -118,7 +122,7 @@ class WietExampleTester {
 
   async checkComponentUsage($, exampleFile) {
     try {
-      const hasCustomElements = $('greeting-card, shadow-button, user-card, product-card, counter-widget, lifecycle-demo, card-component, dialog-component, article-component, icon-button, score-badge, product-item, cart-panel, todo-app, example-section, event-log, view-code, page-header, page-footer, feature-card, example-card').length > 0;
+      const hasCustomElements = $('greeting-card, shadow-button, user-card, product-card, counter-widget, lifecycle-demo, card-component, dialog-component, article-component, icon-button, score-badge, product-item, cart-panel, todo-app, example-section, event-log, page-source, page-header, page-footer, feature-card, example-card').length > 0;
       
       if (!hasCustomElements) {
         return { passed: false, error: 'No custom elements found in HTML' };

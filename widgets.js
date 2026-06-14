@@ -5,11 +5,13 @@
 
 import { wietCreate, wietDefine, WietClass } from './wiet.js';
 
+const moduleBase = new URL('.', import.meta.url).href;
+
 // Event Log Component
 wietDefine('event-log', class extends WietClass() {
 	constructor() {
 		super();
-		this.template = './widgets/event-log.html';
+		this.template = new URL('./widgets/event-log.html', moduleBase).href;
 	}
 
 	mounted() {
@@ -58,7 +60,7 @@ wietDefine('example-section', class extends WietClass() {
 	
 	constructor() {
 		super();
-		this.template = './widgets/example-section.html';
+		this.template = new URL('./widgets/example-section.html', moduleBase).href;
 	}
 
 	mounted() {
@@ -93,7 +95,7 @@ wietDefine('feature-card', class extends WietClass() {
     
 	constructor() {
 		super();
-		this.template = './widgets/feature-card.html';
+		this.template = new URL('./widgets/feature-card.html', moduleBase).href;
 	}
 
 	mounted() {
@@ -127,7 +129,7 @@ wietDefine('example-card', class extends WietClass() {
 
 	constructor() {
 		super();
-		this.template = './widgets/example-card.html';
+		this.template = new URL('./widgets/example-card.html', moduleBase).href;
 	}
 
 	mounted() {

@@ -48,7 +48,7 @@
 
 				<event-log id="eventLog"></event-log>
 
-				<view-code></view-code>
+				<page-source></page-source>
 
 				<div class="card mt-4">
 					<div class="card-header">
@@ -112,9 +112,9 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module" class="source">
-		import './examples/layouts.js';
-		import './widgets.js';
-		import { wietCreate, wietDefine, WietClass } from './wiet.js';
+		import './layouts.js';
+		import '../widgets.js';
+		import { wietCreate, wietDefine, WietClass } from '../wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -130,7 +130,7 @@
 
 			constructor() {
 				super();
-				this.template = './widgets/lifecycle-demo.html';
+				this.template = '../widgets/lifecycle-demo.html';
 			}
 
 			mounted() {

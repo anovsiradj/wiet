@@ -7,7 +7,7 @@ test.describe('Basic Wiet functionality', () => {
   });
 
   test('should be able to create a simple component', async ({ page }) => {
-    await page.goto('example-01-template.html');
+    await page.goto('examples/template.html');
     await page.waitForSelector('greeting-card');
     
     const card = page.locator('greeting-card');

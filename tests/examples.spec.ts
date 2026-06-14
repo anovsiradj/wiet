@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Example 1: Template Tag (Light DOM)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-01-template.html');
+    await page.goto('examples/template.html');
     await page.waitForSelector('greeting-card');
   });
 
@@ -32,7 +32,7 @@ test.describe('Example 1: Template Tag (Light DOM)', () => {
 
 test.describe('Example 2: Shadow DOM', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-02-shadow.html');
+    await page.goto('examples/shadow.html');
     await page.waitForSelector('shadow-button');
   });
 
@@ -61,7 +61,7 @@ test.describe('Example 2: Shadow DOM', () => {
 
 test.describe('Example 3: External HTML File', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-03-external.html');
+    await page.goto('examples/external.html');
     await page.waitForSelector('user-card');
   });
 
@@ -86,7 +86,7 @@ test.describe('Example 3: External HTML File', () => {
 
 test.describe('Example 4: External HTML + Shadow DOM', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-04-external-shadow.html');
+    await page.goto('examples/external-shadow.html');
     await page.waitForSelector('product-card');
   });
 
@@ -108,7 +108,7 @@ test.describe('Example 4: External HTML + Shadow DOM', () => {
 
 test.describe('Example 5: Events & Custom Events', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-05-events.html');
+    await page.goto('examples/events.html');
     await page.waitForSelector('counter-widget');
   });
 
@@ -131,16 +131,16 @@ test.describe('Example 5: Events & Custom Events', () => {
 
 test.describe('Example 6: Lifecycle Hooks', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-06-lifecycle.html');
+    await page.goto('examples/lifecycle.html');
   });
 
-	test('component lifecycle hooks are called', async ({ page }) => {
-		await page.click('#addComponent');
+  test('component lifecycle hooks are called', async ({ page }) => {
+    await page.click('#addComponent');
 
-		const eventLog = page.locator('#eventLog');
-		await expect(eventLog).toContainText('MOUNTED');
-		await expect(eventLog).toContainText('Creating component');
-	});
+    const eventLog = page.locator('#eventLog');
+    await expect(eventLog).toContainText('MOUNTED');
+    await expect(eventLog).toContainText('Creating component');
+  });
 
   test('component can be removed', async ({ page }) => {
     await page.click('#addComponent');
@@ -153,26 +153,26 @@ test.describe('Example 6: Lifecycle Hooks', () => {
 
 test.describe('Example 7: Slots', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-07-slots.html');
+    await page.goto('examples/slots.html');
     await page.waitForSelector('card-component');
   });
 
-	test('component with default slot renders', async ({ page }) => {
-		const card = page.locator('card-component').first();
-		await expect(card.locator('p').first()).toContainText('This content is passed through the default slot!');
-	});
+  test('component with default slot renders', async ({ page }) => {
+    const card = page.locator('card-component').first();
+    await expect(card.locator('p').first()).toContainText('This content is passed through the default slot!');
+  });
 
-	test('component with named slots renders', async ({ page }) => {
-		const dialog = page.locator('dialog-component').first();
-		await expect(dialog).toBeVisible();
+  test('component with named slots renders', async ({ page }) => {
+    const dialog = page.locator('dialog-component').first();
+    await expect(dialog).toBeVisible();
 
-		await expect(dialog.locator('[slot="title"]')).toContainText('Confirmation Required');
-	});
+    await expect(dialog.locator('[slot="title"]')).toContainText('Confirmation Required');
+  });
 });
 
 test.describe('Example 8: Extending Built-in Elements', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-08-extends.html');
+    await page.goto('examples/extends.html');
   });
 
   test('custom button element works', async ({ page }) => {
@@ -189,7 +189,7 @@ test.describe('Example 8: Extending Built-in Elements', () => {
 
 test.describe('Example 9: create() Utility', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-09-create.html');
+    await page.goto('examples/create.html');
   });
 
   test('create utility builds elements', async ({ page }) => {
@@ -213,7 +213,7 @@ test.describe('Example 9: create() Utility', () => {
 
 test.describe('Example 10: Attribute Mapping', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-10-attrs.html');
+    await page.goto('examples/attrs.html');
     await page.waitForSelector('user-profile');
   });
 
@@ -233,7 +233,7 @@ test.describe('Example 10: Attribute Mapping', () => {
 
 test.describe('Example 11: Component Composition', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-11-composition.html');
+    await page.goto('examples/composition.html');
     await page.waitForSelector('product-item');
   });
 
@@ -245,17 +245,17 @@ test.describe('Example 11: Component Composition', () => {
     await expect(product.first()).toHaveAttribute('price', '89.99');
   });
 
-	test('product item adds to cart', async ({ page }) => {
-		await page.locator('.add-btn').first().click();
+  test('product item adds to cart', async ({ page }) => {
+    await page.locator('.add-btn').first().click();
 
-		const cart = page.locator('#cartPanel');
-		await expect(cart).toContainText('Mechanical Keyboard');
-	});
+    const cart = page.locator('#cartPanel');
+    await expect(cart).toContainText('Mechanical Keyboard');
+  });
 });
 
 test.describe('Example 12: Todo App (Complex)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('example-12-todo.html');
+    await page.goto('examples/todo.html');
     await page.waitForSelector('#todoApp');
   });
 
@@ -264,93 +264,93 @@ test.describe('Example 12: Todo App (Complex)', () => {
     await expect(todoItems).toHaveCount(3);
   });
 
-	test('todo app adds new todo', async ({ page }) => {
-		await page.fill('#todoInput', 'New Todo');
-		await page.click('.btn-danger');
+  test('todo app adds new todo', async ({ page }) => {
+    await page.fill('#todoInput', 'New Todo');
+    await page.click('.btn-danger');
 
-		const todoItems = page.locator('.todo-item');
-		await expect(todoItems).toHaveCount(4);
-	});
+    const todoItems = page.locator('.todo-item');
+    await expect(todoItems).toHaveCount(4);
+  });
 });
 
 test.describe('Example 13: Todo Light DOM + Internal', () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto('example-13-todo-light.html');
-		await page.waitForSelector('todo-app');
-	});
+  test.beforeEach(async ({ page }) => {
+    await page.goto('examples/13-todo-internal-light.html');
+    await page.waitForSelector('todo-app');
+  });
 
-	test('renders initial todos', async ({ page }) => {
-		const items = page.locator('.todo-item');
-		await expect(items).toHaveCount(3);
-	});
+  test('renders initial todos', async ({ page }) => {
+    const items = page.locator('.todo-item');
+    await expect(items).toHaveCount(3);
+  });
 
-	test('adds new todo', async ({ page }) => {
-		const input = page.locator('todo-app .todo-input');
-		await input.fill('Test todo');
-		await input.press('Enter');
-		const items = page.locator('.todo-item');
-		await expect(items).toHaveCount(4);
-	});
+  test('adds new todo', async ({ page }) => {
+    const input = page.locator('todo-app .todo-input');
+    await input.fill('Test todo');
+    await input.press('Enter');
+    const items = page.locator('.todo-item');
+    await expect(items).toHaveCount(4);
+  });
 });
 
 test.describe('Example 14: Todo Shadow DOM + Internal', () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto('example-14-todo-shadow.html');
-		await page.waitForSelector('todo-app');
-	});
+  test.beforeEach(async ({ page }) => {
+    await page.goto('examples/14-todo-internal-shadow.html');
+    await page.waitForSelector('todo-app');
+  });
 
-	test('renders initial todos', async ({ page }) => {
-		const app = page.locator('todo-app').first();
-		const items = app.locator('.todo-item');
-		await expect(items).toHaveCount(3);
-	});
+  test('renders initial todos', async ({ page }) => {
+    const app = page.locator('todo-app').first();
+    const items = app.locator('.todo-item');
+    await expect(items).toHaveCount(3);
+  });
 
-	test('adds new todo', async ({ page }) => {
-		const input = page.locator('todo-app .input').first();
-		await input.fill('Test todo');
-		await input.press('Enter');
-		const items = page.locator('todo-app .todo-item');
-		await expect(items).toHaveCount(4);
-	});
+  test('adds new todo', async ({ page }) => {
+    const input = page.locator('todo-app .input').first();
+    await input.fill('Test todo');
+    await input.press('Enter');
+    const items = page.locator('todo-app .todo-item');
+    await expect(items).toHaveCount(4);
+  });
 });
 
 test.describe('Example 15: Todo Light DOM + External', () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto('example-15-todo-light-external.html');
-		await page.waitForSelector('todo-app');
-	});
+  test.beforeEach(async ({ page }) => {
+    await page.goto('examples/todo-light-external.html');
+    await page.waitForSelector('todo-app');
+  });
 
-	test('renders initial todos', async ({ page }) => {
-		const items = page.locator('.todo-item');
-		await expect(items).toHaveCount(3);
-	});
+  test('renders initial todos', async ({ page }) => {
+    const items = page.locator('.todo-item');
+    await expect(items).toHaveCount(3);
+  });
 
-	test('adds new todo', async ({ page }) => {
-		const input = page.locator('todo-app .input');
-		await input.fill('Test todo');
-		await input.press('Enter');
-		const items = page.locator('.todo-item');
-		await expect(items).toHaveCount(4);
-	});
+  test('adds new todo', async ({ page }) => {
+    const input = page.locator('todo-app .input');
+    await input.fill('Test todo');
+    await input.press('Enter');
+    const items = page.locator('.todo-item');
+    await expect(items).toHaveCount(4);
+  });
 });
 
 test.describe('Example 16: Todo Shadow DOM + External', () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto('example-16-todo-shadow-external.html');
-		await page.waitForSelector('todo-app');
-	});
+  test.beforeEach(async ({ page }) => {
+    await page.goto('examples/todo-shadow-external.html');
+    await page.waitForSelector('todo-app');
+  });
 
-	test('renders initial todos', async ({ page }) => {
-		const app = page.locator('todo-app').first();
-		const items = app.locator('.todo-item');
-		await expect(items).toHaveCount(3);
-	});
+  test('renders initial todos', async ({ page }) => {
+    const app = page.locator('todo-app').first();
+    const items = app.locator('.todo-item');
+    await expect(items).toHaveCount(3);
+  });
 
-	test('adds new todo', async ({ page }) => {
-		const input = page.locator('todo-app .input').first();
-		await input.fill('Test todo');
-		await input.press('Enter');
-		const items = page.locator('todo-app .todo-item');
-		await expect(items).toHaveCount(4);
-	});
+  test('adds new todo', async ({ page }) => {
+    const input = page.locator('todo-app .input').first();
+    await input.fill('Test todo');
+    await input.press('Enter');
+    const items = page.locator('todo-app .todo-item');
+    await expect(items).toHaveCount(4);
+  });
 });

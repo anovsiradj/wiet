@@ -1,12 +1,20 @@
 import { wietCreate, wietDefine, WietClass } from '../wiet.js';
 
+const moduleBase = new URL('.', import.meta.url).href;
+
 wietDefine('page-header', class extends WietClass() {
 	constructor() {
 		super();
-		this.template = './widgets/page-header.html';
+		this.template = new URL('../widgets/page-header.html', moduleBase).href;
 	}
 
 	mounted() {
+		// Fix "Back to Examples" link relative to module location
+		const brandLink = this.querySelector('.navbar-brand');
+		if (brandLink) {
+			brandLink.href = new URL('../index.html', moduleBase).href;
+		}
+
 		// Setup theme toggle
 		const toggleBtn = this.querySelector('.theme-toggle');
 		const html = document.documentElement;
@@ -28,15 +36,48 @@ wietDefine('page-header', class extends WietClass() {
 wietDefine('page-footer', class extends WietClass() {
 	constructor() {
 		super();
-		this.template = './examples/footer.html';
+		this.template = new URL('./footer.html', moduleBase).href;
 	}
 });
 
 
-wietDefine('view-code', class extends WietClass() {
+function loadHighlightCSS() {
+	if (document.querySelector('link[href*="highlightjs"][href*="gruvbox-dark-soft"]')) return;
+	const link = document.createElement('link');
+	link.rel = 'stylesheet';
+	link.href = 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/base16/gruvbox-dark-soft.min.css';
+	document.head.appendChild(link);
+}
+
+function loadHighlightJS() {
+	if (window.hljs) return Promise.resolve();
+	return new Promise(resolve => {
+		const script = document.createElement('script');
+		script.src = 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js';
+		script.onload = resolve;
+		document.head.appendChild(script);
+	});
+}
+
+function loadBeautify() {
+	if (window.html_beautify) return Promise.resolve();
+	return new Promise(resolve => {
+		const base = 'https://cdn.jsdelivr.net/npm/js-beautify@1.15.4/js/lib/';
+		const s1 = document.createElement('script');
+		s1.src = base + 'beautify.min.js';
+		const s2 = document.createElement('script');
+		s2.src = base + 'beautify-html.min.js';
+		let loaded = 0;
+		s1.onload = s2.onload = () => { if (++loaded === 2) resolve(); };
+		document.head.appendChild(s1);
+		document.head.appendChild(s2);
+	});
+}
+
+wietDefine('page-source', class extends WietClass() {
 	constructor() {
 		super();
-		this.template = './widgets/view-code.html';
+		this.template = new URL('./source.html', moduleBase).href;
 	}
 
 	mounted() {
@@ -46,6 +87,9 @@ wietDefine('view-code', class extends WietClass() {
 		const output = this.querySelector('.card-body');
 
 		void (async () => {
+			loadHighlightCSS();
+			await Promise.all([loadHighlightJS(), loadBeautify()]);
+
 			await new Promise(resolve => {
 				if (document.readyState === 'complete') {
 					resolve();
@@ -63,12 +107,20 @@ wietDefine('view-code', class extends WietClass() {
 						source.textContent = `/* failed to load ${source.dataset.fetch} */`;
 					}
 				}
-				output.appendChild(wietCreate('pre', {
+				const pre = wietCreate('pre', {
 					props: {
-						className: 'bg-dark text-light p-3 rounded small mb-2 overflow-auto',
-						textContent: source.outerHTML,
+						className: 'p-3 rounded small mb-2 overflow-auto',
 					},
-				}));
+				});
+				const code = wietCreate('code', {
+					props: {
+						className: 'language-html',
+						textContent: html_beautify(source.outerHTML, { indent_size: 2 }),
+					},
+				});
+				pre.appendChild(code);
+				output.appendChild(pre);
+				hljs.highlightElement(code);
 			}
 		})();
 	}

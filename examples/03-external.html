@@ -58,8 +58,8 @@
 
 				<event-log id="eventLog"></event-log>
 
-				<code class="source" data-fetch="widgets/user-card.html" hidden></code>
-				<view-code></view-code>
+				<code class="source" data-fetch="../widgets/user-card.html" hidden></code>
+				<page-source></page-source>
 			</div>
 		</div>
 	</div>
@@ -68,9 +68,9 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module" class="source">
-		import './examples/layouts.js';
-		import './widgets.js';
-		import { wietDefine, WietClass } from './wiet.js';
+		import './layouts.js';
+		import '../widgets.js';
+		import { wietDefine, WietClass } from '../wiet.js';
 
 		const eventLog = document.getElementById('eventLog');
 
@@ -83,7 +83,7 @@
 
 			constructor() {
 				super();
-				this.template = './widgets/user-card.html';
+				this.template = '../widgets/user-card.html';
 				this.handles = {
 					'.edit': {
 						click() {
