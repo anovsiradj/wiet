@@ -5,18 +5,58 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Example 13 - Todo App (Light DOM) | Wiet</title>
+	<title>Example 13 - Todo App (Light DOM + Internal) | Wiet</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<style>
-		.todo-item.done .todo-text { text-decoration: line-through; opacity: .5; }
-		.todo-item { transition: opacity .2s; }
-		.filter-bar .btn.active { box-shadow: 0 0 0 2px var(--bs-primary); }
-		.priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-		.priority-dot.high { background: #dc3545; }
-		.priority-dot.medium { background: #ffc107; }
-		.priority-dot.low { background: #198754; }
-		.progress-label { font-size: .8rem; color: var(--bs-secondary-color); }
+		.todo-item.done .todo-text {
+			text-decoration: line-through;
+			opacity: .5;
+		}
+
+		.todo-item {
+			transition: opacity .2s;
+		}
+
+		.filter-bar .btn.active {
+			box-shadow: 0 0 0 2px var(--bs-primary);
+		}
+
+		.priority-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			flex-shrink: 0;
+		}
+
+		.priority-dot.high {
+			background: #dc3545;
+		}
+
+		.priority-dot.medium {
+			background: #ffc107;
+		}
+
+		.priority-dot.low {
+			background: #198754;
+		}
+
+		.progress-label {
+			font-size: .8rem;
+			color: var(--bs-secondary-color);
+		}
+
+		.app-header {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 12px 16px;
+			background: rgba(13, 202, 240, .1);
+			border-bottom: 1px solid #333;
+			font-weight: 700;
+			color: #eee;
+			font-size: 15px;
+		}
 	</style>
 </head>
 
@@ -26,11 +66,11 @@
 	<div class="container my-5">
 		<div class="row">
 			<div class="col-lg-8 mx-auto">
-				<example-section icon="bi bi-check2-square" title="Example 13: Todo App (Light DOM)" description="Same todo app as Example 12, but all components use Light DOM explicitly. The whole component tree lives in the main document." variant="info"></example-section>
+				<example-section icon="bi bi-check2-square" title="Example 13: Todo App (Light DOM + Internal)" description="Every component uses Light DOM and internal templates defined in &lt;template&gt; tags. The .header section is a &lt;slot&gt; processed by processSlots()." variant="info"></example-section>
 
 				<todo-app></todo-app>
 
-				<view-code></view-code>
+				<page-source></page-source>
 			</div>
 		</div>
 	</div>
@@ -90,11 +130,28 @@
 		</div>
 	</template>
 
+	<template id="tpl-todo-app">
+		<div class="card">
+			<slot name="header">
+				<div class="app-header">
+					<i class="bi bi-check2-all text-info fs-5"></i>
+					<span class="fw-bold">Wiet Todo (Light DOM + Internal)</span>
+				</div>
+			</slot>
+			<div class="card-body">
+				<todo-form></todo-form>
+				<todo-stats></todo-stats>
+				<todo-filter></todo-filter>
+				<todo-list></todo-list>
+			</div>
+		</div>
+	</template>
+
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module" class="source">
-		import './examples/layouts.js';
-		import './widgets.js';
-		import { wietCreate, wietDefine, WietClass } from './wiet.js';
+		import './layouts.js';
+		import '../widgets.js';
+		import { wietCreate, wietDefine, WietClass } from '../wiet.js';
 
 		const store = {
 			todos: [
@@ -257,22 +314,12 @@
 		});
 
 		wietDefine('todo-app', class extends WietClass() {
-			mounted() {
-				this.innerHTML = `
-					<div class="card">
-						<div class="card-header d-flex align-items-center gap-2">
-							<i class="bi bi-check2-all text-info fs-5"></i>
-							<span class="fw-bold">Wiet Todo (Light DOM)</span>
-						</div>
-						<div class="card-body">
-							<todo-form></todo-form>
-							<todo-stats></todo-stats>
-							<todo-filter></todo-filter>
-							<todo-list></todo-list>
-						</div>
-					</div>
-				`;
+			constructor() {
+				super();
+				this.template = '#tpl-todo-app';
+			}
 
+			mounted() {
 				this.addEventListener('todo:add', (e) => {
 					store.todos.push({ id: store.nextId++, text: e.detail.text, priority: e.detail.priority, done: false });
 					notify();
