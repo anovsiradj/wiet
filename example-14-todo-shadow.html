@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html lang="en" data-bs-theme="dark">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Example 14 - Todo App (Shadow DOM) | Wiet</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<style>
+		.priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+		.priority-dot.high { background: #dc3545; }
+		.priority-dot.medium { background: #ffc107; }
+		.priority-dot.low { background: #198754; }
+	</style>
+</head>
+
+<body>
+	<page-header></page-header>
+
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-lg-8 mx-auto">
+				<example-section icon="bi bi-check2-square" title="Example 14: Todo App (Shadow DOM)" description="Same todo app, but every component uses Shadow DOM for style encapsulation. Each component carries its own scoped CSS and template." variant="warning"></example-section>
+
+				<todo-app></todo-app>
+
+				<view-code></view-code>
+
+				<div class="card mt-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-shield-shaded"></i> Shadow DOM Boundaries</h5>
+					</div>
+					<div class="card-body">
+						<p class="mb-0 text-muted">Each component's styles are scoped to its shadow root. Bootstrap global styles do not penetrate — each component includes its own minimal base styles.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<page-footer></page-footer>
+
+	<!-- Templates -->
+	<template id="tpl-todo-form">
+		<style>
+			:host { display: block; }
+			.form { display: flex; gap: 8px; margin-bottom: 16px; }
+			.input { flex: 1; padding: 6px 12px; border: 1px solid #444; border-radius: 4px; background: #1a1a2e; color: #eee; font-size: 14px; }
+			.input:focus { outline: none; border-color: #0dcaf0; }
+			.select { padding: 6px 12px; border: 1px solid #444; border-radius: 4px; background: #1a1a2e; color: #eee; font-size: 14px; flex-shrink: 0; }
+			.btn { display: inline-flex; align-items: center; padding: 6px 12px; border: 1px solid transparent; border-radius: 4px; cursor: pointer; font-size: 14px; background: #0dcaf0; color: #000; flex-shrink: 0; }
+			.btn:hover { background: #31d2f2; }
+		</style>
+		<form class="form">
+			<input type="text" class="input" placeholder="What needs to be done?" required>
+			<select class="select">
+				<option value="low"> Low</option>
+				<option value="medium" selected> Medium</option>
+				<option value="high"> High</option>
+			</select>
+			<button type="submit" class="btn">+</button>
+		</form>
+	</template>
+
+	<template id="tpl-todo-stats">
+		<style>
+			:host { display: block; }
+			.wrap { margin-bottom: 16px; }
+			.row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+			.label { font-size: 13px; color: #888; }
+			.bar-track { height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+			.bar-fill { height: 100%; background: #0dcaf0; border-radius: 3px; transition: width .4s ease; }
+		</style>
+		<div class="wrap">
+			<div class="row">
+				<span class="label stats-label">0 of 0 done</span>
+				<span class="label stats-pct">0%</span>
+			</div>
+			<div class="bar-track">
+				<div class="bar-fill stats-bar" style="width:0%"></div>
+			</div>
+		</div>
+	</template>
+
+	<template id="tpl-todo-filter">
+		<style>
+			:host { display: block; }
+			.bar { display: flex; gap: 8px; margin-bottom: 16px; }
+			.btn { padding: 4px 12px; border: 1px solid #0dcaf0; border-radius: 4px; background: transparent; color: #0dcaf0; cursor: pointer; font-size: 13px; }
+			.btn:hover { background: rgba(13,202,240,.1); }
+			.btn.active { background: #0dcaf0; color: #000; box-shadow: 0 0 0 2px #0dcaf0; }
+		</style>
+		<div class="bar">
+			<button class="btn active" data-filter="all">All</button>
+			<button class="btn" data-filter="active">Active</button>
+			<button class="btn" data-filter="done">Done</button>
+		</div>
+	</template>
+
+	<template id="tpl-todo-list">
+		<style>
+			:host { display: block; }
+			.items { display: flex; flex-direction: column; gap: 2px; }
+			.footer { display: flex; justify-content: space-between; margin-top: 8px; }
+			.count { font-size: 13px; color: #888; }
+			.clear-btn { padding: 0; border: none; background: none; color: #0dcaf0; cursor: pointer; font-size: 13px; }
+			.clear-btn:hover { text-decoration: underline; }
+			.empty { padding: 24px; text-align: center; color: #888; font-size: 14px; background: #1a1a2e; border-radius: 4px; }
+		</style>
+		<div>
+			<div class="items todo-items"></div>
+			<div class="footer">
+				<span class="count list-count"></span>
+				<button class="clear-btn clear-done-btn">Clear done</button>
+			</div>
+		</div>
+	</template>
+
+	<template id="tpl-todo-item">
+		<style>
+			:host { display: block; }
+			.item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #1a1a2e; border-radius: 4px; transition: opacity .2s; }
+			.item.done .text { text-decoration: line-through; opacity: .5; }
+			.check { cursor: pointer; width: 16px; height: 16px; accent-color: #0dcaf0; }
+			.text { flex: 1; cursor: pointer; color: #eee; font-size: 14px; }
+			.delete { padding: 0; border: none; background: none; color: #dc3545; cursor: pointer; font-size: 14px; }
+			.delete:hover { color: #f06; }
+			.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+			.dot.high { background: #dc3545; }
+			.dot.medium { background: #ffc107; }
+			.dot.low { background: #198754; }
+		</style>
+		<div class="item todo-item">
+			<input type="checkbox" class="check todo-check">
+			<span class="dot priority-dot"></span>
+			<span class="text todo-text"></span>
+			<button class="delete delete-btn">&#x1F5D1;</button>
+		</div>
+	</template>
+
+	<template id="tpl-todo-app">
+		<style>
+			:host { display: block; }
+			.card { background: #16213e; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
+			.header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: rgba(13,202,240,.1); border-bottom: 1px solid #333; font-weight: 700; color: #eee; font-size: 15px; }
+			.header-icon { color: #0dcaf0; font-size: 18px; }
+			.body { padding: 16px; }
+		</style>
+		<div class="card">
+			<div class="header">
+				<span class="header-icon">&#x2714;</span>
+				<span>Wiet Todo (Shadow DOM)</span>
+			</div>
+			<div class="body">
+				<slot name="form"></slot>
+				<slot name="stats"></slot>
+				<slot name="filter"></slot>
+				<slot name="list"></slot>
+			</div>
+		</div>
+	</template>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" class="source">
+		import './examples/layouts.js';
+		import './widgets.js';
+		import { wietCreate, wietDefine, WietClass } from './wiet.js';
+
+		// --- Shared state ---
+		const store = {
+			todos: [
+				{ id: 1, text: 'Read wiet docs', priority: 'low', done: true },
+				{ id: 2, text: 'Build a custom element', priority: 'medium', done: false },
+				{ id: 3, text: 'Write unit tests', priority: 'high', done: false },
+			],
+			filter: 'all',
+			nextId: 4,
+		};
+
+		function filteredTodos() {
+			if (store.filter === 'active') return store.todos.filter(t => !t.done);
+			if (store.filter === 'done') return store.todos.filter(t => t.done);
+			return store.todos;
+		}
+
+		function notify() {
+			document.dispatchEvent(new CustomEvent('todo:changed', { bubbles: true }));
+		}
+
+		// --- todo-form ---
+		wietDefine('todo-form', class extends WietClass() {
+			constructor() {
+				super();
+				this.useShadow = true;
+				this.template = '#tpl-todo-form';
+			}
+
+			mounted() {
+				const root = this.shadowRoot;
+				root.querySelector('form').addEventListener('submit', (e) => {
+					e.preventDefault();
+					const input = root.querySelector('.input');
+					const text = input.value.trim();
+					if (!text) return;
+					const priority = root.querySelector('.select').value;
+					this.dispatchEvent(new CustomEvent('todo:add', {
+						bubbles: true,
+						detail: { text, priority },
+					}));
+					input.value = '';
+					input.focus();
+				});
+			}
+		});
+
+		// --- todo-stats ---
+		wietDefine('todo-stats', class extends WietClass() {
+			constructor() {
+				super();
+				this.useShadow = true;
+				this.template = '#tpl-todo-stats';
+			}
+
+			mounted() {
+				document.addEventListener('todo:changed', () => this.update());
+				this.update();
+			}
+
+			update() {
+				const root = this.shadowRoot;
+				const total = store.todos.length;
+				const done = store.todos.filter(t => t.done).length;
+				const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+				root.querySelector('.stats-label').textContent = `${done} of ${total} done`;
+				root.querySelector('.stats-pct').textContent = `${pct}%`;
+				root.querySelector('.stats-bar').style.width = `${pct}%`;
+			}
+		});
+
+		// --- todo-filter ---
+		wietDefine('todo-filter', class extends WietClass() {
+			constructor() {
+				super();
+				this.useShadow = true;
+				this.template = '#tpl-todo-filter';
+			}
+
+			mounted() {
+				const root = this.shadowRoot;
+				root.querySelector('.bar').addEventListener('click', (e) => {
+					const btn = e.target.closest('[data-filter]');
+					if (!btn) return;
+					this.dispatchEvent(new CustomEvent('todo:filter', {
+						bubbles: true,
+						detail: { filter: btn.dataset.filter },
+					}));
+				});
+				document.addEventListener('todo:changed', () => this.updateActive());
+			}
+
+			updateActive() {
+				const root = this.shadowRoot;
+				root.querySelectorAll('[data-filter]').forEach(btn => {
+					btn.classList.toggle('active', btn.dataset.filter === store.filter);
+				});
+			}
+		});
+
+		// --- todo-item ---
+		wietDefine('todo-item', class extends WietClass() {
+			static attrs = ['todo-id'];
+
+			constructor() {
+				super();
+				this.useShadow = true;
+				this.template = '#tpl-todo-item';
+			}
+
+			mounted() {
+				const root = this.shadowRoot;
+				this.render();
+				root.querySelector('.todo-check').addEventListener('change', () => {
+					this.dispatchEvent(new CustomEvent('todo:toggle', {
+						bubbles: true, detail: { id: Number(this.todoId) },
+					}));
+				});
+				root.querySelector('.delete-btn').addEventListener('click', () => {
+					this.dispatchEvent(new CustomEvent('todo:delete', {
+						bubbles: true, detail: { id: Number(this.todoId) },
+					}));
+				});
+			}
+
+			changed() { this.render(); }
+
+			render() {
+				const todo = store.todos.find(t => t.id === Number(this.todoId));
+				if (!todo) return;
+				const root = this.shadowRoot;
+				root.querySelector('.todo-item').classList.toggle('done', todo.done);
+				root.querySelector('.todo-check').checked = todo.done;
+				root.querySelector('.todo-text').textContent = todo.text;
+				const dot = root.querySelector('.priority-dot');
+				dot.className = `dot priority-dot ${todo.priority}`;
+			}
+		});
+
+		// --- todo-list ---
+		wietDefine('todo-list', class extends WietClass() {
+			constructor() {
+				super();
+				this.useShadow = true;
+				this.template = '#tpl-todo-list';
+			}
+
+			mounted() {
+				const root = this.shadowRoot;
+				document.addEventListener('todo:changed', () => this.renderItems());
+				root.querySelector('.clear-done-btn').addEventListener('click', () => {
+					store.todos = store.todos.filter(t => !t.done);
+					notify();
+				});
+				this.renderItems();
+			}
+
+			renderItems() {
+				const root = this.shadowRoot;
+				const container = root.querySelector('.todo-items');
+				const visible = filteredTodos();
+				container.innerHTML = '';
+				if (visible.length === 0) {
+					const empty = document.createElement('div');
+					empty.className = 'empty';
+					empty.textContent = store.filter === 'done' ? 'No completed tasks yet.' : 'Nothing to do — enjoy your day!';
+					container.appendChild(empty);
+				} else {
+					visible.forEach(todo => {
+						container.appendChild(wietCreate('todo-item', {
+							attrs: { 'todo-id': String(todo.id) },
+						}));
+					});
+				}
+				const count = visible.length;
+				root.querySelector('.list-count').textContent = `${count} item${count !== 1 ? 's' : ''}`;
+			}
+		});
+
+		// --- todo-app (orchestrator) ---
+		wietDefine('todo-app', class extends WietClass() {
+			constructor() {
+				super();
+				this.useShadow = true;
+				this.template = '#tpl-todo-app';
+			}
+
+			mounted() {
+				const form = document.createElement('todo-form');
+				form.slot = 'form';
+				this.appendChild(form);
+
+				const stats = document.createElement('todo-stats');
+				stats.slot = 'stats';
+				this.appendChild(stats);
+
+				const filter = document.createElement('todo-filter');
+				filter.slot = 'filter';
+				this.appendChild(filter);
+
+				const list = document.createElement('todo-list');
+				list.slot = 'list';
+				this.appendChild(list);
+
+				this.addEventListener('todo:add', (e) => {
+					store.todos.push({ id: store.nextId++, text: e.detail.text, priority: e.detail.priority, done: false });
+					notify();
+				});
+				this.addEventListener('todo:toggle', (e) => {
+					const todo = store.todos.find(t => t.id === e.detail.id);
+					if (todo) todo.done = !todo.done;
+					notify();
+				});
+				this.addEventListener('todo:delete', (e) => {
+					store.todos = store.todos.filter(t => t.id !== e.detail.id);
+					notify();
+				});
+				this.addEventListener('todo:filter', (e) => {
+					store.filter = e.detail.filter;
+					notify();
+				});
+			}
+		});
+	</script>
+</body>
+
+</html>

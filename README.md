@@ -3,7 +3,7 @@
 Tiny, standards-first Web Component factory.
 Define custom elements from inline `<template>` tags or external HTML files — no build step required.
 
-the original purpose is inspired by include/require in PHP.
+Inspired by include/require in PHP and SFC in Vue.
 
 ## Documentation
 
@@ -47,7 +47,8 @@ wiet('hello-card', class extends mixin() {
 ...
 
 ## Browser Requirements
-- HTML templates
+- HTML Templates
+- HTML Slots
 - ES modules
 - Custom Elements
 - Shadow DOM

@@ -1,5 +1,10 @@
+/.env
+
 /*.code*
 /*.sublime*
 
+/test-results/
+/playwright-report/
 
 /vendor/
+/node_modules/

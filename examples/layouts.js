@@ -1,6 +1,6 @@
-import { wiet, mixin, create } from '../wiet.js';
+import { wietCreate, wietDefine, WietClass } from '../wiet.js';
 
-wiet('page-header', class extends mixin() {
+wietDefine('page-header', class extends WietClass() {
 	constructor() {
 		super();
 		this.template = './widgets/page-header.html';
@@ -25,7 +25,7 @@ wiet('page-header', class extends mixin() {
 	}
 });
 
-wiet('page-footer', class extends mixin() {
+wietDefine('page-footer', class extends WietClass() {
 	constructor() {
 		super();
 		this.template = './examples/footer.html';
@@ -33,7 +33,7 @@ wiet('page-footer', class extends mixin() {
 });
 
 
-wiet('view-code', class extends mixin() {
+wietDefine('view-code', class extends WietClass() {
 	constructor() {
 		super();
 		this.template = './widgets/view-code.html';
@@ -63,7 +63,7 @@ wiet('view-code', class extends mixin() {
 						source.textContent = `/* failed to load ${source.dataset.fetch} */`;
 					}
 				}
-				output.appendChild(create('pre', {
+				output.appendChild(wietCreate('pre', {
 					props: {
 						className: 'bg-dark text-light p-3 rounded small mb-2 overflow-auto',
 						textContent: source.outerHTML,

@@ -94,12 +94,8 @@
 				cartDiv.innerHTML = '<p class="text-muted mb-0">Your cart is empty</p>';
 			} else {
 				const total = cart.reduce((sum, item) => sum + item.price, 0);
-				cartDiv.innerHTML = `
-					<ul class="list-unstyled mb-2">
-						${cart.map(item => `<li>🛒 ${item.product} - $${item.price.toFixed(2)}</li>`).join('')}
-					</ul>
-					<strong>Total: $${total.toFixed(2)}</strong>
-				`;
+				const items = cart.map(item => '<li>' + item.product + ' - $' + item.price.toFixed(2) + '</li>').join('');
+				cartDiv.innerHTML = '<ul class="list-unstyled mb-2">' + items + '</ul><strong>Total: $' + total.toFixed(2) + '</strong>';
 			}
 		}
 
@@ -139,7 +135,9 @@
 				root.querySelector('.description').textContent = this.description || 'No description';
 				root.querySelector('.price').textContent = `$${this.price || '0.00'}`;
 			}
-		});
+		};
+
+		wietDefine('product-card', ProductCard);
 
 		// Listen for add-to-cart events
 		document.addEventListener('add-to-cart', (e) => {

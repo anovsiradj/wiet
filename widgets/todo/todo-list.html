@@ -1,0 +1,15 @@
+<style>
+	:host { display: block; }
+	.footer { display: flex; justify-content: space-between; margin-top: 8px; }
+	.count { font-size: 13px; color: #888; }
+	.clear-btn { padding: 0; border: none; background: none; color: #0dcaf0; cursor: pointer; font-size: 13px; }
+	.clear-btn:hover { text-decoration: underline; }
+	.empty { padding: 24px; text-align: center; color: #888; font-size: 14px; background: #1a1a2e; border-radius: 4px; }
+</style>
+<div>
+	<div class="todo-items"></div>
+	<div class="footer">
+		<span class="count list-count"></span>
+		<button class="clear-btn clear-done-btn">Clear done</button>
+	</div>
+</div>

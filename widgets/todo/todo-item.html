@@ -1,0 +1,19 @@
+<style>
+	:host { display: block; }
+	.item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #1a1a2e; border-radius: 4px; transition: opacity .2s; }
+	.item.done .text { text-decoration: line-through; opacity: .5; }
+	.check { cursor: pointer; width: 16px; height: 16px; accent-color: #0dcaf0; }
+	.text { flex: 1; cursor: pointer; color: #eee; font-size: 14px; }
+	.delete { padding: 0; border: none; background: none; color: #dc3545; cursor: pointer; font-size: 14px; }
+	.delete:hover { color: #f06; }
+	.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+	.dot.high { background: #dc3545; }
+	.dot.medium { background: #ffc107; }
+	.dot.low { background: #198754; }
+</style>
+<div class="item todo-item">
+	<input type="checkbox" class="check todo-check">
+	<span class="dot priority-dot"></span>
+	<span class="text todo-text"></span>
+	<button class="delete delete-btn">&#x1F5D1;</button>
+</div>

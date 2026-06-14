@@ -54,7 +54,7 @@
 	<div class="container my-5">
 		<div class="row">
 			<div class="col-lg-8 mx-auto">
-				<example-section icon="bi bi-check2-square" title="Example 12: Todo App (Complex)" description="A real-world todo list built from multiple wiet components — each responsible for a single concern. Demonstrates composition, lifecycle, attribute mapping, event delegation, custom events, and the create() utility." variant="danger"></example-section>
+				<example-section icon="bi bi-check2-square" title="Example 12: Todo App (Complex)" description="A real-world todo list built from multiple wiet components — each responsible for a single concern. Demonstrates composition, lifecycle, attribute mapping, event delegation, custom events, and the wietCreate() utility." variant="danger"></example-section>
 
 				<todo-app id="todoApp" class="source"></todo-app>
 
@@ -145,7 +145,7 @@
 	<script type="module" class="source">
 		import './examples/layouts.js';
 		import './widgets.js';
-		import { wietDefine, WietClass, create } from './wiet.js';
+		import { wietCreate, wietDefine, WietClass } from './wiet.js';
 
 		// --- Shared state store (plain object, no framework needed) ---
 		const store = {
@@ -331,7 +331,7 @@
 
 				container.innerHTML = '';
 				if (visible.length === 0) {
-					container.appendChild(create('div', {
+					container.appendChild(wietCreate('div', {
 						props: {
 							className: 'list-group-item text-muted text-center py-4',
 							textContent: store.filter === 'done' ? 'No completed tasks yet.' : 'Nothing to do — enjoy your day!',
@@ -339,7 +339,7 @@
 					}));
 				} else {
 					visible.forEach(todo => {
-						const item = create('todo-item', {
+						const item = wietCreate('todo-item', {
 							attrs: { 'todo-id': String(todo.id) },
 						});
 						container.appendChild(item);

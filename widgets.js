@@ -3,10 +3,10 @@
  * Reusable components used across all example pages
  */
 
-import { create, wiet, mixin, wietCreate } from './wiet.js';
+import { wietCreate, wietDefine, WietClass } from './wiet.js';
 
 // Event Log Component
-wiet('event-log', class extends mixin() {
+wietDefine('event-log', class extends WietClass() {
 	constructor() {
 		super();
 		this.template = './widgets/event-log.html';
@@ -53,7 +53,7 @@ wiet('event-log', class extends mixin() {
 });
 
 // Example Section Component
-wiet('example-section', class extends mixin() {
+wietDefine('example-section', class extends WietClass() {
 	static attrs = ['icon', 'title', 'description', 'variant'];
 	
 	constructor() {
@@ -88,7 +88,7 @@ wiet('example-section', class extends mixin() {
 });
 
 // Feature Card Component
-wiet('feature-card', class extends mixin() {
+wietDefine('feature-card', class extends WietClass() {
 	static attrs = ['icon', 'title', 'color'];
     
 	constructor() {
@@ -122,7 +122,7 @@ wiet('feature-card', class extends mixin() {
 });
 
 // Example Card Component
-wiet('example-card', class extends mixin() {
+wietDefine('example-card', class extends WietClass() {
 	static attrs = ['title', 'icon', 'href', 'variant'];
 
 	constructor() {

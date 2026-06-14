@@ -1,0 +1,16 @@
+{
+  "name": "wiet",
+  "version": "1.0.0",
+  "description": "Tiny, standards-first Web Component factory",
+  "main": "wiet.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node test-runner.js",
+    "test:ci": "node test-runner.js --ci"
+  },
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "fs-extra": "^11.0.0",
+    "jsdom": "^24.0.0"
+  }
+}
