@@ -37,9 +37,14 @@
 	<div class="container my-5">
 		<div class="row">
 			<div class="col-lg-8 mx-auto">
-				<example-section icon="bi bi-check2-square" title="Example 14: Todo App (Shadow DOM + Internal)" description="Every component uses Shadow DOM and internal templates. The .header section is a &lt;slot&gt; rendered natively by the browser." variant="warning"></example-section>
+				<example-section icon="bi bi-check2-square" title="Example 14: Todo App (Shadow DOM + Internal)" description="Every component uses Shadow DOM and internal templates. Slots use native Shadow DOM slot projection — children created dynamically in mounted() with slot attributes." variant="warning"></example-section>
 
-				<todo-app></todo-app>
+				<todo-app class="source">
+					<div class="header">
+						<i class="bi bi-check2-all text-info fs-5"></i>
+						<span class="fw-bold">Wiet Todo (Shadow DOM + Internal)</span>
+					</div>
+				</todo-app>
 
 				<page-source></page-source>
 
@@ -57,15 +62,59 @@
 
 	<page-footer></page-footer>
 
-	<template id="tpl-todo-form">
+	<template id="tpl-form" class="source">
 		<style>
-			:host { display: block; }
-			.form { display: flex; gap: 8px; margin-bottom: 16px; }
-			.input { flex: 1; padding: 6px 12px; border: 1px solid #444; border-radius: 4px; background: #1a1a2e; color: #eee; font-size: 14px; }
-			.input:focus { outline: none; border-color: #0dcaf0; }
-			.select { padding: 6px 12px; border: 1px solid #444; border-radius: 4px; background: #1a1a2e; color: #eee; font-size: 14px; flex-shrink: 0; }
-			.btn { display: inline-flex; align-items: center; padding: 6px 12px; border: 1px solid transparent; border-radius: 4px; cursor: pointer; font-size: 14px; background: #0dcaf0; color: #000; flex-shrink: 0; }
-			.btn:hover { background: #31d2f2; }
+			:host {
+				display: block;
+			}
+
+			.form {
+				display: flex;
+				gap: 8px;
+				margin-bottom: 16px;
+			}
+
+			.input {
+				flex: 1;
+				padding: 6px 12px;
+				border: 1px solid #444;
+				border-radius: 4px;
+				background: #1a1a2e;
+				color: #eee;
+				font-size: 14px;
+			}
+
+			.input:focus {
+				outline: none;
+				border-color: #0dcaf0;
+			}
+
+			.select {
+				padding: 6px 12px;
+				border: 1px solid #444;
+				border-radius: 4px;
+				background: #1a1a2e;
+				color: #eee;
+				font-size: 14px;
+				flex-shrink: 0;
+			}
+
+			.btn {
+				display: inline-flex;
+				align-items: center;
+				padding: 6px 12px;
+				border: 1px solid transparent;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 14px;
+				background: #0dcaf0;
+				color: #000;
+				flex-shrink: 0;
+			}
+
+			.btn:hover {
+				background: #31d2f2;
+			}
 		</style>
 		<form class="form">
 			<input type="text" class="input" placeholder="What needs to be done?" required>
@@ -78,14 +127,40 @@
 		</form>
 	</template>
 
-	<template id="tpl-todo-stats">
+	<template id="tpl-stats" class="source">
 		<style>
-			:host { display: block; }
-			.wrap { margin-bottom: 16px; }
-			.row { display: flex; justify-content: space-between; margin-bottom: 4px; }
-			.label { font-size: 13px; color: #888; }
-			.bar-track { height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
-			.bar-fill { height: 100%; background: #0dcaf0; border-radius: 3px; transition: width .4s ease; }
+			:host {
+				display: block;
+			}
+
+			.wrap {
+				margin-bottom: 16px;
+			}
+
+			.row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 4px;
+			}
+
+			.label {
+				font-size: 13px;
+				color: #888;
+			}
+
+			.bar-track {
+				height: 6px;
+				background: #333;
+				border-radius: 3px;
+				overflow: hidden;
+			}
+
+			.bar-fill {
+				height: 100%;
+				background: #0dcaf0;
+				border-radius: 3px;
+				transition: width .4s ease;
+			}
 		</style>
 		<div class="wrap">
 			<div class="row">
@@ -98,13 +173,37 @@
 		</div>
 	</template>
 
-	<template id="tpl-todo-filter">
+	<template id="tpl-filter" class="source">
 		<style>
-			:host { display: block; }
-			.bar { display: flex; gap: 8px; margin-bottom: 16px; }
-			.btn { padding: 4px 12px; border: 1px solid #0dcaf0; border-radius: 4px; background: transparent; color: #0dcaf0; cursor: pointer; font-size: 13px; }
-			.btn:hover { background: rgba(13,202,240,.1); }
-			.btn.active { background: #0dcaf0; color: #000; box-shadow: 0 0 0 2px #0dcaf0; }
+			:host {
+				display: block;
+			}
+
+			.bar {
+				display: flex;
+				gap: 8px;
+				margin-bottom: 16px;
+			}
+
+			.btn {
+				padding: 4px 12px;
+				border: 1px solid #0dcaf0;
+				border-radius: 4px;
+				background: transparent;
+				color: #0dcaf0;
+				cursor: pointer;
+				font-size: 13px;
+			}
+
+			.btn:hover {
+				background: rgba(13, 202, 240, .1);
+			}
+
+			.btn.active {
+				background: #0dcaf0;
+				color: #000;
+				box-shadow: 0 0 0 2px #0dcaf0;
+			}
 		</style>
 		<div class="bar">
 			<button class="btn active" data-filter="all">All</button>
@@ -113,15 +212,50 @@
 		</div>
 	</template>
 
-	<template id="tpl-todo-list">
+	<template id="tpl-list" class="source">
 		<style>
-			:host { display: block; }
-			.items { display: flex; flex-direction: column; gap: 2px; }
-			.footer { display: flex; justify-content: space-between; margin-top: 8px; }
-			.count { font-size: 13px; color: #888; }
-			.clear-btn { padding: 0; border: none; background: none; color: #0dcaf0; cursor: pointer; font-size: 13px; }
-			.clear-btn:hover { text-decoration: underline; }
-			.empty { padding: 24px; text-align: center; color: #888; font-size: 14px; background: #1a1a2e; border-radius: 4px; }
+			:host {
+				display: block;
+			}
+
+			.items {
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
+			}
+
+			.footer {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 8px;
+			}
+
+			.count {
+				font-size: 13px;
+				color: #888;
+			}
+
+			.clear-btn {
+				padding: 0;
+				border: none;
+				background: none;
+				color: #0dcaf0;
+				cursor: pointer;
+				font-size: 13px;
+			}
+
+			.clear-btn:hover {
+				text-decoration: underline;
+			}
+
+			.empty {
+				padding: 24px;
+				text-align: center;
+				color: #888;
+				font-size: 14px;
+				background: #1a1a2e;
+				border-radius: 4px;
+			}
 		</style>
 		<div>
 			<div class="items todo-items"></div>
@@ -132,19 +266,73 @@
 		</div>
 	</template>
 
-	<template id="tpl-todo-item">
+	<template id="tpl-item" class="source">
 		<style>
-			:host { display: block; }
-			.item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #1a1a2e; border-radius: 4px; transition: opacity .2s; }
-			.item.done .text { text-decoration: line-through; opacity: .5; }
-			.check { cursor: pointer; width: 16px; height: 16px; accent-color: #0dcaf0; }
-			.text { flex: 1; cursor: pointer; color: #eee; font-size: 14px; }
-			.delete { padding: 0; border: none; background: none; color: #dc3545; cursor: pointer; font-size: 14px; }
-			.delete:hover { color: #f06; }
-			.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
-			.dot.high { background: #dc3545; }
-			.dot.medium { background: #ffc107; }
-			.dot.low { background: #198754; }
+			:host {
+				display: block;
+			}
+
+			.item {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding: 8px 16px;
+				background: #1a1a2e;
+				border-radius: 4px;
+				transition: opacity .2s;
+			}
+
+			.item.done .text {
+				text-decoration: line-through;
+				opacity: .5;
+			}
+
+			.check {
+				cursor: pointer;
+				width: 16px;
+				height: 16px;
+				accent-color: #0dcaf0;
+			}
+
+			.text {
+				flex: 1;
+				cursor: pointer;
+				color: #eee;
+				font-size: 14px;
+			}
+
+			.delete {
+				padding: 0;
+				border: none;
+				background: none;
+				color: #dc3545;
+				cursor: pointer;
+				font-size: 14px;
+			}
+
+			.delete:hover {
+				color: #f06;
+			}
+
+			.dot {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				flex-shrink: 0;
+				display: inline-block;
+			}
+
+			.dot.high {
+				background: #dc3545;
+			}
+
+			.dot.medium {
+				background: #ffc107;
+			}
+
+			.dot.low {
+				background: #198754;
+			}
 		</style>
 		<div class="item todo-item">
 			<input type="checkbox" class="check todo-check">
@@ -154,26 +342,42 @@
 		</div>
 	</template>
 
-	<template id="tpl-todo-app">
+	<template id="tpl-todo-app" class="source">
 		<style>
-			:host { display: block; }
-			.card { background: #16213e; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
-			.header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: rgba(13,202,240,.1); border-bottom: 1px solid #333; font-weight: 700; color: #eee; font-size: 15px; }
-			.header-icon { color: #0dcaf0; font-size: 18px; }
-			.body { padding: 16px; }
+			:host {
+				display: block;
+			}
+
+			.card {
+				background: #16213e;
+				border: 1px solid #333;
+				border-radius: 8px;
+				overflow: hidden;
+			}
+
+			.header {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding: 12px 16px;
+				background: rgba(13, 202, 240, .1);
+				border-bottom: 1px solid #333;
+				font-weight: 700;
+				color: #eee;
+				font-size: 15px;
+			}
+
+			.body {
+				padding: 16px;
+			}
 		</style>
 		<div class="card">
-			<slot name="header">
-				<div class="header">
-					<span class="header-icon">&#x2714;</span>
-					<span>Wiet Todo (Shadow DOM + Internal)</span>
-				</div>
-			</slot>
+			<slot></slot>
 			<div class="body">
-				<slot name="form"></slot>
-				<slot name="stats"></slot>
-				<slot name="filter"></slot>
-				<slot name="list"></slot>
+				<todo-form></todo-form>
+				<todo-stats></todo-stats>
+				<todo-filter></todo-filter>
+				<todo-list></todo-list>
 			</div>
 		</div>
 	</template>
@@ -207,12 +411,12 @@
 		wietDefine('todo-form', class extends WietClass() {
 			constructor() {
 				super();
-				this.useShadow = true;
-				this.template = '#tpl-todo-form';
+				this.shadowEnable = true;
+				this.template = '#tpl-form';
 			}
 
 			mounted() {
-				const root = this.shadowRoot;
+				const root = this.resolvedRoot;
 				root.querySelector('form').addEventListener('submit', (e) => {
 					e.preventDefault();
 					const input = root.querySelector('.input');
@@ -233,8 +437,8 @@
 		wietDefine('todo-stats', class extends WietClass() {
 			constructor() {
 				super();
-				this.useShadow = true;
-				this.template = '#tpl-todo-stats';
+				this.shadowEnable = true;
+				this.template = '#tpl-stats';
 			}
 
 			mounted() {
@@ -243,7 +447,7 @@
 			}
 
 			update() {
-				const root = this.shadowRoot;
+				const root = this.resolvedRoot;
 				const total = store.todos.length;
 				const done = store.todos.filter(t => t.done).length;
 				const pct = total === 0 ? 0 : Math.round((done / total) * 100);
@@ -256,12 +460,12 @@
 		wietDefine('todo-filter', class extends WietClass() {
 			constructor() {
 				super();
-				this.useShadow = true;
-				this.template = '#tpl-todo-filter';
+				this.shadowEnable = true;
+				this.template = '#tpl-filter';
 			}
 
 			mounted() {
-				const root = this.shadowRoot;
+				const root = this.resolvedRoot;
 				root.querySelector('.bar').addEventListener('click', (e) => {
 					const btn = e.target.closest('[data-filter]');
 					if (!btn) return;
@@ -275,7 +479,7 @@
 			}
 
 			updateActive() {
-				const root = this.shadowRoot;
+				const root = this.resolvedRoot;
 				root.querySelectorAll('[data-filter]').forEach(btn => {
 					btn.classList.toggle('active', btn.dataset.filter === store.filter);
 				});
@@ -287,12 +491,12 @@
 
 			constructor() {
 				super();
-				this.useShadow = true;
-				this.template = '#tpl-todo-item';
+				this.shadowEnable = true;
+				this.template = '#tpl-item';
 			}
 
 			mounted() {
-				const root = this.shadowRoot;
+				const root = this.resolvedRoot;
 				this.render();
 				root.querySelector('.todo-check').addEventListener('change', () => {
 					this.dispatchEvent(new CustomEvent('todo:toggle', {
@@ -311,7 +515,7 @@
 			render() {
 				const todo = store.todos.find(t => t.id === Number(this.todoId));
 				if (!todo) return;
-				const root = this.shadowRoot;
+				const root = this.resolvedRoot;
 				root.querySelector('.todo-item').classList.toggle('done', todo.done);
 				root.querySelector('.todo-check').checked = todo.done;
 				root.querySelector('.todo-text').textContent = todo.text;
@@ -323,12 +527,12 @@
 		wietDefine('todo-list', class extends WietClass() {
 			constructor() {
 				super();
-				this.useShadow = true;
-				this.template = '#tpl-todo-list';
+				this.shadowEnable = true;
+				this.template = '#tpl-list';
 			}
 
 			mounted() {
-				const root = this.shadowRoot;
+				const root = this.resolvedRoot;
 				document.addEventListener('todo:changed', () => this.renderItems());
 				root.querySelector('.clear-done-btn').addEventListener('click', () => {
 					store.todos = store.todos.filter(t => !t.done);
@@ -338,14 +542,14 @@
 			}
 
 			renderItems() {
-				const root = this.shadowRoot;
+				const root = this.resolvedRoot;
 				const container = root.querySelector('.todo-items');
 				const visible = filteredTodos();
 				container.innerHTML = '';
 				if (visible.length === 0) {
 					const empty = document.createElement('div');
 					empty.className = 'empty';
-					empty.textContent = store.filter === 'done' ? 'No completed tasks yet.' : 'Nothing to do — enjoy your day!';
+					empty.textContent = store.filter === 'done' ? 'No completed tasks yet.' : 'Nothing to do, enjoy your day!';
 					container.appendChild(empty);
 				} else {
 					visible.forEach(todo => {
@@ -362,27 +566,11 @@
 		wietDefine('todo-app', class extends WietClass() {
 			constructor() {
 				super();
-				this.useShadow = true;
+				this.shadowEnable = true;
 				this.template = '#tpl-todo-app';
 			}
 
 			mounted() {
-				const form = document.createElement('todo-form');
-				form.slot = 'form';
-				this.appendChild(form);
-
-				const stats = document.createElement('todo-stats');
-				stats.slot = 'stats';
-				this.appendChild(stats);
-
-				const filter = document.createElement('todo-filter');
-				filter.slot = 'filter';
-				this.appendChild(filter);
-
-				const list = document.createElement('todo-list');
-				list.slot = 'list';
-				this.appendChild(list);
-
 				this.addEventListener('todo:add', (e) => {
 					store.todos.push({ id: store.nextId++, text: e.detail.text, priority: e.detail.priority, done: false });
 					notify();

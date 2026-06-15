@@ -5,14 +5,29 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Example 16 - Todo Shadow DOM + External | Wiet</title>
+	<title>Example 15 - Todo Light DOM + External | Wiet</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<style>
-		.priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
-		.priority-dot.high { background: #dc3545; }
-		.priority-dot.medium { background: #ffc107; }
-		.priority-dot.low { background: #198754; }
+		.priority-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			flex-shrink: 0;
+			display: inline-block;
+		}
+
+		.priority-dot.high {
+			background: #dc3545;
+		}
+
+		.priority-dot.medium {
+			background: #ffc107;
+		}
+
+		.priority-dot.low {
+			background: #198754;
+		}
 	</style>
 </head>
 
@@ -22,11 +37,11 @@
 	<div class="container my-5">
 		<div class="row">
 			<div class="col-lg-8 mx-auto">
-				<example-section icon="bi bi-check2-square" title="Example 16: Todo App (Shadow DOM + External)" description="Every component uses Shadow DOM with templates loaded from external HTML files. Each shadow root carries its own scoped CSS." variant="warning"></example-section>
+				<example-section icon="bi bi-check2-square" title="Example 15: Todo App (Light DOM + External)" description="All components use Light DOM with templates loaded from external HTML files via Fetch. Templates are self-contained with embedded styles." variant="info"></example-section>
 
 				<todo-app></todo-app>
 
-				<view-code></view-code>
+				<page-source></page-source>
 			</div>
 		</div>
 	</div>
@@ -35,9 +50,9 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="module" class="source">
-		import './examples/layouts.js';
-		import './widgets.js';
-		import { wietCreate, wietDefine, WietClass } from './wiet.js';
+		import './layouts.js';
+		import '../widgets.js';
+		import { wietCreate, wietDefine, WietClass } from '../wiet.js';
 
 		const store = {
 			todos: [
@@ -60,16 +75,15 @@
 		}
 
 		wietDefine('todo-form', class extends WietClass() {
-			constructor() { super(); this.useShadow = true; this.template = './widgets/todo/todo-form.html'; }
+			constructor() { super(); this.template = '../widgets/todo/todo-form.html'; }
 			mounted() {
-				const root = this.shadowRoot;
-				root.querySelector('form').addEventListener('submit', (e) => {
+				this.querySelector('form').addEventListener('submit', (e) => {
 					e.preventDefault();
-					const input = root.querySelector('.input');
+					const input = this.querySelector('.input');
 					const text = input.value.trim();
 					if (!text) return;
-					const priority = root.querySelector('.select').value;
-					this.dispatchEvent(new CustomEvent('todo:add', { bubbles: true, composed: true, detail: { text, priority } }));
+					const priority = this.querySelector('.select').value;
+					this.dispatchEvent(new CustomEvent('todo:add', { bubbles: true, detail: { text, priority } }));
 					input.value = '';
 					input.focus();
 				});
@@ -77,76 +91,69 @@
 		});
 
 		wietDefine('todo-stats', class extends WietClass() {
-			constructor() { super(); this.useShadow = true; this.template = './widgets/todo/todo-stats.html'; }
+			constructor() { super(); this.template = '../widgets/todo/todo-stats.html'; }
 			mounted() { document.addEventListener('todo:changed', () => this.update()); this.update(); }
 			update() {
-				const root = this.shadowRoot;
 				const total = store.todos.length;
 				const done = store.todos.filter(t => t.done).length;
 				const pct = total === 0 ? 0 : Math.round((done / total) * 100);
-				root.querySelector('.stats-label').textContent = `${done} of ${total} done`;
-				root.querySelector('.stats-pct').textContent = `${pct}%`;
-				root.querySelector('.stats-bar').style.width = `${pct}%`;
+				this.querySelector('.stats-label').textContent = `${done} of ${total} done`;
+				this.querySelector('.stats-pct').textContent = `${pct}%`;
+				this.querySelector('.stats-bar').style.width = `${pct}%`;
 			}
 		});
 
 		wietDefine('todo-filter', class extends WietClass() {
-			constructor() { super(); this.useShadow = true; this.template = './widgets/todo/todo-filter.html'; }
+			constructor() { super(); this.template = '../widgets/todo/todo-filter.html'; }
 			mounted() {
-				const root = this.shadowRoot;
-				root.querySelector('.bar').addEventListener('click', (e) => {
+				this.querySelector('.bar').addEventListener('click', (e) => {
 					const btn = e.target.closest('[data-filter]');
 					if (!btn) return;
-					this.dispatchEvent(new CustomEvent('todo:filter', { bubbles: true, composed: true, detail: { filter: btn.dataset.filter } }));
+					this.dispatchEvent(new CustomEvent('todo:filter', { bubbles: true, detail: { filter: btn.dataset.filter } }));
 				});
 				document.addEventListener('todo:changed', () => this.updateActive());
 			}
 			updateActive() {
-				const root = this.shadowRoot;
-				root.querySelectorAll('[data-filter]').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === store.filter));
+				this.querySelectorAll('[data-filter]').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === store.filter));
 			}
 		});
 
 		wietDefine('todo-item', class extends WietClass() {
 			static attrs = ['todo-id'];
-			constructor() { super(); this.useShadow = true; this.template = './widgets/todo/todo-item.html'; }
+			constructor() { super(); this.template = '../widgets/todo/todo-item.html'; }
 			mounted() {
-				const root = this.shadowRoot;
 				this.render();
-				root.querySelector('.todo-check').addEventListener('change', () => {
-					this.dispatchEvent(new CustomEvent('todo:toggle', { bubbles: true, composed: true, detail: { id: Number(this.todoId) } }));
+				this.querySelector('.todo-check').addEventListener('change', () => {
+					this.dispatchEvent(new CustomEvent('todo:toggle', { bubbles: true, detail: { id: Number(this.todoId) } }));
 				});
-				root.querySelector('.delete-btn').addEventListener('click', () => {
-					this.dispatchEvent(new CustomEvent('todo:delete', { bubbles: true, composed: true, detail: { id: Number(this.todoId) } }));
+				this.querySelector('.delete-btn').addEventListener('click', () => {
+					this.dispatchEvent(new CustomEvent('todo:delete', { bubbles: true, detail: { id: Number(this.todoId) } }));
 				});
 			}
 			changed() { this.render(); }
 			render() {
 				const todo = store.todos.find(t => t.id === Number(this.todoId));
 				if (!todo) return;
-				const root = this.shadowRoot;
-				root.querySelector('.todo-item').classList.toggle('done', todo.done);
-				root.querySelector('.todo-check').checked = todo.done;
-				root.querySelector('.todo-text').textContent = todo.text;
-				const dot = root.querySelector('.priority-dot');
+				this.querySelector('.todo-item').classList.toggle('done', todo.done);
+				this.querySelector('.todo-check').checked = todo.done;
+				this.querySelector('.todo-text').textContent = todo.text;
+				const dot = this.querySelector('.priority-dot');
 				dot.className = `priority-dot ${todo.priority}`;
 			}
 		});
 
 		wietDefine('todo-list', class extends WietClass() {
-			constructor() { super(); this.useShadow = true; this.template = './widgets/todo/todo-list.html'; }
+			constructor() { super(); this.template = '../widgets/todo/todo-list.html'; }
 			mounted() {
-				const root = this.shadowRoot;
 				document.addEventListener('todo:changed', () => this.renderItems());
-				root.querySelector('.clear-done-btn').addEventListener('click', () => {
+				this.querySelector('.clear-done-btn').addEventListener('click', () => {
 					store.todos = store.todos.filter(t => !t.done);
 					notify();
 				});
 				this.renderItems();
 			}
 			renderItems() {
-				const root = this.shadowRoot;
-				const container = root.querySelector('.todo-items');
+				const container = this.querySelector('.todo-items');
 				const visible = filteredTodos();
 				container.innerHTML = '';
 				if (visible.length === 0) {
@@ -157,32 +164,13 @@
 				} else {
 					visible.forEach(todo => container.appendChild(wietCreate('todo-item', { attrs: { 'todo-id': String(todo.id) } })));
 				}
-				root.querySelector('.list-count').textContent = `${visible.length} item${visible.length !== 1 ? 's' : ''}`;
+				this.querySelector('.list-count').textContent = `${visible.length} item${visible.length !== 1 ? 's' : ''}`;
 			}
 		});
 
 		wietDefine('todo-app', class extends WietClass() {
-			constructor() { super(); this.useShadow = true; this.template = './widgets/todo/todo-app-shadow.html'; }
+			constructor() { super(); this.template = '../widgets/todo/todo-app-light.html'; }
 			mounted() {
-				const root = this.shadowRoot;
-				const body = root.querySelector('.body');
-
-				const form = document.createElement('todo-form');
-				form.slot = 'form';
-				body.appendChild(form);
-
-				const stats = document.createElement('todo-stats');
-				stats.slot = 'stats';
-				body.appendChild(stats);
-
-				const filter = document.createElement('todo-filter');
-				filter.slot = 'filter';
-				body.appendChild(filter);
-
-				const list = document.createElement('todo-list');
-				list.slot = 'list';
-				body.appendChild(list);
-
 				this.addEventListener('todo:add', (e) => {
 					store.todos.push({ id: store.nextId++, text: e.detail.text, priority: e.detail.priority, done: false });
 					notify();
